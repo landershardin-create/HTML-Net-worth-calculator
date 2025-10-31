@@ -1,0 +1,21 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  padding: 20px;
+  background: #f4f4f4;
+}
+label {
+  display: block;
+  margin: 10px 0;
+}
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #0078D4;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+h3 {
+  margin-top: 20px;
+  font-size: 1.2em;
+}
