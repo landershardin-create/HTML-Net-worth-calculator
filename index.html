@@ -6,149 +6,50 @@
   <title>Net Worth Dashboard</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+      margin: 20px;
     }
-    h1, h2 {
-      color: #333;
+    h1 {
+      text-align: center;
     }
-    .tabs {
+    .tab-container {
       display: flex;
+      gap: 10px;
       margin-bottom: 20px;
     }
     .tab {
       padding: 10px 20px;
+      background-color: #eee;
+      border: 1px solid #ccc;
       cursor: pointer;
-      background: #ddd;
-      margin-right: 5px;
-      border-radius: 5px 5px 0 0;
     }
     .tab.active {
-      background: #0078D4;
-      color: white;
+      background-color: #ddd;
+      font-weight: bold;
     }
-    .tab-content {
-      display: none;
-      background: white;
-      padding: 20px;
+    .content {
       border: 1px solid #ccc;
-      border-top: none;
+      padding: 20px;
     }
-    .tab-content.active {
-      display: block;
-    }
-    label {
-      display: block;
-      margin: 10px 0;
-    }
-    input[type="number"] {
-      width: 200px;
-      padding: 5px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #0078D4;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    h3 {
-      margin-top: 20px;
+    .form-group {
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-
   <h1>Net Worth Dashboard</h1>
-  <div class="tabs">
+
+  <div class="tab-container" id="tabContainer">
     <div class="tab active" onclick="switchTab('personal')">Personal</div>
     <div class="tab" onclick="switchTab('business')">Business</div>
   </div>
 
-  <!-- Personal Tab -->
-  <div id="personal" class="tab-content active">
-    <h2>Personal Net Worth</h2>
-    <label>Cash & Bank: <input type="number" id="p_cash" /></label>
-    <label>Investments: <input type="number" id="p_investments" /></label>
-    <label>Real Estate: <input type="number" id="p_realEstate" /></label>
-    <label>Vehicles: <input type="number" id="p_vehicles" /></label>
-    <label>Business Equity: <input type="number" id="p_businessEquity" /></label>
-    <label>Personal Property: <input type="number" id="p_property" /></label>
-    <label>Mortgage: <input type="number" id="p_mortgage" /></label>
-    <label>Credit Card Debt: <input type="number" id="p_credit" /></label>
-    <label>Other Liabilities: <input type="number" id="p_otherLiabilities" /></label>
-    <button onclick="calculatePersonal()">Calculate</button>
-    <h3 id="personalResult">Net Worth: $0</h3>
+  <div class="content" id="contentArea">
+    <h2 id="tabTitle">Personal Net Worth</h2>
+    <p id="netWorthDisplay">Total: $0</p>
   </div>
 
-  <!-- Business Tab -->
-  <div id="business" class="tab-content">
-    <h2>Business Net Worth</h2>
-    <label>Cash & Accounts: <input type="number" id="b_cash" /></label>
-    <label>Equipment: <input type="number" id="b_equipment" /></label>
-    <label>IP & Codebases: <input type="number" id="b_ip" /></label>
-    <label>Branding Assets: <input type="number" id="b_branding" /></label>
-    <label>Web Properties: <input type="number" id="b_webAssets" /></label>
-    <label>Receivables: <input type="number" id="b_receivables" /></label>
-    <label>Startup Costs: <input type="number" id="b_startup" /></label>
-    <label>Contributor Payouts: <input type="number" id="b_payouts" /></label>
-    <label>Software Licenses: <input type="number" id="b_licenses" /></label>
-    <label>Business Credit: <input type="number" id="b_credit" /></label>
-    <button onclick="calculateBusiness()">Calculate</button>
-    <h3 id="businessResult">Net Worth: $0</h3>
-  </div>
-
-  <script>
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-      document.querySelector(`.tab[onclick*="${tabId}"]`).classList.add('active');
-      document.getElementById(tabId).classList.add('active');
-    }
-
-    function calculatePersonal() {
-      const assets = [
-        +document.getElementById("p_cash").value,
-        +document.getElementById("p_investments").value,
-        +document.getElementById("p_realEstate").value,
-        +document.getElementById("p_vehicles").value,
-        +document.getElementById("p_businessEquity").value,
-        +document.getElementById("p_property").value
-      ];
-      const liabilities = [
-        +document.getElementById("p_mortgage").value,
-        +document.getElementById("p_credit").value,
-        +document.getElementById("p_otherLiabilities").value
-      ];
-      const totalAssets = assets.reduce((a, b) => a + b, 0);
-      const totalLiabilities = liabilities.reduce((a, b) => a + b, 0);
-      const netWorth = totalAssets - totalLiabilities;
-      document.getElementById("personalResult").innerText = `Net Worth:
-
-{netWorth.toLocaleString()}`;
-    }
-
-    function calculateBusiness() {
-      const assets = [
-        +document.getElementById("b_cash").value,
-        +document.getElementById("b_equipment").value,
-        +document.getElementById("b_ip").value,
-        +document.getElementById("b_branding").value,
-        +document.getElementById("b_webAssets").value,
-        +document.getElementById("b_receivables").value
-      ];
-      const liabilities = [
-        +document.getElementById("b_startup").value,
-        +document.getElementById("b_payouts").value,
-        +document.getElementById("b_licenses").value,
-        +document.getElementById("b_credit").value
-      ];
-      const totalAssets = assets.reduce((a, b) => a + b, 0);
-      const totalLiabilities = liabilities.reduce((a, b) => a + b, 0);
-      const netWorth = totalAssets - totalLiabilities;
-      document.getElementById("businessResult").innerText = `Net Worth: 
-
-{netWorth.toLocaleString
+  <div class="form-group">
+    <input type="text" id="newTabLabel" placeholder="New tab label" />
+    <select id="tabType">
+      <option value="personal">Personal</option>
