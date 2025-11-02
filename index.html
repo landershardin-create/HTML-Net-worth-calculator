@@ -206,7 +206,7 @@ function addTimesheetRow(tabId) {
   `;
   tbody.appendChild(row);
 }
-
+  }
 function updateTimesheetTotal(tabId) {
   const rows = document.querySelectorAll(`#${tabId}-table tbody tr`);
   let total = 0;
@@ -216,8 +216,7 @@ function updateTimesheetTotal(tabId) {
   });
   document.getElementById(`${tabId}-total`).innerText = `Total Hours: ${total}`;
 }
-  }
-
+    
   function generateTabContent(type, tabId) {
     const fields = type === 'personal'
       ? ['Cash & Bank', 'Investments', 'Real Estate', 'Vehicles', 'Business Equity', 'Personal Property', 'Mortgage', 'Credit Card Debt', 'Other Liabilities']
