@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Personal Balance Sheet</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    .section {
+      background: #fff;
+      padding: 1em;
+      margin-bottom: 1em;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 0.5em;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.2em;
+    }
+    button {
+      margin-top: 1em;
+      padding: 0.5em 1em;
+    }
+    #summary {
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Personal Balance Sheet</h1>
+
+  <div class="section">
+    <h2>Assets</h2>
+    <label>Cash: <input type="number" id="cash" /></label>
+    <label>Investments: <input type="number" id="investments" /></label>
+    <label>Real Estate: <input type="number" id="realEstate" /></label>
+    <label>Other Assets: <input type="number" id="otherAssets" /></label>
+  </div>
+
+  <div class="section">
+    <h2>Liabilities</h2>
+    <label>Mortgage: <input type="number" id="mortgage" /></label>
+    <label>Credit Cards: <input type="number" id="creditCards" /></label>
+    <label>Loans: <input type="number" id="loans" /></label>
+    <label>Other Liabilities: <input type="number" id="otherLiabilities" /></label>
+  </div>
+
+  <div class="section">
+    <button onclick="calculateNetWorth()">Calculate Net Worth</button>
+    <p id="summary"></p>
+  </div>
+
+  <script>
+    function calculateNetWorth() {
+      const assets = 
+        Number(document.getElementById('cash').value) +
+        Number(document.getElementById('investments').value) +
+        Number(document.getElementById('realEstate').value) +
+        Number(document.getElementById('otherAssets').value);
+
+      const liabilities = 
+        Number(document.getElementById('mortgage').value) +
+        Number(document.getElementById('creditCards').value) +
+        Number(document.getElementById('loans').value) +
+        Number(document.getElementById('otherLiabilities').value);
+
+      const netWorth = assets - liabilities;
+      const summary = document.getElementById('summary');
+
+      summary.textContent = `Net Worth: $${netWorth.toFixed(2)} (${netWorth >= 0 ? 'Positive' : 'Negative'})`;
+    }
+  </script>
+</body>
+</html>
