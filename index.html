@@ -325,6 +325,33 @@
     const net = income - expense;
     document.getElementById(`${tabId}-result`).innerText = `Net: $${net.toLocaleString()}`;
   }
+      const tabContainer = document.getElementById('tab-container');
+    const contentContainer = document.getElementById('tab-content-container');
+    const createButton = document.getElementById('create-button');
+
+    createButton.addEventListener('click', () => {
+      const tabId = 'balance-sheet-' + Date.now();
+      const tab = document.createElement('div');
+      tab.className = 'tab';
+      tab.textContent = 'Business Balance Sheet';
+      tab.dataset.target = tabId;
+
+      const content = document.createElement('div');
+      content.className = 'tab-content';
+      content.id = tabId;
+      content.innerHTML = `
+        <h2>Business Balance Sheet</h2>
+        <p>Assets, liabilities, and equity go here...</p>
+      `;
+
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        content.classList.add('active');
+      });
+
+      tabContainer.appendChild(tab);
+      contentContainer.appendChild(content);
+    });
 </script>
 </body>
 </html>
