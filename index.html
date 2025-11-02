@@ -229,7 +229,68 @@ function createTimesheetTab() {
     <h3 id="${tabId}-total">Total Hours: 0</h3>
   `;
   document.getElementById('tabContents').appendChild(tabContent);
+function createIncomeExpenseTab(type) {
+  tabCount++;
+  const tabId = `${type}-income-expense-${tabCount}`;
 
+  // Create tab header
+  const tabHeader = document.createElement('div');
+  tabHeader.className = 'tab';
+  tabHeader.id = `tab-${tabId}`;
+  tabHeader.setAttribute('data-tab', tabId);
+
+  const tabLabel = document.createElement('span');
+  tabLabel.innerText = `${type.charAt(0).toUpperCase() + type.slice(1)} Income & Expense ${tabCount}`;
+  tabLabel.className = 'tab-label';
+
+  const renameBtn = document.createElement('button');
+  renameBtn.innerText = '📝';
+  renameBtn.title = 'Rename Tab';
+  renameBtn.style.marginLeft = '8px';
+  renameBtn.onclick = (e) => {
+    e.stopPropagation();
+    const newName = prompt('Enter new tab name:');
+    if (newName) tabLabel.innerText = newName;
+  };
+
+  const closeBtn = document.createElement('button');
+  closeBtn.innerText = '❌';
+  closeBtn.title = 'Close Tab';
+  closeBtn.style.marginLeft = '4px';
+  closeBtn.onclick = (e) => {
+    e.stopPropagation();
+    document.getElementById(`tab-${tabId}`).remove();
+    document.getElementById(`content-${tabId}`).remove();
+  };
+
+  tabHeader.appendChild(tabLabel);
+  tabHeader.appendChild(renameBtn);
+  tabHeader.appendChild(closeBtn);
+  tabHeader.onclick = () => switchTab(tabId);
+  document.getElementById('tabHeaders').appendChild(tabHeader);
+
+  // Create tab content
+  const tabContent = document.createElement('div');
+  tabContent.className = 'tab-content';
+  tabContent.id = `content-${tabId}`;
+  tabContent.innerHTML = `
+    <h2>${type.charAt(0).toUpperCase() + type.slice(1)} Income & Expense</h2>
+    <label>Income: <input type="number" id="${tabId}-income" /></label>
+    <label>Expenses: <input type="number" id="${tabId}-expense" /></label>
+    <button class="calculate" onclick="calculateIncomeExpense('${tabId}')">Calculate</button>
+    <h3 id="${tabId}-result">Net: $0</h3>
+  `;
+  document.getElementById('tabContents').appendChild(tabContent);
+
+  switchTab(tabId);
+}
+
+function calculateIncomeExpense(tabId) {
+  const income = +document.getElementById(`${tabId}-income`).value || 0;
+  const expense = +document.getElementById(`${tabId}-expense`).value || 0;
+  const net = income - expense;
+  document.getElementById(`${tabId}-result`).innerText = `Net: $${net.toLocaleString()}`;
+}
   switchTab(tabId);
 }
 
