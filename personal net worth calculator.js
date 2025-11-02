@@ -1,4 +1,4 @@
-function calculateNetWorth() {
+function calculatePersonalNetWorth() {
   const assets = [
     +document.getElementById("cash").value,
     +document.getElementById("investments").value,
