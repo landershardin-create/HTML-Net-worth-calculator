@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Personnel Records Manager</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h2 { color: #333; }
+    form, table { margin-top: 20px; max-width: 800px; }
+    input, select, button { padding: 8px; margin: 5px 0; width: 100%; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    th { background-color: #f4f4f4; }
+    .btn { padding: 8px 12px; margin-right: 5px; cursor: pointer; }
+    .edit-btn { background-color: #ffc107; border: none; }
+    .delete-btn { background-color: #dc3545; border: none; color: white; }
+    .search-box { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h2>Company Personnel Records</h2>
+
+  <label for="role">Select Role:</label>
+  <select id="role">
+    <option value="Admin">Admin</option>
+    <option value="Viewer">Viewer</option>
+  </select>
+
+  <div id="adminPanel">
+    <form id="personnelForm">
+      <label>Full Name:</label>
+      <input type="text" id="name" required />
+      <label>Position:</label>
+      <input type="text" id="position" required />
+      <label>Department:</label>
+      <input type="text" id="department" required />
+      <label>Email:</label>
+      <input type="email" id="email" required />
+      <button type="submit" class="btn">Add Record</button>
+    </form>
+  </div>
+
+  <div class="search-box">
+    <label>Search:</label>
+    <input type="text" id="searchInput" placeholder="Search by any field..." />
+  </div>
+
+  <table id="recordsTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Department</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById('personnelForm');
+    const tableBody = document.querySelector('#recordsTable tbody');
+    const searchInput = document.getElementById('searchInput');
+    const roleSelect = document.getElementById('role');
+    const adminPanel = document.getElementById('adminPanel');
+
+    let records = [];
+
+    roleSelect.addEventListener('change', () => {
+      const role = roleSelect.value;
+      adminPanel.style.display = role === 'Admin' ? 'block' : 'none';
+      renderTable();
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const position = document.getElementById('position').value;
+      const department = document.getElementById('department').value;
+      const email = document.getElementById('email').value;
+
+      records.push({ name, position, department, email });
+      form.reset();
+      renderTable();
+    });
+
+    searchInput.addEventListener('input', renderTable);
+
+    function renderTable() {
+      const role = roleSelect.value;
+      const query = searchInput.value.toLowerCase();
+      tableBody.innerHTML = '';
+
+      records
+        .filter(record =>
+          Object.values(record).some(val =>
+            val.toLowerCase().includes(query)
+          )
+        )
+        .forEach((record, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${record.name}</td>
+            <td>${record.position}</td>
+            <td>${record.department}</td>
+            <td>${record.email}</td>
+            <td>
+              ${role === 'Admin' ? `
+                <button class="btn edit-btn" onclick="editRecord(${index})">Edit</button>
+                <button class="btn delete-btn" onclick="deleteRecord(${index})">Delete</button>
+              ` : '—'}
+            </td>
+          `;
+          tableBody.appendChild(row);
+        });
+    }
+
+    function deleteRecord(index) {
+      records.splice(index, 1);
+      renderTable();
+    }
+
+    function editRecord(index) {
+      const record = records[index];
+      document.getElementById('name').value = record.name;
+      document.getElementById('position').value = record.position;
+      document.getElementById('department').value = record.department;
+      document.getElementById('email').value = record.email;
+      records.splice(index, 1);
+      renderTable();
+    }
+
+    // Initial render
+    renderTable();
+  </script>
+</body>
+</html>
