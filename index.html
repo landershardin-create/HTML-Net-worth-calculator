@@ -94,9 +94,7 @@
   <h1 style="padding: 20px;">Business and Personal Finance Dashboard</h1>
   <div class="container">
     <div class="sidebar">
-<h2>Create View</h2>
-
-<div id="BusinessGroup">
+<h2>Create View</h2> <div id="BusinessGroup">
   <h3>Business Tabs</h3>
   <button id="balanceBtn" onclick="createTab('business')">Business Balance Sheet</button>
   <button id="cashflowBtn" onclick="createTab('business')">Business Cash Flow</button>
@@ -116,7 +114,6 @@
   <button onclick="createTab('personal')">+ Personal Journal Transactions</button>
   <button onclick="createTab('personal')">+ Personal Net Worth</button>
 </div>
-        
     <div class="main">
       <div class="tabs" id="tabHeaders"></div>
       <div id="tabContents"></div>
@@ -147,7 +144,7 @@
     tabLabel.className = 'tab-label';
 
     const renameBtn = document.createElement('button');
-    renameBtn.innerText = 'Ã°ÂÂÂ';
+    renameBtn.innerText = 'ð';
     renameBtn.title = 'Rename Tab';
     renameBtn.style.marginLeft = '8px';
     renameBtn.onclick = (e) => {
@@ -157,7 +154,7 @@
     };
 
     const closeBtn = document.createElement('button');
-    closeBtn.innerText = 'Ã¢ÂÂ';
+    closeBtn.innerText = 'â';
     closeBtn.title = 'Close Tab';
     closeBtn.style.marginLeft = '4px';
     closeBtn.onclick = (e) => {
@@ -231,14 +228,14 @@
     tabContent.className = 'tab-content';
     tabContent.id = `content-${tabId}`;
     tabContent.innerHTML = `
-      <h2>Ã°ÂÂÂ Timesheet Tracker</h2>
+      <h2>ð Timesheet Tracker</h2>
       <table id="${tabId}-table">
         <thead>
           <tr><th>Date</th><th>Project</th><th>Hours</th></tr>
         </thead>
         <tbody></tbody>
       </table>
-      <button onclick="addTimesheetRow('${tabId}')">Ã¢ÂÂ Add Entry</button>
+      <button onclick="addTimesheetRow('${tabId}')">â Add Entry</button>
       <h3 id="${tabId}-total">Total Hours: 0</h3>
     `;
     document.getElementById('tabContents').appendChild(tabContent);
@@ -281,7 +278,7 @@
     tabLabel.className = 'tab-label';
 
     const renameBtn = document.createElement('button');
-    renameBtn.innerText = 'Ã°ÂÂÂ';
+    renameBtn.innerText = 'ð';
     renameBtn.title = 'Rename Tab';
     renameBtn.style.marginLeft = '8px';
     renameBtn.onclick = (e) => {
@@ -291,7 +288,7 @@
     };
 
     const closeBtn = document.createElement('button');
-    closeBtn.innerText = 'Ã¢ÂÂ';
+    closeBtn.innerText = 'â';
     closeBtn.title = 'Close Tab';
     closeBtn.style.marginLeft = '4px';
     closeBtn.onclick = (e) => {
