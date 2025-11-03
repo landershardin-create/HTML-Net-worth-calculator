@@ -131,6 +131,16 @@
     document.getElementById(`content-${tabId}`).classList.add('active');
   }
 
+  function createButton({ text, title, marginLeft, onClick }) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.innerText = text;
+    btn.title = title;
+    btn.style.marginLeft = marginLeft;
+    btn.onclick = onClick;
+    return btn;
+  }
+
   function createTab(type) {
     tabCount++;
     const tabId = `${type}-${tabCount}`;
@@ -144,25 +154,27 @@
     tabLabel.innerText = `${type.charAt(0).toUpperCase() + type.slice(1)} ${tabCount}`;
     tabLabel.className = 'tab-label';
 
-    const renameBtn = document.createElement('button');
-    renameBtn.innerText = 'ð';
-    renameBtn.title = 'Rename Tab';
-    renameBtn.style.marginLeft = '8px';
-    renameBtn.onclick = (e) => {
-      e.stopPropagation();
-      const newName = prompt('Enter new tab name:');
-      if (newName) tabLabel.innerText = newName;
-    };
+    const renameBtn = createButton({
+      text: '📝',
+      title: 'Rename Tab',
+      marginLeft: '8px',
+      onClick: (e) => {
+        e.stopPropagation();
+        const newName = prompt('Enter new tab name:');
+        if (newName) tabLabel.innerText = newName;
+      }
+    });
 
-    const closeBtn = document.createElement('button');
-    closeBtn.innerText = 'â';
-    closeBtn.title = 'Close Tab';
-    closeBtn.style.marginLeft = '4px';
-    closeBtn.onclick = (e) => {
-      e.stopPropagation();
-      document.getElementById(`tab-${tabId}`).remove();
-      document.getElementById(`content-${tabId}`).remove();
-    };
+    const closeBtn = createButton({
+      text: '❌',
+      title: 'Close Tab',
+      marginLeft: '4px',
+      onClick: (e) => {
+        e.stopPropagation();
+        document.getElementById(`tab-${tabId}`).remove();
+        document.getElementById(`content-${tabId}`).remove();
+      }
+    });
 
     tabHeader.appendChild(tabLabel);
     tabHeader.appendChild(renameBtn);
@@ -229,14 +241,14 @@
     tabContent.className = 'tab-content';
     tabContent.id = `content-${tabId}`;
     tabContent.innerHTML = `
-      <h2>ð Timesheet Tracker</h2>
+      <h2>🕒 Timesheet Tracker</h2>
       <table id="${tabId}-table">
         <thead>
           <tr><th>Date</th><th>Project</th><th>Hours</th></tr>
         </thead>
         <tbody></tbody>
       </table>
-      <button onclick="addTimesheetRow('${tabId}')">â Add Entry</button>
+      <button onclick="addTimesheetRow('${tabId}')">➕ Add Entry</button>
       <h3 id="${tabId}-total">Total Hours: 0</h3>
     `;
     document.getElementById('tabContents').appendChild(tabContent);
@@ -278,25 +290,27 @@
     tabLabel.innerText = `${type.charAt(0).toUpperCase() + type.slice(1)} Income & Expense ${tabCount}`;
     tabLabel.className = 'tab-label';
 
-    const renameBtn = document.createElement('button');
-    renameBtn.innerText = 'ð';
-    renameBtn.title = 'Rename Tab';
-    renameBtn.style.marginLeft = '8px';
-    renameBtn.onclick = (e) => {
-      e.stopPropagation();
-      const newName = prompt('Enter new tab name:');
-      if (newName) tabLabel.innerText = newName;
-    };
+    const renameBtn = createButton({
+      text: '📝',
+      title: 'Rename Tab',
+      marginLeft: '8px',
+      onClick: (e) => {
+        e.stopPropagation();
+        const newName = prompt('Enter new tab name:');
+        if (newName) tabLabel.innerText = newName;
+      }
+    });
 
-    const closeBtn = document.createElement('button');
-    closeBtn.innerText = 'â';
-    closeBtn.title = 'Close Tab';
-    closeBtn.style.marginLeft = '4px';
-    closeBtn.onclick = (e) => {
-      e.stopPropagation();
-      document.getElementById(`tab-${tabId}`).remove();
-      document.getElementById(`content-${tabId}`).remove();
-    };
+    const closeBtn = createButton({
+      text: '❌',
+      title: 'Close Tab',
+      marginLeft: '4px',
+      onClick: (e) => {
+        e.stopPropagation();
+        document.getElementById(`tab-${tabId}`).remove();
+        document.getElementById(`content-${tabId}`).remove();
+      }
+    });
 
     tabHeader.appendChild(tabLabel);
     tabHeader.appendChild(renameBtn);
@@ -310,21 +324,8 @@
     tabContent.innerHTML = `
       <h2>${type.charAt(0).toUpperCase() + type.slice(1)} Income & Expense</h2>
       <label>Income: <input type="number" id="${tabId}-income" /></label>
-      <label>Expenses: <input type="number" id="${tabId}-expense" /></label>
-      <button class="calculate" onclick="calculateIncomeExpense('${tabId}')">Calculate</button>
-      <h3 id="${tabId}-result">Net: $0</h3>
-    `;
-    document.getElementById('tabContents').appendChild(tabContent);
-
-    switchTab(tabId);
-  }
-
-  function calculateIncomeExpense(tabId) {
-    const income = +document.getElementById(`${tabId}-income`).value || 0;
-    const expense = +document.getElementById(`${tabId}-expense`).value || 0;
-    const net = income - expense;
-    document.getElementById(`${tabId}-result`).innerText = `Net: $${net.toLocaleString()}`;
-  }
+      <label>Expenses: <input type="
+      }
 </script>
 </body>
 </html>
