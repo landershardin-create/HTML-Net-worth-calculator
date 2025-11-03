@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dynamic Accounting Journal</title>
+  <title>Accounting Journal & Account Manager</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,55 +11,71 @@
       background-color: #f4f4f4;
     }
     h2 {
-      text-align: center;
+      margin-top: 40px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-top: 10px;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 10px;
-      text-align: left;
+      padding: 8px;
     }
     th {
       background-color: #e0e0e0;
     }
-    input[type="text"], input[type="number"], input[type="date"] {
+    input, select {
       width: 100%;
       padding: 6px;
       box-sizing: border-box;
     }
     .btn {
-      margin-top: 20px;
+      margin-top: 15px;
       padding: 10px 15px;
       font-size: 14px;
       cursor: pointer;
       border: none;
       color: white;
     }
-    .add-btn {
-      background-color: #2196F3;
-    }
-    .remove-btn {
-      background-color: #f44336;
-    }
-    .submit-btn {
-      background-color: #4CAF50;
-      width: 100%;
-      font-size: 16px;
-    }
+    .add-btn { background-color: #2196F3; }
+    .remove-btn { background-color: #f44336; }
+    .submit-btn { background-color: #4CAF50; width: 100%; font-size: 16px; }
   </style>
 </head>
 <body>
-  <h2>Accounting Journal Entry</h2>
+
+  <h2>Create New Account</h2>
+  <form id="accountForm">
+    <table>
+      <tr>
+        <td><label for="accountName">Account Name</label></td>
+        <td><input type="text" id="accountName" required /></td>
+      </tr>
+      <tr>
+        <td><label for="accountType">Account Type</label></td>
+        <td>
+          <select id="accountType" required>
+            <option value="">Select type</option>
+            <option value="Asset">Asset</option>
+            <option value="Liability">Liability</option>
+            <option value="Equity">Equity</option>
+            <option value="Revenue">Revenue</option>
+            <option value="Expense">Expense</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+    <button type="submit" class="btn submit-btn">Create Account</button>
+  </form>
+
+  <h2>Journal Entry</h2>
   <form id="journalForm">
     <table id="journalTable">
       <thead>
         <tr>
           <th>Date</th>
-          <th>Account Name</th>
+          <th>Account</th>
           <th>Debit ($)</th>
           <th>Credit ($)</th>
           <th>Description</th>
@@ -69,7 +85,11 @@
       <tbody>
         <tr>
           <td><input type="date" name="date[]" required /></td>
-          <td><input type="text" name="account[]" required /></td>
+          <td>
+            <select name="account[]" class="accountSelect" required>
+              <option value="">Select account</option>
+            </select>
+          </td>
           <td><input type="number" name="debit[]" step="0.01" /></td>
           <td><input type="number" name="credit[]" step="0.01" /></td>
           <td><input type="text" name="description[]" /></td>
@@ -78,14 +98,36 @@
       </tbody>
     </table>
     <button type="button" class="btn add-btn" onclick="addRow()">Add Row</button>
-    <button type="submit" class="btn submit-btn">Submit Entries</button>
+    <button type="submit" class="btn submit-btn">Submit Journal</button>
   </form>
 
   <script>
+    const accountForm = document.getElementById("accountForm");
+    const journalForm = document.getElementById("journalForm");
+    const accountSelects = document.getElementsByClassName("accountSelect");
+
+    accountForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const name = document.getElementById("accountName").value.trim();
+      const type = document.getElementById("accountType").value;
+      if (name && type) {
+        for (let select of accountSelects) {
+          const option = document.createElement("option");
+          option.value = name;
+          option.text = `${name} (${type})`;
+          select.appendChild(option);
+        }
+        alert(`Account "${name}" created as ${type}.`);
+        accountForm.reset();
+      }
+    });
+
     function addRow() {
       const table = document.getElementById("journalTable").getElementsByTagName("tbody")[0];
       const newRow = table.rows[0].cloneNode(true);
       newRow.querySelectorAll("input").forEach(input => input.value = "");
+      const newSelect = newRow.querySelector("select");
+      newSelect.innerHTML = accountSelects[0].innerHTML;
       table.appendChild(newRow);
     }
 
@@ -97,10 +139,10 @@
       }
     }
 
-    document.getElementById("journalForm").addEventListener("submit", function(e) {
+    journalForm.addEventListener("submit", function(e) {
       e.preventDefault();
       alert("Journal entries submitted!");
-      // You can add logic here to process or export the data
+      // Add logic here to process or export the data
     });
   </script>
 </body>
