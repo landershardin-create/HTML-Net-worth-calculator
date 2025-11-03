@@ -212,6 +212,36 @@ function createIncomeExpenseTab(type) {
     `
   });
 }
+function createCashFlowTab() {
+  createDashboardTab({
+    type: 'cashflow',
+    labelPrefix: 'Cash Flow',
+    contentHTML: (tabId) => `
+      <h2>📊 Monthly Cash Flow Tracker</h2>
+      <label>Month: <input type="text" id="${tabId}-month" placeholder="e.g. November" /></label>
+      <div style="margin-top:10px;">
+        <h4>Income Sources</h4>
+        <label>Primary Income: <input type="number" id="${tabId}-income-1" /></label>
+        <label>Side Income: <input type="number" id="${tabId}-income-2" /></label>
+        <label>Other Income: <input type="number" id="${tabId}-income-3" /></label>
+      </div>
+      <div style="margin-top:10px;">
+        <h4>Expenses</h4>
+        <label>Fixed Expenses: <input type="number" id="${tabId}-expense-1" /></label>
+        <label>Variable Expenses: <input type="number" id="${tabId}-expense-2" /></label>
+        <label>Debt Payments: <input type="number" id="${tabId}-expense-3" /></label>
+      </div>
+      <button class="calculate" onclick="calculateCashFlow('${tabId}')">Calculate</button>
+      <h3 id="${tabId}-result">Cash Flow: $0</h3>
+    `
+  });
+}
+function calculateCashFlow(tabId) {
+  const incomes = [1, 2, 3].map(i => +document.getElementById(`${tabId}-income-${i}`).value || 0);
+  const expenses = [1, 2, 3].map(i => +document.getElementById(`${tabId}-expense-${i}`).value || 0);
+  const net = incomes.reduce((a, b) => a + b, 0) - expenses.reduce((a, b) => a + b, 0);
+  document.getElementById(`${tabId}-result`).innerText = `Cash Flow: $${net.toLocaleString()}`;
+}
 </script>
 </body>
 </html>
