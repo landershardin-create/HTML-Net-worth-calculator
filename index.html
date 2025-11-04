@@ -120,6 +120,41 @@
       <div id="tabContents"></div>
     </div>
   </div>
+<div id="businessTab" style="display: none;">
+  <h2>Business Personnel Registry</h2>
+
+  <div id="businessAdminPanel">
+    <form id="businessForm">
+      <label>Business Name:</label>
+      <input type="text" id="bizName" required />
+      <label>Contact Person:</label>
+      <input type="text" id="bizContact" required />
+      <label>Industry:</label>
+      <input type="text" id="bizIndustry" required />
+      <label>Email:</label>
+      <input type="email" id="bizEmail" required />
+      <button type="submit" class="btn">Add Business</button>
+    </form>
+  </div>
+
+  <div class="search-box">
+    <label>Search:</label>
+    <input type="text" id="bizSearchInput" placeholder="Search businesses..." />
+  </div>
+
+  <table id="bizTable">
+    <thead>
+      <tr>
+        <th>Business Name</th>
+        <th>Contact Person</th>
+        <th>Industry</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <script>
   function createDashboardTab({ type, labelPrefix, contentHTML, calculateFn }) {
@@ -331,6 +366,86 @@ function addJournalEntry(tabId) {
 }
 createJournalTab('personal');
 createJournalTab('business');
+
+const bizForm = document.getElementById('businessForm');
+const bizTableBody = document.querySelector('#bizTable tbody');
+const bizSearchInput = document.getElementById('bizSearchInput');
+const bizAdminPanel = document.getElementById('businessAdminPanel');
+
+let businessRecords = [];
+
+function switchTab(tabName) {
+  document.getElementById('personnelTab').style.display = tabName === 'personnel' ? 'block' : 'none';
+  document.getElementById('businessTab').style.display = tabName === 'business' ? 'block' : 'none';
+  renderTable(); // refresh both views
+  renderBusinessTable();
+}
+
+roleSelect.addEventListener('change', () => {
+  const role = roleSelect.value;
+  adminPanel.style.display = role === 'Admin' ? 'block' : 'none';
+  bizAdminPanel.style.display = role === 'Admin' ? 'block' : 'none';
+  renderTable();
+  renderBusinessTable();
+});
+
+bizForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+  const bizName = document.getElementById('bizName').value;
+  const bizContact = document.getElementById('bizContact').value;
+  const bizIndustry = document.getElementById('bizIndustry').value;
+  const bizEmail = document.getElementById('bizEmail').value;
+
+  businessRecords.push({ bizName, bizContact, bizIndustry, bizEmail });
+  bizForm.reset();
+  renderBusinessTable();
+});
+
+bizSearchInput.addEventListener('input', renderBusinessTable);
+
+function renderBusinessTable() {
+  const role = roleSelect.value;
+  const query = bizSearchInput.value.toLowerCase();
+  bizTableBody.innerHTML = '';
+
+  businessRecords
+    .filter(record =>
+      Object.values(record).some(val =>
+        val.toLowerCase().includes(query)
+      )
+    )
+    .forEach((record, index) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${record.bizName}</td>
+        <td>${record.bizContact}</td>
+        <td>${record.bizIndustry}</td>
+        <td>${record.bizEmail}</td>
+        <td>
+          ${role === 'Admin' ? `
+            <button class="btn edit-btn" onclick="editBusiness(${index})">Edit</button>
+            <button class="btn delete-btn" onclick="deleteBusiness(${index})">Delete</button>
+          ` : '—'}
+        </td>
+      `;
+      bizTableBody.appendChild(row);
+    });
+}
+
+function deleteBusiness(index) {
+  businessRecords.splice(index, 1);
+  renderBusinessTable();
+}
+
+function editBusiness(index) {
+  const record = businessRecords[index];
+  document.getElementById('bizName').value = record.bizName;
+  document.getElementById('bizContact').value = record.bizContact;
+  document.getElementById('bizIndustry').value = record.bizIndustry;
+  document.getElementById('bizEmail').value = record.bizEmail;
+  businessRecords.splice(index, 1);
+  renderBusinessTable();
+}
 </script>
 </body>
 </html>
