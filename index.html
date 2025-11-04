@@ -446,6 +446,57 @@ function editBusiness(index) {
   businessRecords.splice(index, 1);
   renderBusinessTable();
 }
+function createBalanceSheetTab(type) {
+  const labelPrefix = `${type.charAt(0).toUpperCase() + type.slice(1)} Balance Sheet`;
+
+  createDashboardTab({
+    type: `${type}-balance-sheet`,
+    labelPrefix,
+    contentHTML: (tabId) => {
+      const assetFields = type === 'personal'
+        ? ['Cash', 'Investments', 'Property', 'Other Assets']
+        : ['Cash', 'Accounts Receivable', 'Inventory', 'Equipment', 'Other Assets'];
+
+      const liabilityFields = type === 'personal'
+        ? ['Credit Cards', 'Loans', 'Mortgage', 'Other Liabilities']
+        : ['Accounts Payable', 'Loans', 'Taxes Payable', 'Other Liabilities'];
+
+      const assetInputs = assetFields.map((label, i) =>
+        `<label>${label}: <input type="number" id="${tabId}-asset-${i}" /></label>`
+      ).join('');
+
+      const liabilityInputs = liabilityFields.map((label, i) =>
+        `<label>${label}: <input type="number" id="${tabId}-liability-${i}" /></label>`
+      ).join('');
+
+      return `
+        <h2>📋 ${labelPrefix}</h2>
+        <div style="margin-top:10px;">
+          <h4>Assets</h4>
+          ${assetInputs}
+        </div>
+        <div style="margin-top:10px;">
+          <h4>Liabilities</h4>
+          ${liabilityInputs}
+        </div>
+        <button class="calculate" onclick="calculateBalanceSheet('${tabId}', ${assetFields.length}, ${liabilityFields.length})">Calculate</button>
+        <h3 id="${tabId}-result">Net Worth: $0</h3>
+      `;
+    }
+  });
+}
+function calculateBalanceSheet(tabId, assetCount, liabilityCount) {
+  const assets = Array.from({ length: assetCount }, (_, i) =>
+    +document.getElementById(`${tabId}-asset-${i}`).value || 0
+  );
+  const liabilities = Array.from({ length: liabilityCount }, (_, i) =>
+    +document.getElementById(`${tabId}-liability-${i}`).value || 0
+  );
+  const netWorth = assets.reduce((a, b) => a + b, 0) - liabilities.reduce((a, b) => a + b, 0);
+  document.getElementById(`${tabId}-result`).innerText = `Net Worth: $${netWorth.toLocaleString()}`;
+}
+createBalanceSheetTab('personal');
+createBalanceSheetTab('business');
 </script>
 </body>
 </html>
