@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Tabbed Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .tab-container {
+      display: flex;
+      background-color: #333;
+    }
+    .tab {
+      padding: 14px 20px;
+      cursor: pointer;
+      color: white;
+      border: none;
+      background: none;
+      outline: none;
+    }
+    .tab:hover {
+      background-color: #555;
+    }
+    .tab.active {
+      background-color: #007acc;
+    }
+    #content {
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="tab-container">
+    <button class="tab active" onclick="loadTab('home')">Home</button>
+    <button class="tab" onclick="loadTab('analytics')">Analytics</button>
+    <button class="tab" onclick="loadTab('settings')">Settings</button>
+  </div>
+
+  <div id="content">Loading...</div>
+
+  <script>
+    const baseURL = 'https://raw.githubusercontent.com/username/repo-name/branch-name/path/to/';
+    const tabs = {
+      home: 'home.html',
+      analytics: 'analytics.html',
+      settings: 'settings.html'
+    };
+
+    function loadTab(tabName) {
+      document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      fetch(baseURL + tabs[tabName])
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('content').innerHTML = html;
+        })
+        .catch(err => {
+          document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
+        });
+    }
+
+    // Load default tab
+    loadTab('home');
+  </script>
+</body>
+</html>
