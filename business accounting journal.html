@@ -3,147 +3,139 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Accounting Journal & Account Manager</title>
+  <title>Business Journal</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 40px;
+      margin: 2rem;
       background-color: #f4f4f4;
     }
-    h2 {
-      margin-top: 40px;
+    h1 {
+      text-align: center;
+    }
+    .section {
+      margin-bottom: 2rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select, button {
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      width: 100%;
+      max-width: 400px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 1rem;
     }
     th, td {
+      padding: 0.75rem;
       border: 1px solid #ccc;
-      padding: 8px;
+      text-align: left;
     }
     th {
       background-color: #e0e0e0;
     }
-    input, select {
-      width: 100%;
-      padding: 6px;
-      box-sizing: border-box;
-    }
-    .btn {
-      margin-top: 15px;
-      padding: 10px 15px;
-      font-size: 14px;
-      cursor: pointer;
-      border: none;
-      color: white;
-    }
-    .add-btn { background-color: #2196F3; }
-    .remove-btn { background-color: #f44336; }
-    .submit-btn { background-color: #4CAF50; width: 100%; font-size: 16px; }
   </style>
 </head>
 <body>
+  <h1>Business Journal</h1>
 
-  <h2>Create New Account</h2>
-  <form id="accountForm">
-    <table>
-      <tr>
-        <td><label for="accountName">Account Name</label></td>
-        <td><input type="text" id="accountName" required /></td>
-      </tr>
-      <tr>
-        <td><label for="accountType">Account Type</label></td>
-        <td>
-          <select id="accountType" required>
-            <option value="">Select type</option>
-            <option value="Asset">Asset</option>
-            <option value="Liability">Liability</option>
-            <option value="Equity">Equity</option>
-            <option value="Revenue">Revenue</option>
-            <option value="Expense">Expense</option>
-          </select>
-        </td>
-      </tr>
-    </table>
-    <button type="submit" class="btn submit-btn">Create Account</button>
-  </form>
+  <div class="section">
+    <h2>Add New Account</h2>
+    <label for="new-account-name">Account Name:</label>
+    <input type="text" id="new-account-name" placeholder="e.g. Sales Revenue" />
+    <button onclick="addNewAccount()">Add Account</button>
+  </div>
 
-  <h2>Journal Entry</h2>
-  <form id="journalForm">
-    <table id="journalTable">
+  <div class="section">
+    <h2>Add Entry to Account</h2>
+    <label for="entry-account">Select Account:</label>
+    <select id="entry-account"></select>
+
+    <label for="entry-description">Description:</label>
+    <input type="text" id="entry-description" placeholder="e.g. Invoice #123" />
+
+    <label for="entry-amount">Amount ($):</label>
+    <input type="number" id="entry-amount" />
+
+    <button onclick="addEntry()">Add Entry</button>
+  </div>
+
+  <div class="section">
+    <h2>Journal Entries</h2>
+    <table id="journal-table">
       <thead>
         <tr>
-          <th>Date</th>
           <th>Account</th>
-          <th>Debit ($)</th>
-          <th>Credit ($)</th>
           <th>Description</th>
-          <th>Action</th>
+          <th>Amount ($)</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><input type="date" name="date[]" required /></td>
-          <td>
-            <select name="account[]" class="accountSelect" required>
-              <option value="">Select account</option>
-            </select>
-          </td>
-          <td><input type="number" name="debit[]" step="0.01" /></td>
-          <td><input type="number" name="credit[]" step="0.01" /></td>
-          <td><input type="text" name="description[]" /></td>
-          <td><button type="button" class="btn remove-btn" onclick="removeRow(this)">Remove</button></td>
-        </tr>
-      </tbody>
+      <tbody></tbody>
     </table>
-    <button type="button" class="btn add-btn" onclick="addRow()">Add Row</button>
-    <button type="submit" class="btn submit-btn">Submit Journal</button>
-  </form>
+  </div>
+
+  <div class="section">
+    <h2>Account Balances</h2>
+    <table id="balance-table">
+      <thead>
+        <tr>
+          <th>Account</th>
+          <th>Total ($)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <script>
-    const accountForm = document.getElementById("accountForm");
-    const journalForm = document.getElementById("journalForm");
-    const accountSelects = document.getElementsByClassName("accountSelect");
+    const accounts = {};
+    const journalTable = document.querySelector('#journal-table tbody');
+    const balanceTable = document.querySelector('#balance-table tbody');
+    const accountSelect = document.getElementById('entry-account');
 
-    accountForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      const name = document.getElementById("accountName").value.trim();
-      const type = document.getElementById("accountType").value;
-      if (name && type) {
-        for (let select of accountSelects) {
-          const option = document.createElement("option");
-          option.value = name;
-          option.text = `${name} (${type})`;
-          select.appendChild(option);
-        }
-        alert(`Account "${name}" created as ${type}.`);
-        accountForm.reset();
-      }
-    });
-
-    function addRow() {
-      const table = document.getElementById("journalTable").getElementsByTagName("tbody")[0];
-      const newRow = table.rows[0].cloneNode(true);
-      newRow.querySelectorAll("input").forEach(input => input.value = "");
-      const newSelect = newRow.querySelector("select");
-      newSelect.innerHTML = accountSelects[0].innerHTML;
-      table.appendChild(newRow);
-    }
-
-    function removeRow(button) {
-      const row = button.closest("tr");
-      const table = document.getElementById("journalTable").getElementsByTagName("tbody")[0];
-      if (table.rows.length > 1) {
-        row.remove();
+    function addNewAccount() {
+      const name = document.getElementById('new-account-name').value.trim();
+      if (name && !accounts[name]) {
+        accounts[name] = [];
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        accountSelect.appendChild(option);
+        updateBalances();
+        document.getElementById('new-account-name').value = '';
       }
     }
 
-    journalForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      alert("Journal entries submitted!");
-      // Add logic here to process or export the data
-    });
+    function addEntry() {
+      const account = accountSelect.value;
+      const description = document.getElementById('entry-description').value.trim();
+      const amount = parseFloat(document.getElementById('entry-amount').value);
+      if (account && description && !isNaN(amount)) {
+        accounts[account].push({ description, amount });
+        const row = journalTable.insertRow();
+        row.insertCell(0).textContent = account;
+        row.insertCell(1).textContent = description;
+        row.insertCell(2).textContent = amount.toFixed(2);
+        updateBalances();
+        document.getElementById('entry-description').value = '';
+        document.getElementById('entry-amount').value = '';
+      }
+    }
+
+    function updateBalances() {
+      balanceTable.innerHTML = '';
+      for (const account in accounts) {
+        const total = accounts[account].reduce((sum, entry) => sum + entry.amount, 0);
+        const row = balanceTable.insertRow();
+        row.insertCell(0).textContent = account;
+        row.insertCell(1).textContent = `$${total.toFixed(2)}`;
+      }
+    }
   </script>
 </body>
 </html>
