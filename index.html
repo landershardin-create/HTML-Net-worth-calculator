@@ -9,27 +9,27 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      background-color: #f4f4f4;
     }
-    .tab-container {
-      display: flex;
+    .menu-container {
       background-color: #333;
-    }
-    .tab {
-      padding: 14px 20px;
-      cursor: pointer;
+      padding: 15px;
       color: white;
+    }
+    label {
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    select {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 4px;
       border: none;
-      background: none;
-      outline: none;
-    }
-    .tab:hover {
-      background-color: #555;
-    }
-    .tab.active {
-      background-color: #007acc;
     }
     #content {
       padding: 20px;
+      background-color: white;
+      min-height: 300px;
     }
   </style>
 </head>
@@ -37,50 +37,50 @@
   <div class="menu-container">
     <label for="tabMenu">Choose a section:</label>
     <select id="tabMenu">
-      <option value="business journal">Business Journal</option>
+      <option value="journal">Business Journal</option>
       <option value="timesheet">Timesheet</option>
       <option value="settings">Settings</option>
     </select>
   </div>
 
-  <div id="content" style="margin-top: 20px;"></div>
+  <div id="content"></div>
 
-    <script>
-  const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
-  const tabs = {
-    business journal: 'business accounting journal.html',
-    timesheet: 'timesheet.html',
-    settings: 'settings.html'
-  };
+  <script>
+    const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
+    const tabs = {
+      journal: 'business accounting journal.html',
+      timesheet: 'timesheet.html',
+      settings: 'settings.html'
+    };
 
-  function loadTab(tabName) {
-    const file = tabs[tabName];
-    if (!file) {
-      document.getElementById('content').innerHTML = `<p>Invalid selection.</p>`;
-      return;
+    function loadTab(tabName) {
+      const file = tabs[tabName];
+      if (!file) {
+        document.getElementById('content').innerHTML = `<p>Invalid selection.</p>`;
+        return;
+      }
+
+      fetch(baseURL + file)
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('content').innerHTML = html;
+        })
+        .catch(err => {
+          console.error(`Error loading ${tabName}:`, err);
+          document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
+        });
     }
 
-    fetch(baseURL + file)
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('content').innerHTML = html;
-      })
-      .catch(err => {
-        console.error(`Error loading ${tabName}:`, err);
-        document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
-      });
-  }
+    // Load default tab on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const defaultTab = document.getElementById('tabMenu').value;
+      loadTab(defaultTab);
+    });
 
-  // Load default tab on page load
-  window.addEventListener('DOMContentLoaded', () => {
-    const defaultTab = document.getElementById('tabMenu').value;
-    loadTab(defaultTab);
-  });
-
-  // Listen for dropdown changes
-  document.getElementById('tabMenu').addEventListener('change', (event) => {
-    loadTab(event.target.value);
-  });
-</script>
+    // Listen for dropdown changes
+    document.getElementById('tabMenu').addEventListener('change', (event) => {
+      loadTab(event.target.value);
+    });
+  </script>
 </body>
 </html>
