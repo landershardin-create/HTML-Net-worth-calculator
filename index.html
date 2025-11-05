@@ -44,28 +44,35 @@
 
   <script>
     const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
-    const tabs = {
-      home: 'business accounting journal.html',
-      analytics: 'timesheet.html',
-      settings: 'settings.html'
-    };
+const tabs = {
+  home: 'business accounting journal.html',
+  analytics: 'timesheet.html',
+  settings: 'settings.html'
+};
 
-    function loadTab(tabName) {
-      document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+function loadTab(tabName) {
+  fetch(baseURL + tabs[tabName])
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('content').innerHTML = html;
+    })
+    .catch(err => {
+      console.error(`Failed to load ${tabName}:`, err);
+      document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
+    });
+}
 
-      fetch(baseURL + tabs[tabName])
-        .then(response => response.text())
-        .then(html => {
-          document.getElementById('content').innerHTML = html;
-        })
-        .catch(err => {
-          document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
-        });
-    }
+// Listen for dropdown changes
+document.getElementById('tabMenu').addEventListener('change', (event) => {
+  const selectedTab = event.target.value;
+  loadTab(selectedTab);
+});
 
-    // Load default tab
-    loadTab('home');
+// Load default tab on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const defaultTab = document.getElementById('tabMenu').value;
+  loadTab(defaultTab);
+});
   </script>
 </body>
 </html>
