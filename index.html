@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GitHub Tabbed Dashboard</title>
+  <title>GitHub Tabbed Dashboard with Company Manager</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -15,12 +15,15 @@
       background-color: #333;
       padding: 15px;
       color: white;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 15px;
     }
     label {
-      margin-right: 10px;
       font-weight: bold;
     }
-    select {
+    select, input, button {
       padding: 8px;
       font-size: 16px;
       border-radius: 4px;
@@ -31,37 +34,72 @@
       background-color: white;
       min-height: 300px;
     }
+    .company-manager {
+      padding: 20px;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+    }
+    .company-manager h3 {
+      margin-top: 0;
+    }
+    .company-list {
+      margin-top: 10px;
+    }
+    .company-list span {
+      display: inline-block;
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+      margin: 5px;
+      border-radius: 4px;
+    }
+    .company-list span button {
+      margin-left: 8px;
+      background: none;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <div class="menu-container">
     <label for="tabMenu">Choose a section:</label>
     <select id="tabMenu">
-      <option value="businessjournal">Business Journal</option>
-      <option value="businessbalancesheet">Business Balance Sheet</option>
-      <option value="businesscashflow">Business Cash Flow</option>
-      <option value="businessincomeandexpense">Business Income & Expense</option>
-      <option value="businessnetworth">Business Net Worth</option>
-      <option value="businesspersonnelregistry">Business Personnel Records</option>
-      <option value="timesheet">Timesheet</option>
+      <option value="dashboard">Dashboard</option>
       <option value="settings">Settings</option>
     </select>
+
+    <label for="companySelect">Companies:</label>
+    <select id="companySelect" multiple></select>
   </div>
 
   <div id="content"></div>
 
+  <div class="company-manager">
+    <h3>Manage Companies</h3>
+    <form id="companyForm">
+      <input type="text" id="newCompany" placeholder="Add new company..." required />
+      <button type="submit">Add</button>
+    </form>
+    <div class="company-list" id="companyList"></div>
+  </div>
+
   <script>
     const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
     const tabs = {
-      businessjournal: 'business accounting journal.html',
-      businessbalancesheet: 'business balance sheet.html',
-      businesscashflow: 'business cash flow.html',
-      businessincomeandexpense: 'business income and expense.html',
-      businessnetworth: 'business net worth calculator.html',
-      businesspersonnelregistry: 'business personnel registry.html',
-      timesheet: 'timesheet.html',
+      dashboard: 'business dashboard.html',
       settings: 'settings.html'
     };
+
+    let companies = ['Alpha Corp', 'Beta LLC', 'Gamma Inc'];
+
+    const tabMenu = document.getElementById('tabMenu');
+    const companySelect = document.getElementById('companySelect');
+    const companyForm = document.getElementById('companyForm');
+    const newCompanyInput = document.getElementById('newCompany');
+    const companyList = document.getElementById('companyList');
 
     function loadTab(tabName) {
       const file = tabs[tabName];
@@ -81,15 +119,53 @@
         });
     }
 
-    // Load default tab on page load
-    window.addEventListener('DOMContentLoaded', () => {
-      const defaultTab = document.getElementById('tabMenu').value;
-      loadTab(defaultTab);
+    function renderCompanySelect() {
+      companySelect.innerHTML = '';
+      companies.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        companySelect.appendChild(option);
+      });
+    }
+
+    function renderCompanyList() {
+      companyList.innerHTML = '';
+      companies.forEach((name, index) => {
+        const tag = document.createElement('span');
+        tag.textContent = name;
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = '×';
+        removeBtn.title = `Remove ${name}`;
+        removeBtn.onclick = () => {
+          companies.splice(index, 1);
+          renderCompanySelect();
+          renderCompanyList();
+        };
+        tag.appendChild(removeBtn);
+        companyList.appendChild(tag);
+      });
+    }
+
+    companyForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newName = newCompanyInput.value.trim();
+      if (newName && !companies.includes(newName)) {
+        companies.push(newName);
+        renderCompanySelect();
+        renderCompanyList();
+        newCompanyInput.value = '';
+      }
     });
 
-    // Listen for dropdown changes
-    document.getElementById('tabMenu').addEventListener('change', (event) => {
-      loadTab(event.target.value);
+    tabMenu.addEventListener('change', (e) => {
+      loadTab(e.target.value);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCompanySelect();
+      renderCompanyList();
+      loadTab(tabMenu.value);
     });
   </script>
 </body>
