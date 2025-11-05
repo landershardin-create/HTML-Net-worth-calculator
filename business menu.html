@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Tabbed Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .menu-container {
+      background-color: #333;
+      padding: 15px;
+      color: white;
+    }
+    label {
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    select {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: none;
+    }
+    #content {
+      padding: 20px;
+      background-color: white;
+      min-height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-container">
+    <label for="tabMenu">Choose a section:</label>
+    <select id="tabMenu">
+      <option value="businessjournal">Business Journal</option>
+      <option value="businessbalancesheet">Business Balance Sheet</option>
+      <option value="businesscashflow">Business Cash Flow</option>
+      <option value="businessincomeandexpense">Business Income & Expense</option>
+      <option value="businessnetworth">Business Net Worth</option>
+      <option value="businesspersonnelregistry">Business Personnel Records</option>
+      <option value="timesheet">Timesheet</option>
+      <option value="settings">Settings</option>
+    </select>
+  </div>
+
+  <div id="content"></div>
+
+  <script>
+    const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
+    const tabs = {
+      businessjournal: 'business accounting journal.html',
+      businessbalancesheet: 'business balance sheet.html',
+      businesscashflow: 'business cash flow.html',
+      businessincomeandexpense: 'business income and expense.html',
+      businessnetworth: 'business net worth calculator.html',
+      businesspersonnelregistry: 'business personnel registry.html',
+      timesheet: 'timesheet.html',
+      settings: 'settings.html'
+    };
+
+    function loadTab(tabName) {
+      const file = tabs[tabName];
+      if (!file) {
+        document.getElementById('content').innerHTML = `<p>Invalid selection.</p>`;
+        return;
+      }
+
+      fetch(baseURL + file)
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('content').innerHTML = html;
+        })
+        .catch(err => {
+          console.error(`Error loading ${tabName}:`, err);
+          document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
+        });
+    }
+
+    // Load default tab on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const defaultTab = document.getElementById('tabMenu').value;
+      loadTab(defaultTab);
+    });
+
+    // Listen for dropdown changes
+    document.getElementById('tabMenu').addEventListener('change', (event) => {
+      loadTab(event.target.value);
+    });
+  </script>
+</body>
+</html>
