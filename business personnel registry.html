@@ -144,6 +144,10 @@
             <label for="email">Email:</label>
             <input type="email" id="email" required />
           </div>
+          <div class="form-group">
+            <label for="businessNames">Business Name(s):</label>
+            <div id="businessDropdownContainer"></div>
+          </div>
           <button type="submit" class="btn">Add Record</button>
         </fieldset>
       </form>
@@ -161,6 +165,7 @@
           <th>Position</th>
           <th>Department</th>
           <th>Email</th>
+          <th>Business(es)</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -177,19 +182,51 @@
 
     let records = [];
 
+    const allBusinesses = [
+      { name: "Alpha Corp", contributors: ["Admin", "Viewer"] },
+      { name: "Beta LLC", contributors: ["Admin"] },
+      { name: "Gamma Inc", contributors: ["Viewer"] },
+      { name: "Delta Partners", contributors: ["Admin", "Viewer"] }
+    ];
+
+    function getFilteredBusinesses(role) {
+      return allBusinesses.filter(b => b.contributors.includes(role));
+    }
+
+    function renderBusinessDropdown(role) {
+      const container = document.getElementById('businessDropdownContainer');
+      container.innerHTML = '';
+
+      const select = document.createElement('select');
+      select.id = 'businessNames';
+      select.multiple = true;
+
+      getFilteredBusinesses(role).forEach(b => {
+        const option = document.createElement('option');
+        option.value = b.name;
+        option.textContent = b.name;
+        select.appendChild(option);
+      });
+
+      container.appendChild(select);
+    }
+
     roleSelect.addEventListener('change', () => {
       const role = roleSelect.value;
       adminPanel.style.display = role === 'Admin' ? 'block' : 'none';
+      renderBusinessDropdown(role);
       renderTable();
     });
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+      const selectedBusinesses = Array.from(document.getElementById('businessNames').selectedOptions).map(opt => opt.value);
       const record = {
         name: document.getElementById('name').value.trim(),
         position: document.getElementById('position').value.trim(),
         department: document.getElementById('department').value.trim(),
-        email: document.getElementById('email').value.trim()
+        email: document.getElementById('email').value.trim(),
+        businesses: selectedBusinesses
       };
       records.push(record);
       form.reset();
@@ -206,7 +243,9 @@
       records
         .filter(record =>
           Object.values(record).some(val =>
-            val.toLowerCase().includes(query)
+            Array.isArray(val)
+              ? val.join(', ').toLowerCase().includes(query)
+              : val.toLowerCase().includes(query)
           )
         )
         .forEach((record, index) => {
@@ -216,6 +255,7 @@
             <td>${record.position}</td>
             <td>${record.department}</td>
             <td>${record.email}</td>
+            <td>${record.businesses.join(', ')}</td>
             <td>
               ${role === 'Admin' ? `
                 <button class="btn edit-btn" onclick="editRecord(${index})" aria-label="Edit ${record.name}">Edit</button>
@@ -238,11 +278,19 @@
       document.getElementById('position').value = record.position;
       document.getElementById('department').value = record.department;
       document.getElementById('email').value = record.email;
+
+      renderBusinessDropdown(roleSelect.value);
+      const businessSelect = document.getElementById('businessNames');
+      Array.from(businessSelect.options).forEach(opt => {
+        opt.selected = record.businesses.includes(opt.value);
+      });
+
       records.splice(index, 1);
       renderTable();
     }
 
     // Initial render
+    renderBusinessDropdown(roleSelect.value);
     renderTable();
   </script>
 </body>
