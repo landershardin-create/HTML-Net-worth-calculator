@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Tabbed Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    header {
+      background-color: #333;
+      padding: 15px;
+      color: white;
+    }
+
+    .menu-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    select {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: none;
+      background-color: #fff;
+      color: #333;
+      cursor: pointer;
+    }
+
+    select:focus {
+      outline: 2px solid #007acc;
+    }
+
+    main {
+      padding: 20px;
+      background-color: white;
+      min-height: 300px;
+    }
+
+    .loading {
+      font-style: italic;
+      color: #666;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="menu-container">
+      <label for="tabMenu">Choose a section:</label>
+      <select id="tabMenu" aria-label="Dashboard section selector">
+        <option value="personaljournal,"> Personal Journal</option>
+        <option value="personalbalancesheet">Personal Balance Sheet</option>
+        <option value="personalcashflow">Personal Cash Flow</option>
+        <option value="personalincomeandexpense">Personal Income & Expense</option>
+        <option value="personalnetworth">Personal Net Worth</option>
+        <option value="personalpersonnelregistry">Personal Personnel Records</option>
+        <
+      </select>
+    </div>
+  </header>
+
+  <main id="content" aria-live="polite"></main>
+
+  <script>
+    const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
+    const tabs = {
+      businessjournal: 'business accounting journal.html',
+      businessbalancesheet: 'business balance sheet.html',
+      businesscashflow: 'business cash flow.html',
+      businessincomeandexpense: 'business income and expense.html',
+      businessnetworth: 'business net worth calculator.html',
+      businesspersonnelregistry: 'business personnel registry.html',
+      timesheet: 'timesheet.html',
+      settings: 'settings.html'
+    };
+
+    const contentEl = document.getElementById('content');
+    const tabMenu = document.getElementById('tabMenu');
+
+    function showMessage(message, className = '') {
+      contentEl.innerHTML = `<p class="${className}">${message}</p>`;
+    }
+
+    function loadTab(tabName) {
+      const file = tabs[tabName];
+      if (!file) {
+        showMessage('Invalid selection.', 'error');
+        return;
+      }
+
+      showMessage('Loading...', 'loading');
+
+      fetch(baseURL + file)
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.text();
+        })
+        .then(html => {
+          contentEl.innerHTML = html;
+        })
+        .catch(err => {
+          console.error(`Error loading ${tabName}:`, err);
+          showMessage(`Error loading "${tabName}" tab.`, 'error');
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadTab(tabMenu.value);
+    });
+
+    tabMenu.addEventListener('change', (event) => {
+      loadTab(event.target.value);
+    });
+  </script>
+</body>
+</html>
