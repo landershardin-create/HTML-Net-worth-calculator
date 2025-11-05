@@ -3,97 +3,115 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Business Cash Flow Sheet</title>
+  <title>Business Cash Flow Tracker</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 2em;
-      background: #f4f4f4;
+      margin: 2rem;
+      background-color: #f4f4f4;
     }
     h1 {
       text-align: center;
     }
-    .section {
-      background: #fff;
-      padding: 1em;
-      margin-bottom: 1em;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      margin-top: 0.5em;
-    }
-    input[type="number"] {
+    table {
       width: 100%;
-      padding: 0.5em;
-      margin-top: 0.2em;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
     }
-    button {
-      margin-top: 1em;
-      padding: 0.5em 1em;
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      text-align: left;
     }
-    #summary {
+    th {
+      background-color: #e0e0e0;
+    }
+    tfoot td {
       font-weight: bold;
-      font-size: 1.2em;
+      background-color: #f0f0f0;
+    }
+    .section-title {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: #333;
     }
   </style>
 </head>
 <body>
-  <h1>Business Cash Flow Sheet</h1>
+  <h1>Business Cash Flow Dashboard</h1>
 
-  <div class="section">
-    <h2>Operating Activities</h2>
-    <label>Cash Received from Customers: <input type="number" id="cashFromCustomers" /></label>
-    <label>Cash Paid to Suppliers: <input type="number" id="cashToSuppliers" /></label>
-    <label>Cash Paid for Salaries: <input type="number" id="cashForSalaries" /></label>
-    <label>Other Operating Expenses: <input type="number" id="otherOperating" /></label>
-  </div>
+  <div class="section-title">Income</div>
+  <table id="income-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Source</th>
+        <th>Amount ($)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>2025-11-01</td><td>Client A Payment</td><td>1500</td></tr>
+      <tr><td>2025-11-03</td><td>Product Sale</td><td>800</td></tr>
+    </tbody>
+  </table>
 
-  <div class="section">
-    <h2>Investing Activities</h2>
-    <label>Purchase of Equipment: <input type="number" id="equipmentPurchase" /></label>
-    <label>Sale of Assets: <input type="number" id="assetSale" /></label>
-    <label>Other Investing Cash Flow: <input type="number" id="otherInvesting" /></label>
-  </div>
+  <div class="section-title">Expenses</div>
+  <table id="expenses-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Category</th>
+        <th>Amount ($)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>2025-11-02</td><td>Software Subscription</td><td>200</td></tr>
+      <tr><td>2025-11-04</td><td>Marketing</td><td>300</td></tr>
+    </tbody>
+  </table>
 
-  <div class="section">
-    <h2>Financing Activities</h2>
-    <label>Loan Proceeds: <input type="number" id="loanProceeds" /></label>
-    <label>Loan Repayments: <input type="number" id="loanRepayments" /></label>
-    <label>Owner Contributions: <input type="number" id="ownerContributions" /></label>
-    <label>Owner Withdrawals: <input type="number" id="ownerWithdrawals" /></label>
-  </div>
-
-  <div class="section">
-    <button onclick="calculateBusinessCashFlow()">Calculate Net Cash Flow</button>
-    <p id="summary"></p>
-  </div>
+  <div class="section-title">Net Cash Flow</div>
+  <table id="net-cash-table">
+    <tfoot>
+      <tr>
+        <td colspan="2">Total Income</td>
+        <td id="total-income">$2300</td>
+      </tr>
+      <tr>
+        <td colspan="2">Total Expenses</td>
+        <td id="total-expenses">$500</td>
+      </tr>
+      <tr>
+        <td colspan="2">Net Cash Flow</td>
+        <td id="net-cash">$1800</td>
+      </tr>
+    </tfoot>
+  </table>
 
   <script>
-    function calculateBusinessCashFlow() {
-      const operating =
-        Number(document.getElementById('cashFromCustomers').value) -
-        Number(document.getElementById('cashToSuppliers').value) -
-        Number(document.getElementById('cashForSalaries').value) -
-        Number(document.getElementById('otherOperating').value);
+    function calculateTotals() {
+      const incomeRows = document.querySelectorAll('#income-table tbody tr');
+      const expenseRows = document.querySelectorAll('#expenses-table tbody tr');
+      let incomeTotal = 0, expenseTotal = 0;
 
-      const investing =
-        Number(document.getElementById('assetSale').value) -
-        Number(document.getElementById('equipmentPurchase').value) +
-        Number(document.getElementById('otherInvesting').value);
+      incomeRows.forEach(row => {
+        incomeTotal += parseFloat(row.cells[2].textContent) || 0;
+      });
 
-      const financing =
-        Number(document.getElementById('loanProceeds').value) -
-        Number(document.getElementById('loanRepayments').value) +
-        Number(document.getElementById('ownerContributions').value) -
-        Number(document.getElementById('ownerWithdrawals').value);
+      expenseRows.forEach(row => {
+        expenseTotal += parseFloat(row.cells[2].textContent) || 0;
+      });
 
-      const netCashFlow = operating + investing + financing;
+      document.getElementById('total-income').textContent = `
 
-      document.getElementById('summary').textContent =
-        `Net Cash Flow: $${netCashFlow.toFixed(2)} (${netCashFlow >= 0 ? 'Positive' : 'Negative'})`;
+{incomeTotal}`;
+      document.getElementById('total-expenses').textContent = `
+
+{expenseTotal}`;
+      document.getElementById('net-cash').textContent = `$${incomeTotal - expenseTotal}`;
     }
+
+    calculateTotals();
   </script>
 </body>
 </html>
