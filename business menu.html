@@ -10,45 +10,73 @@
       margin: 0;
       padding: 0;
       background-color: #f4f4f4;
+      color: #333;
     }
-    .menu-container {
+
+    header {
       background-color: #333;
       padding: 15px;
       color: white;
     }
+
+    .menu-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     label {
-      margin-right: 10px;
       font-weight: bold;
     }
+
     select {
       padding: 8px;
       font-size: 16px;
       border-radius: 4px;
       border: none;
+      background-color: #fff;
+      color: #333;
+      cursor: pointer;
     }
-    #content {
+
+    select:focus {
+      outline: 2px solid #007acc;
+    }
+
+    main {
       padding: 20px;
       background-color: white;
       min-height: 300px;
     }
+
+    .loading {
+      font-style: italic;
+      color: #666;
+    }
+
+    .error {
+      color: red;
+    }
   </style>
 </head>
 <body>
-  <div class="menu-container">
-    <label for="tabMenu">Choose a section:</label>
-    <select id="tabMenu">
-      <option value="businessjournal">Business Journal</option>
-      <option value="businessbalancesheet">Business Balance Sheet</option>
-      <option value="businesscashflow">Business Cash Flow</option>
-      <option value="businessincomeandexpense">Business Income & Expense</option>
-      <option value="businessnetworth">Business Net Worth</option>
-      <option value="businesspersonnelregistry">Business Personnel Records</option>
-      <option value="timesheet">Timesheet</option>
-      <option value="settings">Settings</option>
-    </select>
-  </div>
+  <header>
+    <div class="menu-container">
+      <label for="tabMenu">Choose a section:</label>
+      <select id="tabMenu" aria-label="Dashboard section selector">
+        <option value="businessjournal">Business Journal</option>
+        <option value="businessbalancesheet">Business Balance Sheet</option>
+        <option value="businesscashflow">Business Cash Flow</option>
+        <option value="businessincomeandexpense">Business Income & Expense</option>
+        <option value="businessnetworth">Business Net Worth</option>
+        <option value="businesspersonnelregistry">Business Personnel Records</option>
+        <option value="timesheet">Timesheet</option>
+        <option value="settings">Settings</option>
+      </select>
+    </div>
+  </header>
 
-  <div id="content"></div>
+  <main id="content" aria-live="polite"></main>
 
   <script>
     const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
@@ -63,32 +91,41 @@
       settings: 'settings.html'
     };
 
+    const contentEl = document.getElementById('content');
+    const tabMenu = document.getElementById('tabMenu');
+
+    function showMessage(message, className = '') {
+      contentEl.innerHTML = `<p class="${className}">${message}</p>`;
+    }
+
     function loadTab(tabName) {
       const file = tabs[tabName];
       if (!file) {
-        document.getElementById('content').innerHTML = `<p>Invalid selection.</p>`;
+        showMessage('Invalid selection.', 'error');
         return;
       }
 
+      showMessage('Loading...', 'loading');
+
       fetch(baseURL + file)
-        .then(response => response.text())
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.text();
+        })
         .then(html => {
-          document.getElementById('content').innerHTML = html;
+          contentEl.innerHTML = html;
         })
         .catch(err => {
           console.error(`Error loading ${tabName}:`, err);
-          document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
+          showMessage(`Error loading "${tabName}" tab.`, 'error');
         });
     }
 
-    // Load default tab on page load
     window.addEventListener('DOMContentLoaded', () => {
-      const defaultTab = document.getElementById('tabMenu').value;
-      loadTab(defaultTab);
+      loadTab(tabMenu.value);
     });
 
-    // Listen for dropdown changes
-    document.getElementById('tabMenu').addEventListener('change', (event) => {
+    tabMenu.addEventListener('change', (event) => {
       loadTab(event.target.value);
     });
   </script>
