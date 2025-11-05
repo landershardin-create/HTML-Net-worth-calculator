@@ -5,59 +5,168 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Personnel Records Manager</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h2 { color: #333; }
-    form, table { margin-top: 20px; max-width: 800px; }
-    input, select, button { padding: 8px; margin: 5px 0; width: 100%; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-    th { background-color: #f4f4f4; }
-    .btn { padding: 8px 12px; margin-right: 5px; cursor: pointer; }
-    .edit-btn { background-color: #ffc107; border: none; }
-    .delete-btn { background-color: #dc3545; border: none; color: white; }
-    .search-box { margin-top: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    form, table, .search-box {
+      margin-top: 20px;
+    }
+
+    fieldset {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    legend {
+      font-weight: bold;
+      padding: 0 10px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+
+    label {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      width: fit-content;
+      background-color: #007bff;
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background-color: #fff;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #eaeaea;
+    }
+
+    .btn {
+      padding: 6px 10px;
+      margin-right: 5px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .edit-btn {
+      background-color: #ffc107;
+      border: none;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-group {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
-  <h2>Company Personnel Records</h2>
+  <div class="container">
+    <h2>Company Personnel Records</h2>
 
-  <label for="role">Select Role:</label>
-  <select id="role">
-    <option value="Admin">Admin</option>
-    <option value="Viewer">Viewer</option>
-  </select>
+    <div class="form-group">
+      <label for="role">Select Role:</label>
+      <select id="role" aria-label="User role">
+        <option value="Admin">Admin</option>
+        <option value="Viewer">Viewer</option>
+      </select>
+    </div>
 
-  <div id="adminPanel">
-    <form id="personnelForm">
-      <label>Full Name:</label>
-      <input type="text" id="name" required />
-      <label>Position:</label>
-      <input type="text" id="position" required />
-      <label>Department:</label>
-      <input type="text" id="department" required />
-      <label>Email:</label>
-      <input type="email" id="email" required />
-      <button type="submit" class="btn">Add Record</button>
-    </form>
+    <div id="adminPanel">
+      <form id="personnelForm">
+        <fieldset>
+          <legend>Add Personnel Record</legend>
+          <div class="form-group">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" required />
+          </div>
+          <div class="form-group">
+            <label for="position">Position:</label>
+            <input type="text" id="position" required />
+          </div>
+          <div class="form-group">
+            <label for="department">Department:</label>
+            <input type="text" id="department" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" required />
+          </div>
+          <button type="submit" class="btn">Add Record</button>
+        </fieldset>
+      </form>
+    </div>
+
+    <div class="search-box">
+      <label for="searchInput">Search:</label>
+      <input type="text" id="searchInput" placeholder="Search by any field..." />
+    </div>
+
+    <table id="recordsTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Department</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
-
-  <div class="search-box">
-    <label>Search:</label>
-    <input type="text" id="searchInput" placeholder="Search by any field..." />
-  </div>
-
-  <table id="recordsTable">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Position</th>
-        <th>Department</th>
-        <th>Email</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
 
   <script>
     const form = document.getElementById('personnelForm');
@@ -74,14 +183,15 @@
       renderTable();
     });
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const name = document.getElementById('name').value;
-      const position = document.getElementById('position').value;
-      const department = document.getElementById('department').value;
-      const email = document.getElementById('email').value;
-
-      records.push({ name, position, department, email });
+      const record = {
+        name: document.getElementById('name').value.trim(),
+        position: document.getElementById('position').value.trim(),
+        department: document.getElementById('department').value.trim(),
+        email: document.getElementById('email').value.trim()
+      };
+      records.push(record);
       form.reset();
       renderTable();
     });
@@ -108,8 +218,8 @@
             <td>${record.email}</td>
             <td>
               ${role === 'Admin' ? `
-                <button class="btn edit-btn" onclick="editRecord(${index})">Edit</button>
-                <button class="btn delete-btn" onclick="deleteRecord(${index})">Delete</button>
+                <button class="btn edit-btn" onclick="editRecord(${index})" aria-label="Edit ${record.name}">Edit</button>
+                <button class="btn delete-btn" onclick="deleteRecord(${index})" aria-label="Delete ${record.name}">Delete</button>
               ` : '—'}
             </td>
           `;
