@@ -3,77 +3,103 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Personal Income & Expense Tracker</title>
+  <title>Business Income & Expense Tracker</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
-    h1 { text-align: center; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
-    th { background-color: #eee; }
-    input[type="number"] { width: 100px; }
-    .summary { margin-top: 20px; font-size: 1.2em; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background-color: #e0e0e0;
+    }
+    .income {
+      background-color: #e8f5e9;
+    }
+    .expense {
+      background-color: #ffebee;
+    }
+    .total-row {
+      font-weight: bold;
+      background-color: #f0f0f0;
+    }
   </style>
 </head>
 <body>
-  <h1>Income & Expense Tracker</h1>
+  <h1>Business Income & Expense Tracker</h1>
 
-  <table id="tracker">
+  <h2>Income</h2>
+  <table class="income">
     <thead>
       <tr>
         <th>Date</th>
-        <th>Description</th>
-        <th>Income ($)</th>
-        <th>Expense ($)</th>
+        <th>Source</th>
+        <th>Amount ($)</th>
+        <th>Notes</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><input type="date" /></td>
-        <td><input type="text" placeholder="Description" /></td>
-        <td><input type="number" class="income" value="0" /></td>
-        <td><input type="number" class="expense" value="0" /></td>
+        <td>2025-11-01</td>
+        <td>Client A - Web Design</td>
+        <td>1200</td>
+        <td>Final payment</td>
       </tr>
-      <!-- Add more rows as needed -->
+      <tr>
+        <td>2025-11-03</td>
+        <td>Client B - Consulting</td>
+        <td>800</td>
+        <td>Monthly retainer</td>
+      </tr>
+      <tr class="total-row">
+        <td colspan="2">Total Income</td>
+        <td colspan="2">$2000</td>
+      </tr>
     </tbody>
   </table>
 
-  <button onclick="addRow()">Add Row</button>
-  <button onclick="calculate()">Calculate Totals</button>
-
-  <div class="summary">
-    <p>Total Income: $<span id="totalIncome">0</span></p>
-    <p>Total Expenses: $<span id="totalExpense">0</span></p>
-    <p>Balance: $<span id="balance">0</span></p>
-  </div>
-
-  <script>
-    function addRow() {
-      const table = document.getElementById("tracker").getElementsByTagName("tbody")[0];
-      const newRow = table.insertRow();
-      newRow.innerHTML = `
-        <td><input type="date" /></td>
-        <td><input type="text" placeholder="Description" /></td>
-        <td><input type="number" class="income" value="0" /></td>
-        <td><input type="number" class="expense" value="0" /></td>
-      `;
-    }
-
-    function calculate() {
-      let totalIncome = 0;
-      let totalExpense = 0;
-
-      document.querySelectorAll(".income").forEach(input => {
-        totalIncome += parseFloat(input.value) || 0;
-      });
-
-      document.querySelectorAll(".expense").forEach(input => {
-        totalExpense += parseFloat(input.value) || 0;
-      });
-
-      document.getElementById("totalIncome").textContent = totalIncome.toFixed(2);
-      document.getElementById("totalExpense").textContent = totalExpense.toFixed(2);
-      document.getElementById("balance").textContent = (totalIncome - totalExpense).toFixed(2);
-    }
-  </script>
+  <h2>Expenses</h2>
+  <table class="expense">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Category</th>
+        <th>Amount ($)</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>2025-11-02</td>
+        <td>Software Subscription</td>
+        <td>50</td>
+        <td>Design tools</td>
+      </tr>
+      <tr>
+        <td>2025-11-04</td>
+        <td>Marketing</td>
+        <td>150</td>
+        <td>Social media ads</td>
+      </tr>
+      <tr class="total-row">
+        <td colspan="2">Total Expenses</td>
+        <td colspan="2">$200</td>
+      </tr>
+    </tbody>
+  </table>
 </body>
 </html>
