@@ -2,77 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Business Net Worth Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Business Net Worth Tracker</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f8fc;
-      margin: 20px;
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f9f9f9;
     }
     h1 {
       text-align: center;
-      color: #333;
+      margin-bottom: 2rem;
     }
-    section {
-      background: #fff;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
     }
-    label {
-      display: block;
-      margin: 10px 0;
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      text-align: left;
     }
-    input[type="number"], input[type="text"] {
-      margin-left: 10px;
-      padding: 5px;
-      width: 160px;
+    th {
+      background-color: #e0e0e0;
     }
-    .tab {
-      display: none;
-    }
-    .tab.active {
-      display: block;
-    }
-    .tab-buttons {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .tab-buttons button {
-      margin: 0 10px;
-      padding: 10px 20px;
-      border: none;
-      background: #0078D4;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .tab-buttons button:hover {
-      background: #005a9e;
-    }
-    #calculateBtn {
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      color: white;
+    tfoot td {
       font-weight: bold;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      display: block;
-      margin: 20px auto;
+      background-color: #f0f0f0;
     }
-    #calculateBtn:hover {
-      background: linear-gradient(135deg, #0072ff, #00c6ff);
-    }
-    #result {
-      text-align: center;
-      font-size: 1.2em;
-      color: #0072ff;
+    .section-title {
+      font-size: 1.2rem;
+      margin-top: 2rem;
+      color: #333;
     }
   </style>
 </head>
 <body>
+  <h1>Business Net Worth Dashboard</h1>
 
-<h1>Business Net Worth Calculator
+  <div class="section-title">Assets</div>
+  <table id="assets-table">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Value ($)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Cash</td><td>Business Checking Account</td><td>12000</td></tr>
+      <tr><td>Receivables</td><td>Client Invoices</td><td>5000</td></tr>
+      <tr><td>Equipment</td><td>Laptops & Tools</td><td>8000</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Liabilities</div>
+  <table id="liabilities-table">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Description</th>
+        <th>Amount ($)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Loans</td><td>Startup Loan</td><td>7000</td></tr>
+      <tr><td>Credit</td><td>Business Credit Card</td><td>2000</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Net Worth Summary</div>
+  <table id="net-worth-table">
+    <tfoot>
+      <tr>
+        <td colspan="2">Total Assets</td>
+        <td id="total-assets">$25000</td>
+      </tr>
+      <tr>
+        <td colspan="2">Total Liabilities</td>
+        <td id="total-liabilities">$9000</td>
+      </tr>
+      <tr>
+        <td colspan="2">Net Worth</td>
+        <td id="net-worth">$16000</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <script>
+    function calculateNetWorth() {
+      const assetRows = document.querySelectorAll('#assets-table tbody tr');
+      const liabilityRows = document.querySelectorAll('#liabilities-table tbody tr');
+      let assetTotal = 0, liabilityTotal = 0;
+
+      assetRows.forEach(row => {
+        assetTotal += parseFloat(row.cells[2].textContent) || 0;
+      });
+
+      liabilityRows.forEach(row => {
+        liabilityTotal += parseFloat(row.cells[2].textContent) || 0;
+      });
+
+      document.getElementById('total-assets').textContent = `
+
+{assetTotal}`;
+      document.getElementById('total-liabilities').textContent = `
+
+{liabilityTotal}`;
+      document.getElementById('net-worth').textContent = `$${assetTotal - liabilityTotal}`;
+    }
+
+    calculateNetWorth();
+  </script>
+</body>
+</html>
