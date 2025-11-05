@@ -50,37 +50,42 @@
 
 <div id="content" style="margin-top: 20px;"></div>
 
-  <script>
-    const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
-const tabs = {
-  home: 'home.html',
-  analytics: 'business accounting journal.html', 'timesheet.html',
-  settings: 'settings.html'
-};
+<script>
+  const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
+  const tabs = {
+    home: 'business accounting journal.html',
+    analytics: 'timesheet.html',
+    settings: 'settings.html'
+  };
 
-function loadTab(tabName) {
-  fetch(baseURL + tabs[tabName])
-    .then(response => response.text())
-    .then(html => {
-      document.getElementById('content').innerHTML = html;
-    })
-    .catch(err => {
-      console.error(`Failed to load ${tabName}:`, err);
-      document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
-    });
-}
+  function loadTab(tabName) {
+    const file = tabs[tabName];
+    if (!file) {
+      document.getElementById('content').innerHTML = `<p>Invalid selection.</p>`;
+      return;
+    }
 
-// Listen for dropdown changes
-document.getElementById('tabMenu').addEventListener('change', (event) => {
-  const selectedTab = event.target.value;
-  loadTab(selectedTab);
-});
+    fetch(baseURL + file)
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('content').innerHTML = html;
+      })
+      .catch(err => {
+        console.error(`Error loading ${tabName}:`, err);
+        document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
+      });
+  }
 
-// Load default tab on page load
-document.addEventListener('DOMContentLoaded', () => {
-  const defaultTab = document.getElementById('tabMenu').value;
-  loadTab(defaultTab);
-});
-  </script>
+  // Event listener for dropdown
+  document.getElementById('menu').addEventListener('change', (event) => {
+    loadTab(event.target.value);
+  });
+
+  // Load default tab on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    const defaultTab = document.getElementById('menu').value;
+    loadTab(defaultTab);
+  });
+</script>
 </body>
 </html>
