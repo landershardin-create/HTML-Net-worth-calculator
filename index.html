@@ -34,23 +34,18 @@
   </style>
 </head>
 <body>
-  <div class="tab-container">
-    <button class="tab active" onclick="loadTab('home')">Home</button>
-    <button class="tab" onclick="loadTab('analytics')">Analytics</button>
-    <button class="tab" onclick="loadTab('settings')">Settings</button>
+  <div class="menu-container">
+    <label for="tabMenu">Choose a section:</label>
+    <select id="tabMenu">
+      <option value="home">Home</option>
+      <option value="analytics">Analytics</option>
+      <option value="settings">Settings</option>
+    </select>
   </div>
 
-  <div id="content">Loading...</div>
-  <label for="menu">Choose a section:</label>
-<select id="menu">
-  <option value="home">Home</option>
-  <option value="analytics">Analytics</option>
-  <option value="settings">Settings</option>
-</select>
+  <div id="content" style="margin-top: 20px;"></div>
 
-<div id="content" style="margin-top: 20px;"></div>
-
-<script>
+    <script>
   const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
   const tabs = {
     home: 'business accounting journal.html',
@@ -76,15 +71,15 @@
       });
   }
 
-  // Event listener for dropdown
-  document.getElementById('menu').addEventListener('change', (event) => {
-    loadTab(event.target.value);
-  });
-
   // Load default tab on page load
   window.addEventListener('DOMContentLoaded', () => {
-    const defaultTab = document.getElementById('menu').value;
+    const defaultTab = document.getElementById('tabMenu').value;
     loadTab(defaultTab);
+  });
+
+  // Listen for dropdown changes
+  document.getElementById('tabMenu').addEventListener('change', (event) => {
+    loadTab(event.target.value);
   });
 </script>
 </body>
