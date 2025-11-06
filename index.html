@@ -97,8 +97,9 @@
       <div class="form-group">
         <input type="text" id="companyName" placeholder="Company name" required />
         <input type="text" id="companyAddress" placeholder="Address" />
-        <input type="text" id="companyEmployer" placeholder="Employer" />
-        <input type="text" id="companyID" placeholder="ID number" />
+        <input type="text" id="companyOwner" placeholder="Owner" />
+        <input type="text" id="companyEIN" placeholder="EIN #" />
+        <input type="text" id="companySEIN" placeholder="State EIN #" />
         <button type="submit">Add</button>
       </div>
     </form>
@@ -138,7 +139,7 @@
       companyList.innerHTML = '';
       companies.forEach((company, index) => {
         const tag = document.createElement('span');
-        tag.textContent = `${company.name} (${company.employer || 'No employer'})`;
+        tag.textContent = `${company.name} (${company.owner || 'No owner'})`;
         const removeBtn = document.createElement('button');
         removeBtn.textContent = '×';
         removeBtn.title = `Remove ${company.name}`;
@@ -175,17 +176,17 @@
       e.preventDefault();
       const name = companyName.value.trim();
       const address = companyAddress.value.trim();
-      const employer = companyEmployer.value.trim();
+      const owner = companyOwner.value.trim();
       const id = companyID.value.trim();
 
       if (name && !companies.some(c => c.name === name)) {
-        companies.push({ name, address, employer, id });
+        companies.push({ name, address, owner, id });
         saveCompanies();
         renderCompanySelect();
         renderCompanyList();
         companyName.value = '';
         companyAddress.value = '';
-        companyEmployer.value = '';
+        companyowner.value = '';
         companyID.value = '';
       }
     });
@@ -206,7 +207,7 @@
     const companyForm = document.getElementById('companyForm');
     const companyName = document.getElementById('companyName');
     const companyAddress = document.getElementById('companyAddress');
-    const companyEmployer = document.getElementById('companyEmployer');
+    const companyOwner = document.getElementById('companyOwner');
     const companyID = document.getElementById('companyID');
     const companyList = document.getElementById('companyList');
   </script>
