@@ -61,23 +61,6 @@
       cursor: pointer;
       font-weight: bold;
     }
-    .link-section {
-      margin-top: 20px;
-    }
-    .link-section h3 {
-      margin-bottom: 10px;
-    }
-    .link-section ul {
-      list-style-type: none;
-      padding-left: 0;
-    }
-    .link-section li a {
-      color: #007bff;
-      text-decoration: none;
-    }
-    .link-section li a:hover {
-      text-decoration: underline;
-    }
   </style>
 </head>
 <body>
@@ -130,27 +113,7 @@
       fetch(baseURL + file)
         .then(response => response.text())
         .then(html => {
-          let linkSection = '';
-          if (tabName === 'businessmenu') {
-            linkSection = `
-              <div class="link-section">
-                <h3>Business Menu Links</h3>
-                <ul>
-                  <li><a href="${baseURL}business dashboard.html" target="_blank">Business Dashboard</a></li>
-                  <li><a href="${baseURL}business menu.html" target="_blank">Business Menu</a></li>
-                </ul>
-              </div>`;
-          } else if (tabName === 'personalmenu') {
-            linkSection = `
-              <div class="link-section">
-                <h3>Personal Menu Links</h3>
-                <ul>
-                  <li><a href="${baseURL}personal menu.html" target="_blank">Personal Menu</a></li>
-                </ul>
-              </div>`;
-          }
-
-          document.getElementById('content').innerHTML = html + linkSection;
+          document.getElementById('content').innerHTML = html;
         })
         .catch(err => {
           console.error(`Error loading ${tabName}:`, err);
@@ -174,7 +137,7 @@
         const tag = document.createElement('span');
         tag.textContent = name;
         const removeBtn = document.createElement('button');
-        removeBtn.textContent = '×';
+        removeBtn.textContent = 'Ã';
         removeBtn.title = `Remove ${name}`;
         removeBtn.onclick = () => {
           companies.splice(index, 1);
