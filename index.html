@@ -125,7 +125,10 @@
     <form id="companyForm">
       <div class="form-group">
         <input type="text" id="companyName" placeholder="Company name" required />
-        <input type="text" id="companyAddress" placeholder="Address" />
+        <input type="text" id="streetAddress" placeholder="Street Address" />
+        <input type="text" id="city" placeholder="City" />
+        <input type="text" id="state" placeholder="State" />
+        <input type="text" id="zipCode" placeholder="ZIP Code" />
         <input type="text" id="companyOwner" placeholder="Owner" />
         <input type="text" id="companyEIN" placeholder="SSN (XXX-XX-XXXX) or EIN (XX-XXXXXXX)" pattern="\d{3}-\d{2}-\d{4}|\d{2}-\d{7}" title="Format: SSN XXX-XX-XXXX or EIN XX-XXXXXXX" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
@@ -144,11 +147,10 @@
   </div>
 
   <script>
-    const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
     const tabs = {
-      companymgr: 'business dashboard.html',
-      businessmenu: 'business menu.html',
-      personalmenu: 'personal menu.html'
+      companymgr: '<p>Welcome to the Company Manager tab. Use the form below to add and manage companies.</p>',
+      businessmenu: '<p>This is the Business Menu. Customize it with your business tools and dashboards.</p>',
+      personalmenu: '<p>This is the Personal Menu. Add personal finance tools or dashboards here.</p>'
     };
 
     let companies = [];
@@ -189,8 +191,9 @@
       const filtered = filterOwner ? companies.filter(c => c.owner === filterOwner) : companies;
       filtered.forEach((company, index) => {
         const tag = document.createElement('span');
+        const fullAddress = `${company.street || ''}, ${company.city || ''}, ${company.state || ''} ${company.zip || ''}`.trim();
         tag.textContent = `${company.name} (${company.type || 'Type unknown'}, ${company.owner || 'No owner'})`;
-        tag.title = `Address: ${company.address || 'N/A'}\nEIN: ${company.ein || 'N/A'}\nSEIN: ${company.sein || 'N/A'}`;
+        tag.title = `Address: ${fullAddress || 'N/A'}\nEIN: ${company.ein || 'N/A'}\nSEIN: ${company.sein || 'N/A'}`;
         tag.onclick = () => editCompany(index);
         const removeBtn = document.createElement('button');
         removeBtn.textContent = '×';
@@ -212,11 +215,14 @@
     function editCompany(index) {
       const company = companies[index];
       companyName.value = company.name;
-      companyAddress.value = company.address;
-      companyOwner.value = company.owner;
-      companyEIN.value = company.ein;
-      companySEIN.value = company.sein;
-      companyType.value = company.type;
+      streetAddress.value = company.street || '';
+      city.value = company.city || '';
+      state.value = company.state || '';
+      zipCode.value = company.zip || '';
+      companyOwner.value = company.owner || '';
+      companyEIN.value = company.ein || '';
+      companySEIN.value = company.sein || '';
+      companyType.value = company.type || '';
       companies.splice(index, 1);
       saveCompanies();
       renderCompanySelect();
@@ -232,22 +238,56 @@
         return;
       }
       const company = companies[currentIndex];
+      const fullAddress = `${company.street || ''}, ${company.city || ''}, ${company.state || ''} ${company.zip || ''}`.trim();
       display.innerHTML = `
         <strong>${company.name}</strong><br/>
         Type: ${company.type || 'N/A'}<br/>
-        Owner: ${company.owner || 'N/A'}<br/>
-        Address: ${company.address || 'N/A'}<br/>
-        EIN: ${company.ein || 'N/A'}<br/>
-        State EIN: ${company.sein || 'N/A'}
-      `;
+        Owner: ${company.owner || 'N/A'}<br
+        function exportCompanies() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(companies, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "companies.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
     }
 
-    function prevCompany() {
-      if (companies.length === 0) return;
-      currentIndex = (currentIndex - 1 + companies.length) % companies.length;
+    companyForm.onsubmit = function (e) {
+      e.preventDefault();
+      const newCompany = {
+        name: companyName.value.trim(),
+        address: companyAddress.value.trim(),
+        owner: companyOwner.value.trim(),
+        ein: companyEIN.value.trim(),
+        sein: companySEIN.value.trim(),
+        type: companyType.value
+      };
+      if (!newCompany.name) return;
+      companies.push(newCompany);
+      saveCompanies();
+      companyForm.reset();
+      renderCompanySelect();
+      renderOwnerFilter();
+      renderCompanyList(ownerFilter.value);
       renderCarousel();
-    }
+    };
 
-    function nextCompany() {
-      if (companies.length === 0) return;
-      currentIndex = (currentIndex + 1)
+    tabMenu.onchange = function () {
+      const selected = tabMenu.value;
+      const html = tabs[selected] || '<p>Section not found.</p>';
+      content.innerHTML = html;
+    };
+
+    ownerFilter.onchange = () => renderCompanyList(ownerFilter.value);
+
+    // Initialize
+    loadCompanies();
+    renderCompanySelect();
+    renderOwnerFilter();
+    renderCompanyList();
+    renderCarousel();
+    tabMenu.dispatchEvent(new Event('change'));
+  </script>
+</body>
+</html>
