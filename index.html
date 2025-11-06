@@ -34,12 +34,12 @@
       background-color: white;
       min-height: 300px;
     }
-    .company-manager {
+    .company-manager, .carousel-viewer {
       padding: 20px;
       background-color: #fff;
       border-top: 1px solid #ccc;
     }
-    .company-manager h3 {
+    .company-manager h3, .carousel-viewer h3 {
       margin-top: 0;
     }
     .company-list {
@@ -70,9 +70,16 @@
     .form-group {
       margin-bottom: 10px;
     }
-    .form-group input {
+    .form-group input, .form-group select {
       width: 200px;
       margin-right: 10px;
+    }
+    .carousel-card {
+      background-color: #e9ecef;
+      padding: 15px;
+      border-radius: 8px;
+      min-height: 100px;
+      font-size: 16px;
     }
   </style>
 </head>
@@ -91,6 +98,15 @@
 
   <div id="content"></div>
 
+  <div class="carousel-viewer">
+    <h3>Company Carousel Viewer</h3>
+    <div id="carouselDisplay" class="carousel-card"></div>
+    <div style="margin-top:10px;">
+      <button onclick="prevCompany()">Previous</button>
+      <button onclick="nextCompany()">Next</button>
+    </div>
+  </div>
+
   <div class="company-manager">
     <h3>Manage Companies</h3>
     <form id="companyForm">
@@ -100,6 +116,14 @@
         <input type="text" id="companyOwner" placeholder="Owner" />
         <input type="text" id="companyEIN" placeholder="EIN #" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
+        <select id="companyType">
+          <option value="">Select type</option>
+          <option value="Sole Proprietor">Sole Proprietor</option>
+          <option value="Partnership">Partnership</option>
+          <option value="LLC">LLC</option>
+          <option value="Corporation">Corporation</option>
+          <option value="Nonprofit">Nonprofit</option>
+        </select>
         <button type="submit">Add</button>
       </div>
     </form>
@@ -115,6 +139,7 @@
     };
 
     let companies = [];
+    let currentIndex = 0;
 
     function saveCompanies() {
       localStorage.setItem('companies', JSON.stringify(companies));
@@ -139,7 +164,7 @@
       companyList.innerHTML = '';
       companies.forEach((company, index) => {
         const tag = document.createElement('span');
-        tag.textContent = `${company.name} (${company.owner || 'No owner'})`;
+        tag.textContent = `${company.name} (${company.type || 'Type unknown'}, ${company.owner || 'No owner'})`;
         const removeBtn = document.createElement('button');
         removeBtn.textContent = '×';
         removeBtn.title = `Remove ${company.name}`;
@@ -148,10 +173,41 @@
           saveCompanies();
           renderCompanySelect();
           renderCompanyList();
+          renderCarousel();
         };
         tag.appendChild(removeBtn);
         companyList.appendChild(tag);
       });
+    }
+
+    function renderCarousel() {
+      const display = document.getElementById('carouselDisplay');
+      if (companies.length === 0) {
+        display.innerHTML = '<p>No companies to display.</p>';
+        return;
+      }
+
+      const company = companies[currentIndex];
+      display.innerHTML = `
+        <strong>${company.name}</strong><br/>
+        Type: ${company.type || 'N/A'}<br/>
+        Owner: ${company.owner || 'N/A'}<br/>
+        Address: ${company.address || 'N/A'}<br/>
+        EIN: ${company.ein || 'N/A'}<br/>
+        State EIN: ${company.sein || 'N/A'}
+      `;
+    }
+
+    function prevCompany() {
+      if (companies.length === 0) return;
+      currentIndex = (currentIndex - 1 + companies.length) % companies.length;
+      renderCarousel();
+    }
+
+    function nextCompany() {
+      if (companies.length === 0) return;
+      currentIndex = (currentIndex + 1) % companies.length;
+      renderCarousel();
     }
 
     function loadTab(tabName) {
@@ -177,17 +233,22 @@
       const name = companyName.value.trim();
       const address = companyAddress.value.trim();
       const owner = companyOwner.value.trim();
-      const id = companyID.value.trim();
+      const ein = companyEIN.value.trim();
+      const sein = companySEIN.value.trim();
+      const type = companyType.value;
 
       if (name && !companies.some(c => c.name === name)) {
-        companies.push({ name, address, owner, id });
+        companies.push({ name, address, owner, ein, sein, type });
         saveCompanies();
         renderCompanySelect();
         renderCompanyList();
+        renderCarousel();
         companyName.value = '';
         companyAddress.value = '';
-        companyowner.value = '';
-        companyID.value = '';
+        companyOwner.value = '';
+        companyEIN.value = '';
+        companySEIN.value = '';
+        companyType.value = '';
       }
     });
 
@@ -199,6 +260,7 @@
       loadCompanies();
       renderCompanySelect();
       renderCompanyList();
+      renderCarousel();
       loadTab(tabMenu.value);
     });
 
@@ -208,8 +270,3 @@
     const companyName = document.getElementById('companyName');
     const companyAddress = document.getElementById('companyAddress');
     const companyOwner = document.getElementById('companyOwner');
-    const companyID = document.getElementById('companyID');
-    const companyList = document.getElementById('companyList');
-  </script>
-</body>
-</html>
