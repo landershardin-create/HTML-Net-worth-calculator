@@ -61,6 +61,19 @@
       cursor: pointer;
       font-weight: bold;
     }
+    .company-list span:hover {
+      background-color: #0056b3;
+    }
+    .company-list span button:hover {
+      color: #ffdddd;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    .form-group input {
+      width: 200px;
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body>
@@ -81,8 +94,13 @@
   <div class="company-manager">
     <h3>Manage Companies</h3>
     <form id="companyForm">
-      <input type="text" id="newCompany" placeholder="Add new company..." required />
-      <button type="submit">Add</button>
+      <div class="form-group">
+        <input type="text" id="companyName" placeholder="Company name" required />
+        <input type="text" id="companyAddress" placeholder="Address" />
+        <input type="text" id="companyEmployer" placeholder="Employer" />
+        <input type="text" id="companyID" placeholder="ID number" />
+        <button type="submit">Add</button>
+      </div>
     </form>
     <div class="company-list" id="companyList"></div>
   </div>
@@ -95,13 +113,45 @@
       personalmenu: 'personal menu.html'
     };
 
-    let companies = ['Alpha Corp', 'Beta LLC', 'Gamma Inc'];
+    let companies = [];
 
-    const tabMenu = document.getElementById('tabMenu');
-    const companySelect = document.getElementById('companySelect');
-    const companyForm = document.getElementById('companyForm');
-    const newCompanyInput = document.getElementById('newCompany');
-    const companyList = document.getElementById('companyList');
+    function saveCompanies() {
+      localStorage.setItem('companies', JSON.stringify(companies));
+    }
+
+    function loadCompanies() {
+      const stored = localStorage.getItem('companies');
+      if (stored) companies = JSON.parse(stored);
+    }
+
+    function renderCompanySelect() {
+      companySelect.innerHTML = '';
+      companies.forEach(company => {
+        const option = document.createElement('option');
+        option.value = company.name;
+        option.textContent = company.name;
+        companySelect.appendChild(option);
+      });
+    }
+
+    function renderCompanyList() {
+      companyList.innerHTML = '';
+      companies.forEach((company, index) => {
+        const tag = document.createElement('span');
+        tag.textContent = `${company.name} (${company.employer || 'No employer'})`;
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = '×';
+        removeBtn.title = `Remove ${company.name}`;
+        removeBtn.onclick = () => {
+          companies.splice(index, 1);
+          saveCompanies();
+          renderCompanySelect();
+          renderCompanyList();
+        };
+        tag.appendChild(removeBtn);
+        companyList.appendChild(tag);
+      });
+    }
 
     function loadTab(tabName) {
       const file = tabs[tabName];
@@ -121,42 +171,22 @@
         });
     }
 
-    function renderCompanySelect() {
-      companySelect.innerHTML = '';
-      companies.forEach(name => {
-        const option = document.createElement('option');
-        option.value = name;
-        option.textContent = name;
-        companySelect.appendChild(option);
-      });
-    }
-
-    function renderCompanyList() {
-      companyList.innerHTML = '';
-      companies.forEach((name, index) => {
-        const tag = document.createElement('span');
-        tag.textContent = name;
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Ã';
-        removeBtn.title = `Remove ${name}`;
-        removeBtn.onclick = () => {
-          companies.splice(index, 1);
-          renderCompanySelect();
-          renderCompanyList();
-        };
-        tag.appendChild(removeBtn);
-        companyList.appendChild(tag);
-      });
-    }
-
     companyForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const newName = newCompanyInput.value.trim();
-      if (newName && !companies.includes(newName)) {
-        companies.push(newName);
+      const name = companyName.value.trim();
+      const address = companyAddress.value.trim();
+      const employer = companyEmployer.value.trim();
+      const id = companyID.value.trim();
+
+      if (name && !companies.some(c => c.name === name)) {
+        companies.push({ name, address, employer, id });
+        saveCompanies();
         renderCompanySelect();
         renderCompanyList();
-        newCompanyInput.value = '';
+        companyName.value = '';
+        companyAddress.value = '';
+        companyEmployer.value = '';
+        companyID.value = '';
       }
     });
 
@@ -165,10 +195,20 @@
     });
 
     window.addEventListener('DOMContentLoaded', () => {
+      loadCompanies();
       renderCompanySelect();
       renderCompanyList();
       loadTab(tabMenu.value);
     });
+
+    const tabMenu = document.getElementById('tabMenu');
+    const companySelect = document.getElementById('companySelect');
+    const companyForm = document.getElementById('companyForm');
+    const companyName = document.getElementById('companyName');
+    const companyAddress = document.getElementById('companyAddress');
+    const companyEmployer = document.getElementById('companyEmployer');
+    const companyID = document.getElementById('companyID');
+    const companyList = document.getElementById('companyList');
   </script>
 </body>
 </html>
