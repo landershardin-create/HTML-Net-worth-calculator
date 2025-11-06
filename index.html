@@ -52,6 +52,10 @@
       padding: 5px 10px;
       margin: 5px;
       border-radius: 4px;
+      cursor: pointer;
+    }
+    .company-list span:hover {
+      background-color: #0056b3;
     }
     .company-list span button {
       margin-left: 8px;
@@ -60,9 +64,6 @@
       border: none;
       cursor: pointer;
       font-weight: bold;
-    }
-    .company-list span:hover {
-      background-color: #0056b3;
     }
     .company-list span button:hover {
       color: #ffdddd;
@@ -81,6 +82,10 @@
       min-height: 100px;
       font-size: 16px;
     }
+    .filter-export {
+      padding: 15px;
+      background-color: #eee;
+    }
   </style>
 </head>
 <body>
@@ -94,6 +99,14 @@
 
     <label for="companySelect">Companies:</label>
     <select id="companySelect" multiple></select>
+  </div>
+
+  <div class="filter-export">
+    <label for="ownerFilter">Filter by Owner:</label>
+    <select id="ownerFilter">
+      <option value="">All Owners</option>
+    </select>
+    <button onclick="exportCompanies()">Export Companies</button>
   </div>
 
   <div id="content"></div>
@@ -114,7 +127,7 @@
         <input type="text" id="companyName" placeholder="Company name" required />
         <input type="text" id="companyAddress" placeholder="Address" />
         <input type="text" id="companyOwner" placeholder="Owner" />
-        <input type="text" id="companyEIN" placeholder="SSN or EIN #" />
+        <input type="text" id="companyEIN" placeholder="SSN (XXX-XX-XXXX) or EIN (XX-XXXXXXX)" pattern="\d{3}-\d{2}-\d{4}|\d{2}-\d{7}" title="Format: SSN XXX-XX-XXXX or EIN XX-XXXXXXX" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
         <select id="companyType">
           <option value="">Select type</option>
@@ -160,24 +173,56 @@
       });
     }
 
-    function renderCompanyList() {
+    function renderOwnerFilter() {
+      const owners = [...new Set(companies.map(c => c.owner).filter(Boolean))];
+      ownerFilter.innerHTML = '<option value="">All Owners</option>';
+      owners.forEach(owner => {
+        const opt = document.createElement('option');
+        opt.value = owner;
+        opt.textContent = owner;
+        ownerFilter.appendChild(opt);
+      });
+    }
+
+    function renderCompanyList(filterOwner = '') {
       companyList.innerHTML = '';
-      companies.forEach((company, index) => {
+      const filtered = filterOwner ? companies.filter(c => c.owner === filterOwner) : companies;
+      filtered.forEach((company, index) => {
         const tag = document.createElement('span');
         tag.textContent = `${company.name} (${company.type || 'Type unknown'}, ${company.owner || 'No owner'})`;
+        tag.title = `Address: ${company.address || 'N/A'}\nEIN: ${company.ein || 'N/A'}\nSEIN: ${company.sein || 'N/A'}`;
+        tag.onclick = () => editCompany(index);
         const removeBtn = document.createElement('button');
         removeBtn.textContent = '×';
         removeBtn.title = `Remove ${company.name}`;
-        removeBtn.onclick = () => {
+        removeBtn.onclick = (e) => {
+          e.stopPropagation();
           companies.splice(index, 1);
           saveCompanies();
           renderCompanySelect();
-          renderCompanyList();
+          renderOwnerFilter();
+          renderCompanyList(ownerFilter.value);
           renderCarousel();
         };
         tag.appendChild(removeBtn);
         companyList.appendChild(tag);
       });
+    }
+
+    function editCompany(index) {
+      const company = companies[index];
+      companyName.value = company.name;
+      companyAddress.value = company.address;
+      companyOwner.value = company.owner;
+      companyEIN.value = company.ein;
+      companySEIN.value = company.sein;
+      companyType.value = company.type;
+      companies.splice(index, 1);
+      saveCompanies();
+      renderCompanySelect();
+      renderOwnerFilter();
+      renderCompanyList(ownerFilter.value);
+      renderCarousel();
     }
 
     function renderCarousel() {
@@ -186,7 +231,6 @@
         display.innerHTML = '<p>No companies to display.</p>';
         return;
       }
-
       const company = companies[currentIndex];
       display.innerHTML = `
         <strong>${company.name}</strong><br/>
@@ -206,67 +250,4 @@
 
     function nextCompany() {
       if (companies.length === 0) return;
-      currentIndex = (currentIndex + 1) % companies.length;
-      renderCarousel();
-    }
-
-    function loadTab(tabName) {
-      const file = tabs[tabName];
-      if (!file) {
-        document.getElementById('content').innerHTML = `<p>Invalid selection.</p>`;
-        return;
-      }
-
-      fetch(baseURL + file)
-        .then(response => response.text())
-        .then(html => {
-          document.getElementById('content').innerHTML = html;
-        })
-        .catch(err => {
-          console.error(`Error loading ${tabName}:`, err);
-          document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
-        });
-    }
-
-    companyForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = companyName.value.trim();
-      const address = companyAddress.value.trim();
-      const owner = companyOwner.value.trim();
-      const ein = companyEIN.value.trim();
-      const sein = companySEIN.value.trim();
-      const type = companyType.value;
-
-      if (name && !companies.some(c => c.name === name)) {
-        companies.push({ name, address, owner, ein, sein, type });
-        saveCompanies();
-        renderCompanySelect();
-        renderCompanyList();
-        renderCarousel();
-        companyName.value = '';
-        companyAddress.value = '';
-        companyOwner.value = '';
-        companyEIN.value = '';
-        companySEIN.value = '';
-        companyType.value = '';
-      }
-    });
-
-    tabMenu.addEventListener('change', (e) => {
-      loadTab(e.target.value);
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      loadCompanies();
-      renderCompanySelect();
-      renderCompanyList();
-      renderCarousel();
-      loadTab(tabMenu.value);
-    });
-
-    const tabMenu = document.getElementById('tabMenu');
-    const companySelect = document.getElementById('companySelect');
-    const companyForm = document.getElementById('companyForm');
-    const companyName = document.getElementById('companyName');
-    const companyAddress = document.getElementById('companyAddress');
-    const companyOwner = document.getElementById('companyOwner');
+      currentIndex = (currentIndex + 1)
