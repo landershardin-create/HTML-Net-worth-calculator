@@ -128,7 +128,7 @@
     tabMenu.addEventListener('change', (event) => {
       loadTab(event.target.value);
     });
-<script type="module">
+// <script type="module">
   import { loadTab, tabs } from './tab-loader.js';
 
   const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/';
@@ -138,7 +138,7 @@
   window.addEventListener('DOMContentLoaded', () => {
     loadTab(tabMenu.value, contentEl, baseURL);
   });
-</script>
+//</script>
   tabMenu.addEventListener('change', e => {
     loadTab(e.target.value, contentEl, baseURL);
   });
