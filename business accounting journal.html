@@ -136,6 +136,34 @@
         row.insertCell(1).textContent = `$${total.toFixed(2)}`;
       }
     }
+    // Save accounts to localStorage
+localStorage.setItem('accounts', JSON.stringify(accounts));
+
+// Load on page load
+const saved = localStorage.getItem('accounts');
+if (saved) {
+  Object.assign(accounts, JSON.parse(saved));
+  // Rebuild dropdown and tables...
+}
+const userRole = 'admin'; // Example role
+
+if (userRole !== 'admin') {
+  document.querySelector('.section:nth-child(2)').style.display = 'none'; // Hide entry form
+}
+function exportCSV() {
+  let csv = 'Account,Description,Amount\n';
+  for (const account in accounts) {
+    accounts[account].forEach(entry => {
+      csv += `${account},${entry.description},${entry.amount}\n`;
+    });
+  }
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'journal.csv';
+  a.click();
+}
   </script>
 </body>
 </html>
