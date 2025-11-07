@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GitHub Tabbed Dashboard with Company Manager</title>
+  <link rel="stylesheet" href="styles.css" />
   <style>
-    <link rel="stylesheet" href="styles.css" />
+   
   </style>
 </head>
 <body>
@@ -62,14 +63,14 @@
         </select>
         <button type="submit">Add</button>
       </div>
+       <select id="companyRole">
+          <option value="Viewer">Viewer</option>
+          <option value="Editor">Editor</option>
+          <option value="Owner">Owner</option>
+       </select>
     </form>
     <div class="company-list" id="companyList"></div>
   </div>
 
 <script src="dashboard.js" defer></script>
 
-<select id="companyRole">
-  <option value="Viewer">Viewer</option>
-  <option value="Editor">Editor</option>
-  <option value="Owner">Owner</option>
-</select>
