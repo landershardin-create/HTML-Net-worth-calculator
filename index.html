@@ -34,12 +34,15 @@
   </style>
 </head>
 <body>
-  <div class="tab-container">
-    <button class="tab active" onclick="loadTab('home')">Home</button>
-    <button class="tab" onclick="loadTab('businessmenu')">Business Menu</button>
-    <button class="tab" onclick="loadTab('personalmenu')">Personal Menu</button>
-    <button class="tab" onclick="loadTab('contributordashboard')"> Contributor Dashboard</button>
-  </div>
+<div class="tab-container">
+  <label for="tabSelector">Choose a section:</label>
+  <select id="tabSelector" onchange="loadTab(this.value)">
+    <option value="home">Home</option>
+    <option value="businessmenu">Business Menu</option>
+    <option value="personalmenu">Personal Menu</option>
+    <option value="contributordashboard">Contributor Dashboard</option>
+  </select>
+</div>
 
   <div id="content">Loading...</div>
 
