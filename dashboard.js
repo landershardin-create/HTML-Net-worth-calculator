@@ -587,3 +587,35 @@ tabMenu.onchange = function () {
 if (userRole === 'Viewer') {
   document.querySelector('#companyForm button').disabled = true;
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const tabMenu = document.getElementById("tabMenu");
+  const content = document.getElementById("content");
+
+  tabMenu.addEventListener("change", () => {
+    const selected = tabMenu.value;
+
+    // Map tab values to HTML file paths
+    const tabFiles = {
+      companymgr: "company-info.html",
+      businessmenu: "business-menu.html",
+      personalmenu: "personal-menu.html",
+      contributormenu: "contributor-dashboard.html"
+    };
+
+    const fileToLoad = tabFiles[selected];
+    if (fileToLoad) {
+      fetch(fileToLoad)
+        .then(response => response.text())
+        .then(html => {
+          content.innerHTML = html;
+        })
+        .catch(error => {
+          content.innerHTML = `<p>Error loading ${fileToLoad}: ${error}</p>`;
+        });
+    }
+  });
+
+  // Optionally trigger default load
+  tabMenu.dispatchEvent(new Event("change"));
+});
