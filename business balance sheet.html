@@ -123,6 +123,11 @@
   });
 
   window.onload = calculateTotals;
+  
+  const isContributor = true; // Replace with session logic
+document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
+  cell.contentEditable = isContributor;
+});
 </script>
 
 </body>
