@@ -237,3 +237,16 @@ function canEdit(company) {
 function canRemove(company) {
   return session.role === 'Owner' && company.owner === session.username;
 }
+
+const newCompany = {
+  name: companyName.value.trim(),
+  street: streetAddress.value.trim(),
+  city: city.value.trim(),
+  state: state.value.trim(),
+  zip: zipCode.value.trim(),
+  owner: session.username,
+  ein: companyEIN.value.trim(),
+  sein: companySEIN.value.trim(),
+  type: companyType.value,
+  role: session.role
+};
