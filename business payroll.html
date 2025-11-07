@@ -2,103 +2,109 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Multi-Business Payroll Dashboard</title>
+  <title>Payroll Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .business { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; }
-    .category { margin-top: 10px; }
-    .category h3 { margin-bottom: 5px; }
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
+    .dashboard { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
+    .business { border-bottom: 1px solid #ddd; padding: 15px 0; }
+    .business:last-child { border-bottom: none; }
+    .business h2 { margin-bottom: 10px; }
+    .category { margin-bottom: 10px; }
+    .category h3 { margin-bottom: 5px; color: #333; }
     .employee-list { margin-left: 20px; }
     .employee { margin-bottom: 5px; }
-    .totals { font-weight: bold; margin-top: 10px; color: #333; background: #f9f9f9; padding: 10px; border-top: 1px solid #ccc; }
+    .totals { background: #eef; padding: 10px; margin-top: 15px; border-radius: 4px; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <h1>Payroll Overview</h1>
+  <div class="dashboard">
+    <h1>Payroll Overview</h1>
 
-  <div class="business" id="business-1">
-    <h2>Business: Acme Corp</h2>
+    <!-- Business Template -->
+    <div class="business" data-business="Acme Corp">
+      <h2>Business: Acme Corp</h2>
 
-    <div class="category income">
-      <h3>Income</h3>
-      <p class="value">Total Revenue: $120000</p>
-    </div>
+      <div class="category income">
+        <h3>Income</h3>
+        <p class="value">Total Revenue: $120000</p>
+      </div>
 
-    <div class="category expenses">
-      <h3>Expenses</h3>
-      <p class="value">Operational Costs: $40000</p>
-    </div>
+      <div class="category expenses">
+        <h3>Expenses</h3>
+        <p class="value">Operational Costs: $40000</p>
+      </div>
 
-    <div class="category payroll">
-      <h3>Payroll</h3>
-      <div class="employee-list">
-        <div class="employee">Alice - $5000</div>
-        <div class="employee">Bob - $4500</div>
-        <div class="employee">Charlie - $6000</div>
+      <div class="category payroll">
+        <h3>Payroll</h3>
+        <div class="employee-list">
+          <div class="employee">Alice - $5000</div>
+          <div class="employee">Bob - $4500</div>
+          <div class="employee">Charlie - $6000</div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="business" id="business-2">
-    <h2>Business: Zenith LLC</h2>
+    <div class="business" data-business="Zenith LLC">
+      <h2>Business: Zenith LLC</h2>
 
-    <div class="category income">
-      <h3>Income</h3>
-      <p class="value">Total Revenue: $85000</p>
-    </div>
+      <div class="category income">
+        <h3>Income</h3>
+        <p class="value">Total Revenue: $85000</p>
+      </div>
 
-    <div class="category expenses">
-      <h3>Expenses</h3>
-      <p class="value">Operational Costs: $30000</p>
-    </div>
+      <div class="category expenses">
+        <h3>Expenses</h3>
+        <p class="value">Operational Costs: $30000</p>
+      </div>
 
-    <div class="category payroll">
-      <h3>Payroll</h3>
-      <div class="employee-list">
-        <div class="employee">Dana - $4200</div>
-        <div class="employee">Eli - $3800</div>
+      <div class="category payroll">
+        <h3>Payroll</h3>
+        <div class="employee-list">
+          <div class="employee">Dana - $4200</div>
+          <div class="employee">Eli - $3800</div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    function parseDollarAmount(text) {
+    function parseAmount(text) {
       return parseFloat(text.replace(/[^0-9.]/g, '')) || 0;
     }
 
-    function calculateTotals() {
+    function injectTotals() {
       let incomeTotal = 0, expenseTotal = 0, payrollTotal = 0;
 
       document.querySelectorAll('.category.income .value').forEach(el => {
-        incomeTotal += parseDollarAmount(el.textContent);
+        incomeTotal += parseAmount(el.textContent);
       });
 
       document.querySelectorAll('.category.expenses .value').forEach(el => {
-        expenseTotal += parseDollarAmount(el.textContent);
+        expenseTotal += parseAmount(el.textContent);
       });
 
       document.querySelectorAll('.category.payroll .employee').forEach(el => {
-        payrollTotal += parseDollarAmount(el.textContent);
+        payrollTotal += parseAmount(el.textContent);
       });
 
       document.querySelectorAll('.business').forEach(biz => {
-        const totalsDiv = document.createElement('div');
-        totalsDiv.className = 'totals';
-        totalsDiv.innerHTML = `
-          <p>Combined Income Total:
+        const totals = document.createElement('div');
+        totals.className = 'totals';
+        totals.innerHTML = `
+          Combined Income:
 
-{incomeTotal.toLocaleString()}</p>
-          <p>Combined Expense Total: 
+{incomeTotal.toLocaleString()}<br>
+          Combined Expenses: 
 
-{expenseTotal.toLocaleString()}</p>
-          <p>Combined Payroll Total: $${payrollTotal.toLocaleString()}</p>
+{expenseTotal.toLocaleString()}<br>
+          Combined Payroll: $${payrollTotal.toLocaleString()}
         `;
-        biz.appendChild(totalsDiv);
+        biz.appendChild(totals);
       });
     }
 
-    calculateTotals();
+    injectTotals();
   </script>
 
 </body>
