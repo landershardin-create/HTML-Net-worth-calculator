@@ -597,10 +597,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Map tab values to HTML file paths
     const tabFiles = {
-      companymgr: "company-info.html",
-      businessmenu: "business-menu.html",
-      personalmenu: "personal-menu.html",
-      contributormenu: "contributor-dashboard.html"
+      // companymgr: "company-info.html",
+      businessmenu: "business menu.html",
+      personalmenu: "personal menu.html",
+      // contributormenu: "contributor-dashboard.html"
     };
 
     const fileToLoad = tabFiles[selected];
