@@ -2,126 +2,101 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Business Income & Expense Tracker</title>
+  <title>Income & Expense Report</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 2rem;
-      background-color: #f9f9f9;
+      font-family: sans-serif;
+      margin: 2em;
+      background: #f4f4f4;
     }
-    h1 {
-      text-align: center;
-      color: #333;
+    h1, h2 {
+      color: #2c3e50;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 2rem;
+      margin-bottom: 2em;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 0.75rem;
+      padding: 0.75em;
       text-align: left;
     }
     th {
-      background-color: #e0e0e0;
+      background-color: #ecf0f1;
     }
-    .income {
-      background-color: #e8f5e9;
-    }
-    .expense {
-      background-color: #ffebee;
-    }
-    .total-row {
+    .summary {
       font-weight: bold;
-      background-color: #f0f0f0;
+      background-color: #dff0d8;
     }
   </style>
 </head>
 <body>
-  <h1>Business Income & Expense Tracker</h1>
+  <h1>Business Income and Expense Report</h1>
+  <p><strong>Reporting Period:</strong> January 1 – December 31, 2025</p>
 
   <h2>Income</h2>
-  <table class="income" id="incomeTable">
+  <table id="income-table">
     <thead>
-      <tr>
-        <th>Date</th>
-        <th>Source</th>
-        <th>Amount ($)</th>
-        <th>Notes</th>
-      </tr>
+      <tr><th>Account</th><th>Date</th><th>Amount</th></tr>
     </thead>
-    <tbody>
-      <tr>
-        <td>2025-11-01</td>
-        <td>Client A - Web Design</td>
-        <td>1200</td>
-        <td>Final payment</td>
-      </tr>
-      <tr>
-        <td>2025-11-03</td>
-        <td>Client B - Consulting</td>
-        <td>800</td>
-        <td>Monthly retainer</td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr class="total-row">
-        <td colspan="2">Total Income</td>
-        <td colspan="2" id="incomeTotal">$0</td>
-      </tr>
-    </tfoot>
+    <tbody></tbody>
   </table>
 
   <h2>Expenses</h2>
-  <table class="expense" id="expenseTable">
+  <table id="expense-table">
     <thead>
-      <tr>
-        <th>Date</th>
-        <th>Category</th>
-        <th>Amount ($)</th>
-        <th>Notes</th>
-      </tr>
+      <tr><th>Account</th><th>Date</th><th>Amount</th></tr>
     </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Summary</h2>
+  <table>
     <tbody>
-      <tr>
-        <td>2025-11-02</td>
-        <td>Software Subscription</td>
-        <td>50</td>
-        <td>Design tools</td>
-      </tr>
-      <tr>
-        <td>2025-11-04</td>
-        <td>Marketing</td>
-        <td>150</td>
-        <td>Social media ads</td>
-      </tr>
+      <tr class="summary"><td>Total Income</td><td id="total-income">$0.00</td></tr>
+      <tr class="summary"><td>Total Expenses</td><td id="total-expense">$0.00</td></tr>
+      <tr class="summary"><td>Net Profit</td><td id="net-profit">$0.00</td></tr>
     </tbody>
-    <tfoot>
-      <tr class="total-row">
-        <td colspan="2">Total Expenses</td>
-        <td colspan="2" id="expenseTotal">$0</td>
-      </tr>
-    </tfoot>
   </table>
 
   <script>
-    function calculateTotal(tableId, totalId) {
-      const table = document.getElementById(tableId);
-      const rows = table.querySelectorAll("tbody tr");
-      let total = 0;
-      rows.forEach(row => {
-        const amountCell = row.cells[2];
-        if (amountCell) {
-          total += parseFloat(amountCell.textContent) || 0;
-        }
-      });
-      document.getElementById(totalId).textContent = `$${total.toFixed(2)}`;
+    const journalEntries = [
+      { account: "Sales Revenue", type: "income", date: "2025-01-15", amount: 5000 },
+      { account: "Consulting", type: "income", date: "2025-03-10", amount: 3200 },
+      { account: "Software Subscriptions", type: "expense", date: "2025-02-01", amount: 600 },
+      { account: "Marketing", type: "expense", date: "2025-05-20", amount: 1200 },
+      { account: "Office Supplies", type: "expense", date: "2025-08-12", amount: 350 }
+    ];
+
+    function formatCurrency(amount) {
+      return `$${amount.toFixed(2)}`;
     }
 
-    calculateTotal("incomeTable", "incomeTotal");
-    calculateTotal("expenseTable", "expenseTotal");
+    function populateTables() {
+      let incomeTotal = 0;
+      let expenseTotal = 0;
+
+      const incomeBody = document.querySelector("#income-table tbody");
+      const expenseBody = document.querySelector("#expense-table tbody");
+
+      journalEntries.forEach(entry => {
+        const row = `<tr><td>${entry.account}</td><td>${entry.date}</td><td>${formatCurrency(entry.amount)}</td></tr>`;
+        if (entry.type === "income") {
+          incomeBody.innerHTML += row;
+          incomeTotal += entry.amount;
+        } else if (entry.type === "expense") {
+          expenseBody.innerHTML += row;
+          expenseTotal += entry.amount;
+        }
+      });
+
+      document.getElementById("total-income").textContent = formatCurrency(incomeTotal);
+      document.getElementById("total-expense").textContent = formatCurrency(expenseTotal);
+      document.getElementById("net-profit").textContent = formatCurrency(incomeTotal - expenseTotal);
+    }
+
+    populateTables();
   </script>
 </body>
 </html>
