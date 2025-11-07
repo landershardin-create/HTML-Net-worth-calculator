@@ -43,7 +43,7 @@
   <h1>Business Income & Expense Tracker</h1>
 
   <h2>Income</h2>
-  <table class="income">
+  <table class="income" id="incomeTable">
     <thead>
       <tr>
         <th>Date</th>
@@ -65,15 +65,17 @@
         <td>800</td>
         <td>Monthly retainer</td>
       </tr>
+    </tbody>
+    <tfoot>
       <tr class="total-row">
         <td colspan="2">Total Income</td>
-        <td colspan="2">$2000</td>
+        <td colspan="2" id="incomeTotal">$0</td>
       </tr>
-    </tbody>
+    </tfoot>
   </table>
 
   <h2>Expenses</h2>
-  <table class="expense">
+  <table class="expense" id="expenseTable">
     <thead>
       <tr>
         <th>Date</th>
@@ -95,11 +97,31 @@
         <td>150</td>
         <td>Social media ads</td>
       </tr>
+    </tbody>
+    <tfoot>
       <tr class="total-row">
         <td colspan="2">Total Expenses</td>
-        <td colspan="2">$200</td>
+        <td colspan="2" id="expenseTotal">$0</td>
       </tr>
-    </tbody>
+    </tfoot>
   </table>
+
+  <script>
+    function calculateTotal(tableId, totalId) {
+      const table = document.getElementById(tableId);
+      const rows = table.querySelectorAll("tbody tr");
+      let total = 0;
+      rows.forEach(row => {
+        const amountCell = row.cells[2];
+        if (amountCell) {
+          total += parseFloat(amountCell.textContent) || 0;
+        }
+      });
+      document.getElementById(totalId).textContent = `$${total.toFixed(2)}`;
+    }
+
+    calculateTotal("incomeTable", "incomeTotal");
+    calculateTotal("expenseTable", "expenseTotal");
+  </script>
 </body>
 </html>
