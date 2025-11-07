@@ -102,20 +102,24 @@
       expenseTotal += parseFloat(row.cells[2].textContent) || 0;
     });
 
+    const netCash = incomeTotal - expenseTotal;
+
     document.getElementById('total-income').textContent = `
 
 {incomeTotal.toLocaleString()}`;
     document.getElementById('total-expenses').textContent = `
 
 {expenseTotal.toLocaleString()}`;
-    document.getElementById('net-cash').textContent = `$${(incomeTotal - expenseTotal).toLocaleString()}`;
+    document.getElementById('net-cash').textContent = `
+
+{netCash.toLocaleString()}`;
+
+    const netCashCell = document.getElementById('net-cash');
+    netCashCell.style.backgroundColor = netCash >= 0 ? '#d9edf7' : '#f8d7da';
   }
 
   // Initial calculation on page load
   calculateTotals();
-  const netCashCell = document.getElementById('net-cash');
-const netCash = incomeTotal - expenseTotal;
-netCashCell.style.backgroundColor = netCash >= 0 ? '#d9edf7' : '#f8d7da';
 </script>
 </body>
 </html>
