@@ -67,6 +67,38 @@
     <!-- Balance Check -->
     <tr class="total-row"><td colspan="2">Assets = Liabilities + Equity</td><td contenteditable="true">20000</td></tr>
   </table>
+<script>
+  function calculateTotals() {
+    const rows = document.querySelectorAll("table tr");
+    let totalAssets = 0, totalLiabilities = 0, totalEquity = 0;
 
+    rows.forEach(row => {
+      const cells = row.querySelectorAll("td");
+      if (cells.length === 3) {
+        const category = cells[0].textContent.trim();
+        const amount = parseFloat(cells[2].textContent.trim()) || 0;
+
+        if (category === "Current Assets" || category === "Fixed Assets") {
+          totalAssets += amount;
+        } else if (category === "Current Liabilities" || category === "Long-Term Liabilities") {
+          totalLiabilities += amount;
+        } else if (category === "Equity") {
+          totalEquity += amount;
+        }
+      }
+    });
+
+    document.querySelectorAll(".total-row td")[2].textContent = totalAssets; // Total Assets
+    document.querySelectorAll(".total-row td")[5].textContent = totalLiabilities; // Total Liabilities
+    document.querySelectorAll(".total-row td")[8].textContent = totalEquity; // Total Equity
+    document.querySelectorAll(".total-row td")[11].textContent = totalLiabilities + totalEquity; // Balance Check
+  }
+
+  document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
+    cell.addEventListener("input", calculateTotals);
+  });
+
+  window.onload = calculateTotals;
+</script>
 </body>
 </html>
