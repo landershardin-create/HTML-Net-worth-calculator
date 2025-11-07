@@ -2,121 +2,121 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Business Cash Flow Tracker</title>
+  <title>Balance Sheet Report</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 2rem;
-      background-color: #f4f4f4;
+      margin: 2em;
+      background-color: #f9f9f9;
+      color: #333;
     }
-    h1 {
-      text-align: center;
+    h1, h2 {
+      color: #2c3e50;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 2rem;
+      margin-bottom: 2em;
     }
     th, td {
-      padding: 0.75rem;
       border: 1px solid #ccc;
+      padding: 0.75em;
       text-align: left;
     }
     th {
-      background-color: #e0e0e0;
+      background-color: #ecf0f1;
     }
-    tfoot td {
+    .summary {
       font-weight: bold;
-      background-color: #f0f0f0;
-    }
-    .section-title {
-      margin-top: 2rem;
-      font-size: 1.2rem;
-      color: #333;
+      background-color: #dff0d8;
     }
   </style>
 </head>
 <body>
-  <h1>Business Cash Flow Dashboard</h1>
+  <h1>Business Balance Sheet</h1>
+  <p><strong>As of:</strong> December 31, 2025</p>
 
-  <div class="section-title">Income</div>
-  <table id="income-table">
+  <h2>Assets</h2>
+  <table id="assets-table">
     <thead>
-      <tr>
-        <th>Date</th>
-        <th>Source</th>
-        <th>Amount ($)</th>
-      </tr>
+      <tr><th>Account</th><th>Amount</th></tr>
     </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Liabilities</h2>
+  <table id="liabilities-table">
+    <thead>
+      <tr><th>Account</th><th>Amount</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Equity</h2>
+  <table id="equity-table">
+    <thead>
+      <tr><th>Account</th><th>Amount</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Summary</h2>
+  <table>
     <tbody>
-      <tr><td>2025-11-01</td><td>Client A Payment</td><td>1500</td></tr>
-      <tr><td>2025-11-03</td><td>Product Sale</td><td>800</td></tr>
+      <tr class="summary"><td>Total Assets</td><td id="total-assets">$0.00</td></tr>
+      <tr class="summary"><td>Total Liabilities</td><td id="total-liabilities">$0.00</td></tr>
+      <tr class="summary"><td>Total Equity</td><td id="total-equity">$0.00</td></tr>
+      <tr class="summary"><td>Assets = Liabilities + Equity</td><td id="balance-check">✅ Balanced</td></tr>
     </tbody>
   </table>
 
-  <div class="section-title">Expenses</div>
-  <table id="expenses-table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Category</th>
-        <th>Amount ($)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>2025-11-02</td><td>Software Subscription</td><td>200</td></tr>
-      <tr><td>2025-11-04</td><td>Marketing</td><td>300</td></tr>
-    </tbody>
-  </table>
+  <script>
+    const journal = [
+      { account: "Cash", category: "asset", amount: 12000 },
+      { account: "Accounts Receivable", category: "asset", amount: 4500 },
+      { account: "Equipment", category: "asset", amount: 8000 },
+      { account: "Accounts Payable", category: "liability", amount: 3000 },
+      { account: "Loan Payable", category: "liability", amount: 7000 },
+      { account: "Owner's Capital", category: "equity", amount: 10000 },
+      { account: "Retained Earnings", category: "equity", amount: 5500 }
+    ];
 
-  <div class="section-title">Net Cash Flow</div>
-  <table id="net-cash-table">
-    <tfoot>
-      <tr>
-        <td colspan="2">Total Income</td>
-        <td id="total-income">$2300</td>
-      </tr>
-      <tr>
-        <td colspan="2">Total Expenses</td>
-        <td id="total-expenses">$500</td>
-      </tr>
-      <tr>
-        <td colspan="2">Net Cash Flow</td>
-        <td id="net-cash">$1800</td>
-      </tr>
-    </tfoot>
-  </table>
-<script>
-  function calculateTotals() {
-    const incomeRows = document.querySelectorAll('#income-table tbody tr');
-    const expenseRows = document.querySelectorAll('#expenses-table tbody tr');
-    let incomeTotal = 0, expenseTotal = 0;
+    function formatCurrency(amount) {
+      return `$${amount.toFixed(2)}`;
+    }
 
-    incomeRows.forEach(row => {
-      incomeTotal += parseFloat(row.cells[2].textContent) || 0;
-    });
+    function populateBalanceSheet() {
+      let totalAssets = 0;
+      let totalLiabilities = 0;
+      let totalEquity = 0;
 
-    expenseRows.forEach(row => {
-      expenseTotal += parseFloat(row.cells[2].textContent) || 0;
-    });
+      const assetsBody = document.querySelector("#assets-table tbody");
+      const liabilitiesBody = document.querySelector("#liabilities-table tbody");
+      const equityBody = document.querySelector("#equity-table tbody");
 
-    const netCash = incomeTotal - expenseTotal;
+      journal.forEach(entry => {
+        const row = `<tr><td>${entry.account}</td><td>${formatCurrency(entry.amount)}</td></tr>`;
+        if (entry.category === "asset") {
+          assetsBody.innerHTML += row;
+          totalAssets += entry.amount;
+        } else if (entry.category === "liability") {
+          liabilitiesBody.innerHTML += row;
+          totalLiabilities += entry.amount;
+        } else if (entry.category === "equity") {
+          equityBody.innerHTML += row;
+          totalEquity += entry.amount;
+        }
+      });
 
-    document.getElementById('total-income').textContent = `
+      document.getElementById("total-assets").textContent = formatCurrency(totalAssets);
+      document.getElementById("total-liabilities").textContent = formatCurrency(totalLiabilities);
+      document.getElementById("total-equity").textContent = formatCurrency(totalEquity);
 
-{incomeTotal.toLocaleString()}`;
-    document.getElementById('total-expenses').textContent = `
+      const balanced = totalAssets === (totalLiabilities + totalEquity);
+      document.getElementById("balance-check").textContent = balanced ? "✅ Balanced" : "❌ Not Balanced";
+    }
 
-{expenseTotal.toLocaleString()}`;
-    document.getElementById('net-cash').textContent = `$${netCash.toLocaleString()}`;
-
-    const netCashCell = document.getElementById('net-cash');
-    netCashCell.style.backgroundColor = netCash >= 0 ? '#d9edf7' : '#f8d7da';
-  }
-
-  // Initial calculation on page load
-  calculateTotals();
-</script>
+    populateBalanceSheet();
+  </script>
 </body>
 </html>
