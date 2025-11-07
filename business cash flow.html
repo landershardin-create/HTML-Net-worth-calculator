@@ -113,6 +113,9 @@
 
   // Initial calculation on page load
   calculateTotals();
+  const netCashCell = document.getElementById('net-cash');
+const netCash = incomeTotal - expenseTotal;
+netCashCell.style.backgroundColor = netCash >= 0 ? '#d9edf7' : '#f8d7da';
 </script>
 </body>
 </html>
