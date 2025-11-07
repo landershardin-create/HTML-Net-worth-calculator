@@ -440,3 +440,23 @@ sessionStorage.setItem('userRole', role);
 if (role !== 'Owner') {
   document.getElementById('companyEIN').disabled = true;
 }
+
+document.getElementById('tabMenu').addEventListener('change', (e) => {
+  localStorage.setItem('selectedTab', e.target.value);
+});
+window.addEventListener('load', () => {
+  const savedTab = localStorage.getItem('selectedTab');
+  if (savedTab) document.getElementById('tabMenu').value = savedTab;
+});
+
+function populateOwnerFilter(companies) {
+  const owners = [...new Set(companies.map(c => c.owner))];
+  const filter = document.getElementById('ownerFilter');
+  owners.forEach(owner => {
+    const opt = document.createElement('option');
+    opt.value = owner;
+    opt.textContent = owner;
+    filter.appendChild(opt);
+  });
+}
+
