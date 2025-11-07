@@ -1,4 +1,4 @@
- <script>
+<script>
     const tabs = {
       companymgr: '<p>Welcome to the Company Manager tab. Use the form below to add and manage companies.</p>',
       businessmenu: '<p>This is the Business Menu. Customize it with your business tools and dashboards.</p>',
