@@ -152,10 +152,9 @@
     // Initialize
     loadCompanies();
     renderCompanySelect();
-    renderOwnerFilter
-    
+    renderOwnerFilter();
     renderCompanyList();
-renderCarousel();
+    renderCarousel();
 
 // Restore selected tab from localStorage
 const savedTab = localStorage.getItem('selectedTab') || 'companymgr';
@@ -184,8 +183,6 @@ function editCompany(index) {
   companyName.focus();
   window.scrollTo({ top: companyForm.offsetTop, behavior: 'smooth' });
 }
-
-role: companyRole.value.trim() || 'Viewer'
 
 function canEdit(company) {
   return company.role === 'Editor' || company.role === 'Owner';
