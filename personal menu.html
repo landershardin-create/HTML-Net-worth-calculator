@@ -120,6 +120,18 @@
     tabMenu.addEventListener('change', (event) => {
       loadTab(event.target.value);
     });
+    function populateMenu() {
+  tabMenu.innerHTML = '<option value="" disabled selected>Select a section</option>';
+  roleTabs[userRole].forEach(key => {
+    const option = document.createElement('option');
+    option.value = key;
+    option.textContent = key
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/^personal/, 'Personal ')
+      .trim();
+    tabMenu.appendChild(option);
+  });
+}
 window.addEventListener('DOMContentLoaded', () => {
   populateMenu();
   tabMenu.selectedIndex = 0;
