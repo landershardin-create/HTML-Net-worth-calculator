@@ -195,7 +195,8 @@ function renderCompanyList(filterOwner = '') {
   companyList.innerHTML = '';
   const filtered = filterOwner ? companies.filter(c => c.owner === filterOwner) : companies;
   filtered.forEach((company, index) => {
-    const tag = document.createElement('tag.setAttribute('data-role', company.role || 'Viewer');
+    const tag = document.createElement('span');
+    tag.setAttribute('data-role', company.role || 'Viewer');
     tag.textContent = `${company.name} (${company.type || 'Type unknown'}, ${company.owner || 'No owner'})`;
     tag.title = `Role: ${company.role || 'Viewer'}`;
     if (canEdit(company)) {
