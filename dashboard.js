@@ -189,3 +189,38 @@ function editCompany(index) {
   companyName.focus();
   window.scrollTo({ top: companyForm.offsetTop, behavior: 'smooth' });
 }
+
+role: companyRole.value.trim() || 'Viewer'
+
+function canEdit(company) {
+  return company.role === 'Editor' || company.role === 'Owner';
+}
+
+function renderCompanyList(filterOwner = '') {
+  companyList.innerHTML = '';
+  const filtered = filterOwner ? companies.filter(c => c.owner === filterOwner) : companies;
+  filtered.forEach((company, index) => {
+    const tag = document.createElement('span');
+    tag.textContent = `${company.name} (${company.type || 'Type unknown'}, ${company.owner || 'No owner'})`;
+    tag.title = `Role: ${company.role || 'Viewer'}`;
+    if (canEdit(company)) {
+      tag.onclick = () => editCompany(index);
+    }
+    // Remove button only for owners
+    if (company.role === 'Owner') {
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = '×';
+      removeBtn.onclick = (e) => {
+        e.stopPropagation();
+        companies.splice(index, 1);
+        saveCompanies();
+        renderCompanySelect();
+        renderOwnerFilter();
+        renderCompanyList(ownerFilter.value);
+        renderCarousel();
+      };
+      tag.appendChild(removeBtn);
+    }
+    companyList.appendChild(tag);
+  });
+}
