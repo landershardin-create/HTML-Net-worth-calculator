@@ -51,6 +51,13 @@
     <button onclick="loadTab('businesspersonnel')">Personnel Records</button>
     <button onclick="loadTab('businesstimekeeping')">Timesheet</button>
   </details>
+  
+  <details>
+    <summary>Contributor Dashboard</summary>
+    <button onclick="loadTab('contributordashboard')">Main</button>
+    <button onclick="loadTab('contributor-tasks')">Tasks</button>
+    <button onclick="loadTab('contributor-feedback')">Feedback</button>
+  </details>
 
   <details>
     <summary>Personal Menu</summary>
@@ -61,12 +68,6 @@
     <button onclick="loadTab('personalnetworth')">Net Worth</button>
   </details>
 
-  <details>
-    <summary>Contributor Dashboard</summary>
-    <button onclick="loadTab('contributordashboard')">Main</button>
-    <button onclick="loadTab('contributor-tasks')">Tasks</button>
-    <button onclick="loadTab('contributor-feedback')">Feedback</button>
-  </details>
 </div>
 
 <div id="content">Loading...</div>
@@ -84,14 +85,15 @@
     'businesspayroll': 'business payroll register.html',
     'businesspersonnel': 'business personnel registry.html',
     'businesstimekeeping': 'business timesheet.html',
+    contributordashboard: 'contributor-dashboard.html',
+    'contributor-tasks': 'contributor-tasks.html',
+    'contributor-feedback': 'contributor-feedback.html',
     personaljournal: 'personal accounting journal.html',
     'personalbalsheet': 'personal balance sheet.html',
     'personalcashflow': 'personal cash flow.html',
     'personalincomeexpense': 'personal income and expense.html',
     'personalnetworth': 'personal net worth calculator.html',
-    contributordashboard: 'contributor-dashboard.html',
-    'contributor-tasks': 'contributor-tasks.html',
-    'contributor-feedback': 'contributor-feedback.html',
+
   };
 
   function loadTab(tabName) {
