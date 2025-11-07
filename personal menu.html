@@ -126,9 +126,22 @@
   tabMenu.selectedIndex = 0;
   loadTab(tabMenu.value);
 });
-if (!tabName || !tabs[tabName]) {
-  showMessage('Please select a valid section.', 'error');
-  return;
+const userRole = 'viewer'; // or 'editor', 'admin'
+
+const roleTabs = {
+  viewer: ['personaljournal', 'personalnetworth'],
+  editor: ['personaljournal', 'personalbalancesheet', 'personalcashflow'],
+  admin: Object.keys(tabs),
+};
+
+function populateMenu() {
+  tabMenu.innerHTML = '<option value="" disabled selected>Select a section</option>';
+  roleTabs[userRole].forEach(key => {
+    const option = document.createElement('option');
+    option.value = key;
+    option.textContent = key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/personal/, 'Personal ');
+    tabMenu.appendChild(option);
+  });
 }
   </script>
 </body>
