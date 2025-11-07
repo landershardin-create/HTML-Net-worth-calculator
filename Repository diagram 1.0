@@ -1,0 +1,47 @@
+# Repository diagram 1.0
+
+/finance-dashboard/
+│
+├── index.html                # Entry point of the dashboard
+├── README.md                 # Project overview and contributor guide
+├── LICENSE                   # Open-source license (MIT, GPL, etc.)
+├── .gitignore                # Git exclusions
+│
+├── /assets/                  # Static assets (images, fonts, icons)
+│   ├── /images/              # Logos, illustrations, UI icons
+│   ├── /fonts/               # Custom or branded fonts
+│   └── /branding/            # Business-specific visual assets
+│
+├── /css/                     # Styling and themes
+│   ├── main.css              # Core styles
+│   ├── branding.css          # Business-specific branding
+│   └── responsive.css        # Mobile and adaptive layout
+│
+├── /js/                      # JavaScript modules
+│   ├── app.js                # Main dashboard logic
+│   ├── router.js             # Tab and module navigation
+│   ├── storage.js            # Persistent storage and export logic
+│   ├── access.js             # Role-based access control
+│   └── onboarding.js         # Contributor onboarding flows
+│
+├── /modules/                 # Dashboard feature modules
+│   ├── business-selector.html
+│   ├── contributor-manager.html
+│   ├── cash-flow-tracker.html
+│   ├── journal-entries.html
+│   ├── balance-sheet.html
+│   ├── personnel-records.html
+│   └── export-storage.html
+│
+├── /data/                    # Sample data and templates
+│   ├── sample-business.json
+│   ├── sample-journal.csv
+│   └── contributors-template.json
+│
+└── /docs/                    # Documentation and guides
+    ├── setup.md              # Installation and configuration
+    ├── styling.md            # Branding and visual customization
+    ├── access-control.md     # Role and permission setup
+    ├── onboarding.md         # Contributor onboarding guide
+    ├── extensibility.md      # How to add new modules
+    └── testing.md            # QA and validation procedures
