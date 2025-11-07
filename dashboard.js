@@ -626,7 +626,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   tabMenu.addEventListener("change", function () {
     if (tabMenu.value === "businessmenu") {
-      window.location.href = "businessmenu.html";
+      window.location.href = "business menu.html";
     }
   });
 });
