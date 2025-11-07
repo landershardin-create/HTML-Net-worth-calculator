@@ -250,3 +250,5 @@ const newCompany = {
   type: companyType.value,
   role: session.role
 };
+
+tag.setAttribute('data-role', company.role || 'Viewer');
