@@ -1,0 +1,25 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+label {
+  display: block;
+  margin: 10px 0;
+}
+button {
+  margin-top: 20px;
+}
+/* Add to your stylesheet */
+.branded-theme {
+  border-left: 6px solid #4CAF50;
+  background: #ffffff;
+  padding: 1em;
+  margin: 1em 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.dashboard-card h2 {
+  color: #4CAF50;
+  margin-bottom: 0.5em;
+}
+
