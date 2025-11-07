@@ -427,3 +427,12 @@ function exportCompanies() {
   link.download = 'companies.csv';
   link.click();
 }
+
+document.getElementById('companyRole').addEventListener('change', function() {
+  const role = this.value;
+  // Example: hide EIN field for Viewers
+  document.getElementById('companyEIN').style.display = role === 'Viewer' ? 'none' : 'block';
+});
+
+sessionStorage.setItem('selectedCompany', companyId);
+sessionStorage.setItem('userRole', role);
