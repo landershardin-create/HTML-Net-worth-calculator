@@ -189,5 +189,3 @@ function editCompany(index) {
   companyName.focus();
   window.scrollTo({ top: companyForm.offsetTop, behavior: 'smooth' });
 }
-
-role: companyRole.value.trim() || 'Viewer'
