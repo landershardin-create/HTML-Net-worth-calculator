@@ -2,110 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Payroll Dashboard</title>
+  <title>Payroll Register</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
-    .dashboard { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
-    .business { border-bottom: 1px solid #ddd; padding: 15px 0; }
-    .business:last-child { border-bottom: none; }
-    .business h2 { margin-bottom: 10px; }
-    .category { margin-bottom: 10px; }
-    .category h3 { margin-bottom: 5px; color: #333; }
-    .employee-list { margin-left: 20px; }
-    .employee { margin-bottom: 5px; }
-    .totals { background: #eef; padding: 10px; margin-top: 15px; border-radius: 4px; font-weight: bold; }
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+    .register { max-width: 1000px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
+    h1 { text-align: center; margin-bottom: 30px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    th { background-color: #eee; }
+    .business-header { margin-top: 40px; font-size: 1.2em; color: #333; }
+    .summary { font-weight: bold; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-  <div class="dashboard">
-    <h1>Payroll Overview</h1>
+  <div class="register">
+    <h1>Payroll Register</h1>
 
-    <!-- Business Template -->
-    <div class="business" data-business="Acme Corp">
-      <h2>Business: Acme Corp</h2>
-
-      <div class="category income">
-        <h3>Income</h3>
-        <p class="value">Total Revenue: $120000</p>
-      </div>
-
-      <div class="category expenses">
-        <h3>Expenses</h3>
-        <p class="value">Operational Costs: $40000</p>
-      </div>
-
-      <div class="category payroll">
-        <h3>Payroll</h3>
-        <div class="employee-list">
-          <div class="employee">Alice - $5000</div>
-          <div class="employee">Bob - $4500</div>
-          <div class="employee">Charlie - $6000</div>
-        </div>
-      </div>
+    <!-- Business: Acme Corp -->
+    <div class="business-section">
+      <div class="business-header">Business: Acme Corp</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Employee Name</th>
+            <th>Position</th>
+            <th>Pay Period</th>
+            <th>Gross Pay</th>
+            <th>Deductions</th>
+            <th>Net Pay</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Alice</td>
+            <td>Manager</td>
+            <td>Oct 2025</td>
+            <td>$5,000</td>
+            <td>$500</td>
+            <td>$4,500</td>
+          </tr>
+          <tr>
+            <td>Bob</td>
+            <td>Developer</td>
+            <td>Oct 2025</td>
+            <td>$4,500</td>
+            <td>$450</td>
+            <td>$4,050</td>
+          </tr>
+          <tr>
+            <td>Charlie</td>
+            <td>Designer</td>
+            <td>Oct 2025</td>
+            <td>$6,000</td>
+            <td>$600</td>
+            <td>$5,400</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="summary">Total Net Pay: $13,950</div>
     </div>
 
-    <div class="business" data-business="Zenith LLC">
-      <h2>Business: Zenith LLC</h2>
-
-      <div class="category income">
-        <h3>Income</h3>
-        <p class="value">Total Revenue: $85000</p>
-      </div>
-
-      <div class="category expenses">
-        <h3>Expenses</h3>
-        <p class="value">Operational Costs: $30000</p>
-      </div>
-
-      <div class="category payroll">
-        <h3>Payroll</h3>
-        <div class="employee-list">
-          <div class="employee">Dana - $4200</div>
-          <div class="employee">Eli - $3800</div>
-        </div>
-      </div>
+    <!-- Business: Zenith LLC -->
+    <div class="business-section">
+      <div class="business-header">Business: Zenith LLC</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Employee Name</th>
+            <th>Position</th>
+            <th>Pay Period</th>
+            <th>Gross Pay</th>
+            <th>Deductions</th>
+            <th>Net Pay</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dana</td>
+            <td>Analyst</td>
+            <td>Oct 2025</td>
+            <td>$4,200</td>
+            <td>$420</td>
+            <td>$3,780</td>
+          </tr>
+          <tr>
+            <td>Eli</td>
+            <td>Support</td>
+            <td>Oct 2025</td>
+            <td>$3,800</td>
+            <td>$380</td>
+            <td>$3,420</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="summary">Total Net Pay: $7,200</div>
     </div>
   </div>
-
-  <script>
-    function parseAmount(text) {
-      return parseFloat(text.replace(/[^0-9.]/g, '')) || 0;
-    }
-
-    function injectTotals() {
-      let incomeTotal = 0, expenseTotal = 0, payrollTotal = 0;
-
-      document.querySelectorAll('.category.income .value').forEach(el => {
-        incomeTotal += parseAmount(el.textContent);
-      });
-
-      document.querySelectorAll('.category.expenses .value').forEach(el => {
-        expenseTotal += parseAmount(el.textContent);
-      });
-
-      document.querySelectorAll('.category.payroll .employee').forEach(el => {
-        payrollTotal += parseAmount(el.textContent);
-      });
-
-      document.querySelectorAll('.business').forEach(biz => {
-        const totals = document.createElement('div');
-        totals.className = 'totals';
-        totals.innerHTML = `
-          Combined Income:
-
-{incomeTotal.toLocaleString()}<br>
-          Combined Expenses: 
-
-{expenseTotal.toLocaleString()}<br>
-          Combined Payroll: $${payrollTotal.toLocaleString()}
-        `;
-        biz.appendChild(totals);
-      });
-    }
-
-    injectTotals();
-  </script>
 
 </body>
 </html>
