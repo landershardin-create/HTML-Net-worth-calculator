@@ -360,4 +360,8 @@ function addCompanyToList(company) {
   item.textContent = `${company.name} (${company.type}) - ${company.role}`;
   list.appendChild(item);
 }
+function updateUIByRole(role) {
+  const managerSection = document.querySelector('.company-manager');
+  managerSection.style.display = ['Owner', 'Editor'].includes(role) ? 'block' : 'none';
+}
 </script>
