@@ -343,5 +343,21 @@ function updateUIByRole(role) {
 const sessionUser = { name: "Landers", role: "Owner" }; // Example
 document.getElementById('ownerFilter').value = sessionUser.name;
 updateUIByRole(sessionUser.role);
+document.getElementById('companyForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const company = {
+    name: document.getElementById('companyName').value,
+    owner: document.getElementById('companyOwner').value,
+    role: document.getElementById('companyRole').value,
+    type: document.getElementById('companyType').value
+  };
+  addCompanyToList(company);
+});
 
+function addCompanyToList(company) {
+  const list = document.getElementById('companyList');
+  const item = document.createElement('div');
+  item.textContent = `${company.name} (${company.type}) - ${company.role}`;
+  list.appendChild(item);
+}
 </script>
