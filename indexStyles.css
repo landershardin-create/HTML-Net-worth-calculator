@@ -1,0 +1,105 @@
+/* Layout Containers */
+.index-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9fb;
+  color: #333;
+}
+
+/* Summary Cards */
+.summary-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+/* Filters */
+.index-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.index-filters select,
+.index-filters input {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+/* Index Table */
+.index-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.index-table th,
+.index-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+}
+
+.index-table th {
+  background-color: #eef2f7;
+  font-weight: 600;
+}
+
+/* Onboarding Overlay */
+.onboarding-overlay {
+  background-color: #fff8dc;
+  border: 1px solid #f0d98c;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 223, 0, 0.2);
+}
+
+.onboarding-overlay h2 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: #b8860b;
+}
+
+.onboarding-overlay button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #f0c040;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Widgets */
+.widget-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.widget {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .index-dashboard {
+    padding: 1rem;
+  }
+
+  .widget-row {
+    flex-direction: column;
+  }
+}
