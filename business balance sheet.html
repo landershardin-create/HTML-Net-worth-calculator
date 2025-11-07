@@ -79,6 +79,18 @@
     }
   }
 
+  function validateAmount(cell) {
+    const value = cell.textContent.trim();
+    const amount = parseFloat(value);
+    if (isNaN(amount)) {
+      cell.style.border = "2px solid red";
+      return 0;
+    } else {
+      cell.style.border = "1px solid #ccc";
+      return amount;
+    }
+  }
+
   function calculateTotals() {
     const rows = document.querySelectorAll("table tr");
     let totalAssets = 0, totalLiabilities = 0, totalEquity = 0;
@@ -87,11 +99,11 @@
       const cells = row.querySelectorAll("td");
       if (cells.length === 3) {
         const category = cells[0].textContent.trim();
-        const amount = parseFloat(cells[2].textContent.trim()) || 0;
+        const amount = validateAmount(cells[2]);
 
-        if (category === "Current Assets" || category === "Fixed Assets") {
+        if (["Current Assets", "Fixed Assets"].includes(category)) {
           totalAssets += amount;
-        } else if (category === "Current Liabilities" || category === "Long-Term Liabilities") {
+        } else if (["Current Liabilities", "Long-Term Liabilities"].includes(category)) {
           totalLiabilities += amount;
         } else if (category === "Equity") {
           totalEquity += amount;
@@ -105,39 +117,25 @@
     updateCell("#balance-check", totalLiabilities + totalEquity);
 
     const balanceCell = document.querySelector("#balance-check");
-    if (totalAssets !== totalLiabilities + totalEquity) {
-      balanceCell.style.backgroundColor = "#f8d7da"; // light red
-    } else {
-      balanceCell.style.backgroundColor = "#d9edf7"; // original blue
-    }
+    const statusText = totalAssets === totalLiabilities + totalEquity ? "Balanced" : "Unbalanced";
+    balanceCell.setAttribute("title", statusText);
+    balanceCell.style.backgroundColor = totalAssets === totalLiabilities + totalEquity ? "#d9edf7" : "#f8d7da";
   }
 
-  document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
-    cell.addEventListener("input", calculateTotals);
-  });
+  function applyRolePermissions(role) {
+    const editable = role === "Contributor";
+    document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
+      cell.contentEditable = editable;
+      cell.addEventListener("blur", calculateTotals);
+    });
+    document.querySelector("strong").textContent = role;
+  }
 
-  window.onload = calculateTotals;
-  
-function applyRolePermissions(role) {
-  const editable = role === "Contributor";
-  document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
-    cell.contentEditable = editable;
-  });
-  document.querySelector("strong").textContent = role;
-}
-const isContributor = true;
-applyRolePermissions(isContributor ? "Contributor" : "Viewer");
-
-cell.addEventListener("blur", calculateTotals);
-
-if (isNaN(amount)) {
-  cells[2].style.border = "2px solid red";
-} else {
-  cells[2].style.border = "1px solid #ccc";
-}
-
-const statusText = totalAssets === totalLiabilities + totalEquity ? "Balanced" : "Unbalanced";
-balanceCell.setAttribute("title", statusText);
+  window.onload = () => {
+    const isContributor = true;
+    applyRolePermissions(isContributor ? "Contributor" : "Viewer");
+    calculateTotals();
+  };
 </script>
 <div style="text-align:right; font-size:0.9em; color:#555;">
   Role: <strong>Contributor</strong>
