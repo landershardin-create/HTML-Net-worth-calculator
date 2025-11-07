@@ -621,3 +621,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 content.innerHTML = "<p>Loading...</p>";
+document.addEventListener("DOMContentLoaded", function () {
+  const tabMenu = document.getElementById("tabMenu");
+
+  tabMenu.addEventListener("change", function () {
+    if (tabMenu.value === "businessmenu") {
+      window.location.href = "businessmenu.html";
+    }
+  });
+});
