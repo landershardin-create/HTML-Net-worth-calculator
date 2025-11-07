@@ -68,6 +68,16 @@
     <tr class="total-row"><td colspan="2">Assets = Liabilities + Equity</td><td contenteditable="true">20000</td></tr>
   </table>
 <script>
+  function updateCell(selector, value) {
+    const cell = document.querySelector(selector);
+    if (cell) {
+      cell.textContent = value.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD"
+      });
+    }
+  }
+
   function calculateTotals() {
     const rows = document.querySelectorAll("table tr");
     let totalAssets = 0, totalLiabilities = 0, totalEquity = 0;
@@ -88,10 +98,17 @@
       }
     });
 
-    document.querySelectorAll(".total-row td")[2].textContent = totalAssets; // Total Assets
-    document.querySelectorAll(".total-row td")[5].textContent = totalLiabilities; // Total Liabilities
-    document.querySelectorAll(".total-row td")[8].textContent = totalEquity; // Total Equity
-    document.querySelectorAll(".total-row td")[11].textContent = totalLiabilities + totalEquity; // Balance Check
+    updateCell("#total-assets", totalAssets);
+    updateCell("#total-liabilities", totalLiabilities);
+    updateCell("#total-equity", totalEquity);
+    updateCell("#balance-check", totalLiabilities + totalEquity);
+
+    const balanceCell = document.querySelector("#balance-check");
+    if (totalAssets !== totalLiabilities + totalEquity) {
+      balanceCell.style.backgroundColor = "#f8d7da"; // light red
+    } else {
+      balanceCell.style.backgroundColor = "#d9edf7"; // original blue
+    }
   }
 
   document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
@@ -99,26 +116,16 @@
   });
 
   window.onload = calculateTotals;
-  
-  function updateCell(selector, value) {
-  const cell = document.querySelector(selector);
-  if (cell) cell.textContent = value.toLocaleString("en-US", { style: "currency", currency: "USD" });
-}
-updateCell("#total-assets", totalAssets);
-updateCell("#total-liabilities", totalLiabilities);
-updateCell("#total-equity", totalEquity);
-updateCell("#balance-check", totalLiabilities + totalEquity);
-
-const balanceCell = document.querySelector("#balance-check");
-if (totalAssets !== totalLiabilities + totalEquity) {
-  balanceCell.style.backgroundColor = "#f8d7da"; // light red
-} else {
-  balanceCell.style.backgroundColor = "#d9edf7"; // original blue
-}
 </script>
 <td id="total-assets" contenteditable="false"></td>
 <td id="total-liabilities" contenteditable="false"></td>
 <td id="total-equity" contenteditable="false"></td>
 <td id="balance-check" contenteditable="false"></td>
+
+<!-- Update these cells in your table -->
+<tr class="total-row"><td colspan="2">Total Assets</td><td id="total-assets"></td></tr>
+<tr class="total-row"><td colspan="2">Total Liabilities</td><td id="total-liabilities"></td></tr>
+<tr class="total-row"><td colspan="2">Total Equity</td><td id="total-equity"></td></tr>
+<tr class="total-row"><td colspan="2">Assets = Liabilities + Equity</td><td id="balance-check"></td></tr>
 </body>
 </html>
