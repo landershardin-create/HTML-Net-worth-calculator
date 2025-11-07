@@ -158,3 +158,11 @@
     loadCompanies();
     renderCompanySelect();
     renderOwnerFilter
+    
+    renderCompanyList();
+renderCarousel();
+
+// Restore selected tab from localStorage
+const savedTab = localStorage.getItem('selectedTab') || 'companymgr';
+tabMenu.value = savedTab;
+content.innerHTML = tabs[savedTab] || '<p>Section not found.</p>';
