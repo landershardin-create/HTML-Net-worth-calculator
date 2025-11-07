@@ -164,6 +164,33 @@ function exportCSV() {
   a.download = 'journal.csv';
   a.click();
 }
+if (saved) {
+  Object.assign(accounts, JSON.parse(saved));
+  for (const account in accounts) {
+    const option = document.createElement('option');
+    option.value = account;
+    option.textContent = account;
+    accountSelect.appendChild(option);
+    accounts[account].forEach(({ description, amount }) => {
+      const row = journalTable.insertRow();
+      row.insertCell(0).textContent = account;
+      row.insertCell(1).textContent = description;
+      row.insertCell(2).textContent = amount.toFixed(2);
+    });
+  }
+  updateBalances();
+}
+function addEntry() {
+  // existing logic...
+  localStorage.setItem('accounts', JSON.stringify(accounts));
+}
+function applyRolePermissions(role) {
+  const entrySection = document.querySelector('.section:nth-child(2)');
+  entrySection.style.display = role === 'admin' ? 'block' : 'none';
+}
+applyRolePermissions(userRole);
+a.download = `journal_${new Date().toISOString().split('T')[0]}.csv`;
   </script>
+  <button onclick="exportCSV()">Export Journal as CSV</button>
 </body>
 </html>
