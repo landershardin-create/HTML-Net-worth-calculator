@@ -252,3 +252,9 @@ const newCompany = {
 };
 
 tag.setAttribute('data-role', company.role || 'Viewer');
+
+if (session.role !== 'Owner') {
+  document.getElementById('companyRole').style.display = 'none';
+}
+companyForm.reset();
+companyRole.value = 'Viewer';
