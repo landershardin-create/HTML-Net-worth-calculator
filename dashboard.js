@@ -264,3 +264,48 @@ tabs.contributormenu = `
   <p>Welcome, ${session.username} (${session.role})</p>
   <div id="contributorCompanies"></div>
 `;
+
+function renderContributorDashboard() {
+  const container = document.getElementById('contributorCompanies');
+  if (!container) return;
+
+  const visibleCompanies = companies.filter(c =>
+    session.role === 'Owner' ||
+    c.owner === session.username ||
+    c.role === 'Editor'
+  );
+
+  if (visibleCompanies.length === 0) {
+    container.innerHTML = '<p>No companies assigned to you.</p>';
+    return;
+  }
+
+  container.innerHTML = '<ul>' + visibleCompanies.map((c, i) => {
+    return `<li>
+      <strong>${c.name}</strong> (${c.type || 'Type unknown'})<br/>
+      Owner: ${c.owner} | Role: ${c.role}
+      ${session.role === 'Owner' ? `<br/><button onclick="changeRole(${i})">Change Role</button>` : ''}
+    </li>`;
+  }).join('') + '</ul>';
+}
+
+function changeRole(index) {
+  const newRole = prompt('Enter new role (Viewer, Editor, Owner):');
+  if (!['Viewer', 'Editor', 'Owner'].includes(newRole)) {
+    alert('Invalid role.');
+    return;
+  }
+  companies[index].role = newRole;
+  saveCompanies();
+  renderCompanyList(ownerFilter.value);
+  renderContributorDashboard();
+}
+
+tabMenu.onchange = function () {
+  const selected = tabMenu.value;
+  localStorage.setItem('selectedTab', selected);
+  content.innerHTML = tabs[selected] || '<p>Section not found.</p>';
+  if (selected === 'contributormenu') renderContributorDashboard();
+};
+
+role: companyRole.value.trim() || 'Viewer'
