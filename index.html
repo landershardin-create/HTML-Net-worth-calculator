@@ -3,208 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GitHub Tabbed Dashboard with Company Manager</title>
+  <title>GitHub Tabbed Dashboard</title>
   <style>
-    html, body {
-      width: 100vw;
-      height: 100vh;
+    body {
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
-      font-size: 20px;
-      background-color: #f4f4f4;
-      overflow: hidden;
     }
-    .menu-container {
-      background-color: #333;
-      padding: 15px;
-      color: white;
+    .tab-container {
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 15px;
+      background-color: #333;
     }
-    label {
-      font-weight: bold;
-    }
-    select, input, button {
-      padding: 12px;
-      font-size: 18px;
-      border-radius: 4px;
+    .tab {
+      padding: 14px 20px;
+      cursor: pointer;
+      color: white;
       border: none;
+      background: none;
+      outline: none;
+    }
+    .tab:hover {
+      background-color: #555;
+    }
+    .tab.active {
+      background-color: #007acc;
     }
     #content {
       padding: 20px;
-      background-color: white;
-      min-height: 300px;
-      max-height: 60vh;
-      overflow-y: auto;
-      font-size: 18px;
-      line-height: 1.6;
-    }
-    .company-manager {
-      padding: 20px;
-      background-color: #fff;
-      border-top: 1px solid #ccc;
-    }
-    .company-manager h3 {
-      margin-top: 0;
-    }
-    .company-list {
-      margin-top: 10px;
-    }
-    .company-list span {
-      display: inline-block;
-      background-color: #007bff;
-      color: white;
-      padding: 5px 10px;
-      margin: 5px;
-      border-radius: 4px;
-    }
-    .company-list span button {
-      margin-left: 8px;
-      background: none;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    #selectedCompanies {
-      margin: 10px 0;
-      font-style: italic;
     }
   </style>
 </head>
 <body>
-  <div class="menu-container">
-    <label for="tabMenu">Choose a section:</label>
-    <select id="tabMenu">
-      <option value="companydashboard">Company Manager</option>
-      <option value="businessmenu">Business Menu</option>
-      <option value="personalmenu">Personal Menu</option>
-      <option value="contributordashboard">Contributor Dashboard</option>
-    </select>
-
-    <label for="companySelect">Companies:</label>
-    <select id="companySelect" multiple></select>
-
-    <button onclick="toggleFullscreen()">Fullscreen</button>
+  <div class="tab-container">
+    <button class="tab active" onclick="loadTab('home')">Home</button>
+    <button class="tab" onclick="loadTab('businessmenu')">Business Menu</button>
+    <button class="tab" onclick="loadTab('personalmenu')">Personal Menu</button>
   </div>
 
-  <div id="selectedCompanies"></div>
-  <div id="content"></div>
-
-  <div class="company-manager">
-    <h3>Manage Companies</h3>
-    <form id="companyForm">
-      <input type="text" id="newCompany" placeholder="Add new company..." required />
-      <button type="submit">Add</button>
-    </form>
-    <div class="company-list" id="companyList"></div>
-  </div>
+  <div id="content">Loading...</div>
 
   <script>
-    const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/assets/';
+    const baseURL = 'https://raw.githubusercontent.com/username/repo-name/branch-name/path/to/';
     const tabs = {
-      companydashboard: 'business dashboard.html',
+      home: 'index.html',
       businessmenu: 'business menu.html',
-      personalmenu: 'personal menu.html',
-      contributordashboard: 'contributor-dashboard.html',
+      personalmenu: 'personal menu.html'
     };
 
-    let companies = ['Alpha Corp', 'Beta LLC', 'Gamma Inc'];
-
-    const tabMenu = document.getElementById('tabMenu');
-    const companySelect = document.getElementById('companySelect');
-    const companyForm = document.getElementById('companyForm');
-    const newCompanyInput = document.getElementById('newCompany');
-    const companyList = document.getElementById('companyList');
-    const selectedCompanies = document.getElementById('selectedCompanies');
-
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    }
-
     function loadTab(tabName) {
-      const file = tabs[tabName];
-      if (!file) {
-        document.getElementById('content').innerHTML = `<p>Invalid selection.</p>`;
-        return;
-      }
+      document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
 
-      fetch(baseURL + file)
+      fetch(baseURL + tabs[tabName])
         .then(response => response.text())
         .then(html => {
           document.getElementById('content').innerHTML = html;
         })
         .catch(err => {
-          console.error(`Error loading ${tabName}:`, err);
           document.getElementById('content').innerHTML = `<p>Error loading ${tabName} tab.</p>`;
         });
     }
 
-    function renderCompanySelect() {
-      companySelect.innerHTML = '';
-      companies.forEach(name => {
-        const option = document.createElement('option');
-        option.value = name;
-        option.textContent = name;
-        companySelect.appendChild(option);
-      });
-    }
-
-    function renderCompanyList() {
-      companyList.innerHTML = '';
-      if (companies.length === 0) {
-        companyList.innerHTML = '<p>No companies added yet.</p>';
-        return;
-      }
-      companies.forEach((name, index) => {
-        const tag = document.createElement('span');
-        tag.textContent = name;
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = '×';
-        removeBtn.title = `Remove ${name}`;
-        removeBtn.onclick = () => {
-          companies.splice(index, 1);
-          renderCompanySelect();
-          renderCompanyList();
-        };
-        tag.appendChild(removeBtn);
-        companyList.appendChild(tag);
-      });
-    }
-
-    companyForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const newName = newCompanyInput.value.trim();
-      if (newName && !companies.includes(newName)) {
-        companies.push(newName);
-        renderCompanySelect();
-        renderCompanyList();
-        newCompanyInput.value = '';
-      }
-    });
-
-    companySelect.addEventListener('change', () => {
-      const selected = Array.from(companySelect.selectedOptions).map(opt => opt.value);
-      selectedCompanies.textContent = `Selected: ${selected.join(', ')}`;
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      renderCompanySelect();
-      renderCompanyList();
-      loadTab(tabMenu.value);
-    });
-
-    // Optional auto-refresh every 60 seconds
-    setInterval(() => {
-      loadTab(tabMenu.value);
-    }, 60000);
+    // Load default tab
+    // loadTab('home');
   </script>
 </body>
 </html>
