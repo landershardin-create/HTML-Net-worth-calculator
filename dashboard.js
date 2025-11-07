@@ -419,7 +419,7 @@ function nextCompany() {
   }
 }
 function exportCompanies() {
-  const rows = companyData.map(c => [c.name, c.owner, c.city, c.state].join(','));
+  const rows = companies.map(c => `${c.name},${c.owner},${c.city},${c.state}`);
   const csv = ['Name,Owner,City,State', ...rows].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const link = document.createElement('a');
@@ -460,3 +460,23 @@ function populateOwnerFilter(companies) {
   });
 }
 
+function applyRolePermissions(role) {
+  const isOwner = role === 'Owner';
+  document.querySelectorAll('.company-manager input, .company-manager select').forEach(el => {
+    el.disabled = !isOwner;
+  });
+}
+
+let currentIndex = 0;
+function updateCarousel(companies) {
+  const display = document.getElementById('carouselDisplay');
+  display.textContent = `${companies[currentIndex].name} — ${companies[currentIndex].city}`;
+}
+function nextCompany() {
+  currentIndex = (currentIndex + 1) % companies.length;
+  updateCarousel(companies);
+}
+function prevCompany() {
+  currentIndex = (currentIndex - 1 + companies.length) % companies.length;
+  updateCarousel(companies);
+}
