@@ -145,10 +145,12 @@ const roleTabs = {
   admin: Object.keys(tabs),
 };
 const roleSelect = document.getElementById('roleSelect');
-let userRole = roleSelect.value;
+let userRole = sessionStorage.getItem('role') || roleSelect.value;
+roleSelect.value = userRole;
 
 roleSelect.addEventListener('change', () => {
   userRole = roleSelect.value;
+  sessionStorage.setItem('role', userRole);
   populateMenu();
   tabMenu.selectedIndex = 0;
   loadTab(tabMenu.value);
