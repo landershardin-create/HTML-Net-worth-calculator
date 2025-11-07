@@ -122,6 +122,15 @@
 document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
   cell.contentEditable = isContributor;
 });
+function applyRolePermissions(role) {
+  const editable = role === "Contributor";
+  document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
+    cell.contentEditable = editable;
+  });
+  document.querySelector("strong").textContent = role;
+}
+const isContributor = true;
+applyRolePermissions(isContributor ? "Contributor" : "Viewer");
 </script>
 <div style="text-align:right; font-size:0.9em; color:#555;">
   Role: <strong>Contributor</strong>
