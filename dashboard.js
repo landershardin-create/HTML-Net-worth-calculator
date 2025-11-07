@@ -309,3 +309,7 @@ tabMenu.onchange = function () {
 };
 
 role: companyRole.value.trim() || 'Viewer'
+
+if (userRole === 'Viewer') {
+  document.querySelector('#companyForm button').disabled = true;
+}
