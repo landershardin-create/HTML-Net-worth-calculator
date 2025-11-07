@@ -150,16 +150,19 @@
     ownerFilter.onchange = () => renderCompanyList(ownerFilter.value);
 
     // Initialize
-    loadCompanies();
-    renderCompanySelect();
-    renderOwnerFilter();
-    renderCompanyList();
-    renderCarousel();
+function initializeDashboard() {
+  loadCompanies();
+  renderCompanySelect();
+  renderOwnerFilter();
+  renderCompanyList();
+  renderCarousel();
 
-// Restore selected tab from localStorage
-const savedTab = localStorage.getItem('selectedTab') || 'companymgr';
-tabMenu.value = savedTab;
-content.innerHTML = tabs[savedTab] || '<p>Section not found.</p>';
+  const savedTab = localStorage.getItem('selectedTab') || 'companymgr';
+  tabMenu.value = savedTab;
+  content.innerHTML = tabs[savedTab] || '<p>Section not found.</p>';
+  if (savedTab === 'contributormenu') renderContributorDashboard();
+}
+initializeDashboard();
 
 ownerFilter.onchange = () => {
   renderCompanyList(ownerFilter.value);
@@ -192,7 +195,7 @@ function renderCompanyList(filterOwner = '') {
   companyList.innerHTML = '';
   const filtered = filterOwner ? companies.filter(c => c.owner === filterOwner) : companies;
   filtered.forEach((company, index) => {
-    const tag = document.createElement('span');
+    const tag = document.createElement('tag.setAttribute('data-role', company.role || 'Viewer');
     tag.textContent = `${company.name} (${company.type || 'Type unknown'}, ${company.owner || 'No owner'})`;
     tag.title = `Role: ${company.role || 'Viewer'}`;
     if (canEdit(company)) {
@@ -229,21 +232,6 @@ function canEdit(company) {
 function canRemove(company) {
   return session.role === 'Owner' && company.owner === session.username;
 }
-
-const newCompany = {
-  name: companyName.value.trim(),
-  street: streetAddress.value.trim(),
-  city: city.value.trim(),
-  state: state.value.trim(),
-  zip: zipCode.value.trim(),
-  owner: session.username,
-  ein: companyEIN.value.trim(),
-  sein: companySEIN.value.trim(),
-  type: companyType.value,
-  role: session.role
-};
-
-tag.setAttribute('data-role', company.role || 'Viewer');
 
 if (session.role !== 'Owner') {
   document.getElementById('companyRole').style.display = 'none';
