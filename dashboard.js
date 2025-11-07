@@ -182,3 +182,10 @@ function renderCompanySelectFiltered(owner) {
     companySelect.appendChild(option);
   });
 }
+
+function editCompany(index) {
+  const company = companies[index];
+  // ... existing code ...
+  companyName.focus();
+  window.scrollTo({ top: companyForm.offsetTop, behavior: 'smooth' });
+}
