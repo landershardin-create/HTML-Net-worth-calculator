@@ -17,3 +17,7 @@
   border: 1px solid #ccc;
   padding: 10px;
 }
+.visually-hidden {
+  position: absolute;
+  left: -9999px;
+}
