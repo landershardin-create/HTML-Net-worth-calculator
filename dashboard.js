@@ -258,3 +258,9 @@ if (session.role !== 'Owner') {
 }
 companyForm.reset();
 companyRole.value = 'Viewer';
+
+tabs.contributormenu = `
+  <h3>Contributor Dashboard</h3>
+  <p>Welcome, ${session.username} (${session.role})</p>
+  <div id="contributorCompanies"></div>
+`;
