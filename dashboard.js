@@ -146,12 +146,6 @@
       renderCarousel();
     };
 
-    tabMenu.onchange = function () {
-      const selected = tabMenu.value;
-      localStorage.setItem('selectedTab', selected);
-      content.innerHTML = tabs[selected] || '<p>Section not found.</p>';
-    };
-
     ownerFilter.onchange = () => renderCompanyList(ownerFilter.value);
 
     // Initialize
