@@ -1,8 +1,8 @@
   <script>
     const tabs = {
       companymgr: '<p>Welcome to the Company Manager tab. Use the form below to add and manage companies.</p>',
-      businessmenu: 'business menu.html',
-      personalmenu: 'personal menu.html',
+      businessmenu: '<p>This is the Business Menu. Customize it with your business tools and dashboards.</p>',
+      personalmenu: '<p>This is the Personal Menu. Add personal finance tools or dashboards here.</p>'
     };
 
     let companies = [];
