@@ -2,143 +2,121 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Business Balance Sheet</title>
+  <title>Balance Sheet Report</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f4f4f4;
+      margin: 2em;
+      background-color: #f9f9f9;
+      color: #333;
     }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
+    h1, h2 {
+      color: #2c3e50;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      background-color: white;
+      margin-bottom: 2em;
     }
     th, td {
-      padding: 12px;
       border: 1px solid #ccc;
+      padding: 0.75em;
       text-align: left;
     }
     th {
-      background-color: #007acc;
-      color: white;
+      background-color: #ecf0f1;
     }
-    .section-header {
-      background-color: #e0e0e0;
+    .summary {
       font-weight: bold;
-    }
-    .total-row {
-      background-color: #d9edf7;
-      font-weight: bold;
+      background-color: #dff0d8;
     }
   </style>
 </head>
 <body>
+  <h1>Business Balance Sheet</h1>
+  <p><strong>As of:</strong> December 31, 2025</p>
 
-  <h2>Business Balance Sheet</h2>
-
-  <table>
-    <tr><th>Category</th><th>Description</th><th>Amount (USD)</th></tr>
-
-    <!-- Assets -->
-    <tr class="section-header"><td colspan="3">Assets</td></tr>
-    <tr><td>Current Assets</td><td>Cash and Bank</td><td contenteditable="true">5000</td></tr>
-    <tr><td>Current Assets</td><td>Accounts Receivable</td><td contenteditable="true">3000</td></tr>
-    <tr><td>Fixed Assets</td><td>Equipment</td><td contenteditable="true">12000</td></tr>
-    <tr class="total-row"><td colspan="2">Total Assets</td><td id="total-assets"></td></tr>
-
-    <!-- Liabilities -->
-    <tr class="section-header"><td colspan="3">Liabilities</td></tr>
-    <tr><td>Current Liabilities</td><td>Accounts Payable</td><td contenteditable="true">2500</td></tr>
-    <tr><td>Long-Term Liabilities</td><td>Loan</td><td contenteditable="true">5000</td></tr>
-    <tr class="total-row"><td colspan="2">Total Liabilities</td><td id="total-liabilities"></td></tr>
-
-    <!-- Equity -->
-    <tr class="section-header"><td colspan="3">Owner's Equity</td></tr>
-    <tr><td>Equity</td><td>Capital</td><td contenteditable="true">10000</td></tr>
-    <tr><td>Equity</td><td>Retained Earnings</td><td contenteditable="true">2500</td></tr>
-    <tr class="total-row"><td colspan="2">Total Equity</td><td id="total-equity"></td></tr>
-
-    <!-- Balance Check -->
-    <tr class="total-row"><td colspan="2">Assets = Liabilities + Equity</td><td id="balance-check"></td></tr>
+  <h2>Assets</h2>
+  <table id="assets-table">
+    <thead>
+      <tr><th>Account</th><th>Amount</th></tr>
+    </thead>
+    <tbody></tbody>
   </table>
-  
-<script>
-  function updateCell(selector, value) {
-    const cell = document.querySelector(selector);
-    if (cell) {
-      cell.textContent = value.toLocaleString("en-US", {
-        style: "currency",
-        currency: "USD"
-      });
+
+  <h2>Liabilities</h2>
+  <table id="liabilities-table">
+    <thead>
+      <tr><th>Account</th><th>Amount</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Equity</h2>
+  <table id="equity-table">
+    <thead>
+      <tr><th>Account</th><th>Amount</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Summary</h2>
+  <table>
+    <tbody>
+      <tr class="summary"><td>Total Assets</td><td id="total-assets">$0.00</td></tr>
+      <tr class="summary"><td>Total Liabilities</td><td id="total-liabilities">$0.00</td></tr>
+      <tr class="summary"><td>Total Equity</td><td id="total-equity">$0.00</td></tr>
+      <tr class="summary"><td>Assets = Liabilities + Equity</td><td id="balance-check">✅ Balanced</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    const journal = [
+      { account: "Cash", category: "asset", amount: 12000 },
+      { account: "Accounts Receivable", category: "asset", amount: 4500 },
+      { account: "Equipment", category: "asset", amount: 8000 },
+      { account: "Accounts Payable", category: "liability", amount: 3000 },
+      { account: "Loan Payable", category: "liability", amount: 7000 },
+      { account: "Owner's Capital", category: "equity", amount: 10000 },
+      { account: "Retained Earnings", category: "equity", amount: 5500 }
+    ];
+
+    function formatCurrency(amount) {
+      return `$${amount.toFixed(2)}`;
     }
-  }
 
-  function validateAmount(cell) {
-    const value = cell.textContent.trim();
-    const amount = parseFloat(value);
-    if (isNaN(amount)) {
-      cell.style.border = "2px solid red";
-      return 0;
-    } else {
-      cell.style.border = "1px solid #ccc";
-      return amount;
-    }
-  }
+    function populateBalanceSheet() {
+      let totalAssets = 0;
+      let totalLiabilities = 0;
+      let totalEquity = 0;
 
-  function calculateTotals() {
-    const rows = document.querySelectorAll("table tr");
-    let totalAssets = 0, totalLiabilities = 0, totalEquity = 0;
+      const assetsBody = document.querySelector("#assets-table tbody");
+      const liabilitiesBody = document.querySelector("#liabilities-table tbody");
+      const equityBody = document.querySelector("#equity-table tbody");
 
-    rows.forEach(row => {
-      const cells = row.querySelectorAll("td");
-      if (cells.length === 3) {
-        const category = cells[0].textContent.trim();
-        const amount = validateAmount(cells[2]);
-
-        if (["Current Assets", "Fixed Assets"].includes(category)) {
-          totalAssets += amount;
-        } else if (["Current Liabilities", "Long-Term Liabilities"].includes(category)) {
-          totalLiabilities += amount;
-        } else if (category === "Equity") {
-          totalEquity += amount;
+      journal.forEach(entry => {
+        const row = `<tr><td>${entry.account}</td><td>${formatCurrency(entry.amount)}</td></tr>`;
+        if (entry.category === "asset") {
+          assetsBody.innerHTML += row;
+          totalAssets += entry.amount;
+        } else if (entry.category === "liability") {
+          liabilitiesBody.innerHTML += row;
+          totalLiabilities += entry.amount;
+        } else if (entry.category === "equity") {
+          equityBody.innerHTML += row;
+          totalEquity += entry.amount;
         }
-      }
-    });
+      });
 
-    updateCell("#total-assets", totalAssets);
-    updateCell("#total-liabilities", totalLiabilities);
-    updateCell("#total-equity", totalEquity);
-    updateCell("#balance-check", totalLiabilities + totalEquity);
+      document.getElementById("total-assets").textContent = formatCurrency(totalAssets);
+      document.getElementById("total-liabilities").textContent = formatCurrency(totalLiabilities);
+      document.getElementById("total-equity").textContent = formatCurrency(totalEquity);
 
-    const balanceCell = document.querySelector("#balance-check");
-    const statusText = totalAssets === totalLiabilities + totalEquity ? "Balanced" : "Unbalanced";
-    balanceCell.setAttribute("title", statusText);
-    balanceCell.style.backgroundColor = totalAssets === totalLiabilities + totalEquity ? "#d9edf7" : "#f8d7da";
-  }
+      const balanced = totalAssets === (totalLiabilities + totalEquity);
+      document.getElementById("balance-check").textContent = balanced ? "✅ Balanced" : "❌ Not Balanced";
+    }
 
-  function applyRolePermissions(role) {
-    const editable = role === "Contributor";
-    document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
-      cell.contentEditable = editable;
-      cell.addEventListener("blur", calculateTotals);
-    });
-    document.querySelector("strong").textContent = role;
-  }
-
-  window.onload = () => {
-    const isContributor = true;
-    applyRolePermissions(isContributor ? "Contributor" : "Viewer");
-    calculateTotals();
-  };
-</script>
-<div style="text-align:right; font-size:0.9em; color:#555;">
-  Role: <strong>Contributor</strong>
-</div>
+    populateBalanceSheet();
+  </script>
 </body>
 </html>
