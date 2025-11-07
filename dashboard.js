@@ -340,5 +340,8 @@ function updateUIByRole(role) {
   const contributorSection = document.querySelector('.company-manager');
   contributorSection.style.display = role === 'Owner' || role === 'Editor' ? 'block' : 'none';
 }
+const sessionUser = { name: "Landers", role: "Owner" }; // Example
+document.getElementById('ownerFilter').value = sessionUser.name;
+updateUIByRole(sessionUser.role);
 
 </script>
