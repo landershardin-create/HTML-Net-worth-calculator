@@ -88,29 +88,31 @@
     </tfoot>
   </table>
 
-  <script>
-    function calculateTotals() {
-      const incomeRows = document.querySelectorAll('#income-table tbody tr');
-      const expenseRows = document.querySelectorAll('#expenses-table tbody tr');
-      let incomeTotal = 0, expenseTotal = 0;
+<script>
+  function calculateTotals() {
+    const incomeRows = document.querySelectorAll('#income-table tbody tr');
+    const expenseRows = document.querySelectorAll('#expenses-table tbody tr');
+    let incomeTotal = 0, expenseTotal = 0;
 
-      incomeRows.forEach(row => {
-        incomeTotal += parseFloat(row.cells[2].textContent) || 0;
-      });
+    incomeRows.forEach(row => {
+      incomeTotal += parseFloat(row.cells[2].textContent) || 0;
+    });
 
-      expenseRows.forEach(row => {
-        expenseTotal += parseFloat(row.cells[2].textContent) || 0;
-      });
+    expenseRows.forEach(row => {
+      expenseTotal += parseFloat(row.cells[2].textContent) || 0;
+    });
 
     document.getElementById('total-income').textContent = `
 
 {incomeTotal.toLocaleString()}`;
-document.getElementById('total-expenses').textContent = `
+    document.getElementById('total-expenses').textContent = `
 
 {expenseTotal.toLocaleString()}`;
-document.getElementById('net-cash').textContent = `$${(incomeTotal - expenseTotal).toLocaleString()}`;
+    document.getElementById('net-cash').textContent = `$${(incomeTotal - expenseTotal).toLocaleString()}`;
+  }
 
-    calculateTotals();
-  </script>
+  // Initial calculation on page load
+  calculateTotals();
+</script>
 </body>
 </html>
