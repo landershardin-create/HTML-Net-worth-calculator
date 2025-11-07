@@ -1,27 +1,52 @@
+/* Focus outline for select elements */
 .menu-container select:focus {
   outline: 2px solid #007acc;
 }
 
+/* Role badge styling */
 .company-list span::after {
   content: attr(data-role);
   font-size: 0.8em;
   margin-left: 6px;
   padding: 2px 6px;
-  background: #eee;
+  background: #007acc;
+  color: white;
   border-radius: 4px;
 }
-.menu-container, .filter-export, .carousel-viewer, .company-manager {
+
+/* Shared container margins */
+.menu-container,
+.filter-export,
+.carousel-viewer,
+.company-manager {
   margin: 20px;
 }
+
+/* Responsive margin adjustment */
+@media (max-width: 600px) {
+  .menu-container,
+  .filter-export,
+  .carousel-viewer,
+  .company-manager {
+    margin: 10px;
+  }
+}
+
+/* Carousel card styling */
 .carousel-card {
   border: 1px solid #ccc;
   padding: 10px;
+  transition: box-shadow 0.3s ease;
 }
-.visually-hidden {
-  position: absolute;
-  left: -9999px;
+.carousel-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.carousel-card:focus {
+  outline: 2px dashed #007acc;
+  outline-offset: 4px;
 }
 
+/* Visually hidden (WCAG-compliant) */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -34,6 +59,7 @@
   border: 0;
 }
 
+/* Table row hover effect */
 tr:hover {
   background-color: #f1f1f1;
 }
