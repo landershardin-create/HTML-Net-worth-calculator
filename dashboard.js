@@ -1,0 +1,160 @@
+  <script>
+    const tabs = {
+      companymgr: '<p>Welcome to the Company Manager tab. Use the form below to add and manage companies.</p>',
+      businessmenu: '<p>This is the Business Menu. Customize it with your business tools and dashboards.</p>',
+      personalmenu: '<p>This is the Personal Menu. Add personal finance tools or dashboards here.</p>'
+    };
+
+    let companies = [];
+    let currentIndex = 0;
+
+    function saveCompanies() {
+      localStorage.setItem('companies', JSON.stringify(companies));
+    }
+
+    function loadCompanies() {
+      const stored = localStorage.getItem('companies');
+      if (stored) companies = JSON.parse(stored);
+    }
+
+    function renderCompanySelect() {
+      companySelect.innerHTML = '';
+      companies.forEach(company => {
+        const option = document.createElement('option');
+        option.value = company.name;
+        option.textContent = company.name;
+        companySelect.appendChild(option);
+      });
+    }
+
+    function renderOwnerFilter() {
+      const owners = [...new Set(companies.map(c => c.owner).filter(Boolean))];
+      ownerFilter.innerHTML = '<option value="">All Owners</option>';
+      owners.forEach(owner => {
+        const opt = document.createElement('option');
+        opt.value = owner;
+        opt.textContent = owner;
+        ownerFilter.appendChild(opt);
+      });
+    }
+
+    function renderCompanyList(filterOwner = '') {
+      companyList.innerHTML = '';
+      const filtered = filterOwner ? companies.filter(c => c.owner === filterOwner) : companies;
+      filtered.forEach((company, index) => {
+        const tag = document.createElement('span');
+        const fullAddress = `${company.street || ''}, ${company.city || ''}, ${company.state || ''} ${company.zip || ''}`.trim();
+        tag.textContent = `${company.name} (${company.type || 'Type unknown'}, ${company.owner || 'No owner'})`;
+        tag.title = `Address: ${fullAddress || 'N/A'}\nEIN: ${company.ein || 'N/A'}\nSEIN: ${company.sein || 'N/A'}`;
+        tag.onclick = () => editCompany(index);
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = '×';
+        removeBtn.title = `Remove ${company.name}`;
+        removeBtn.onclick = (e) => {
+          e.stopPropagation();
+          companies.splice(index, 1);
+          saveCompanies();
+          renderCompanySelect();
+          renderOwnerFilter();
+          renderCompanyList(ownerFilter.value);
+          renderCarousel();
+        };
+        tag.appendChild(removeBtn);
+        companyList.appendChild(tag);
+      });
+    }
+
+    function editCompany(index) {
+      const company = companies[index];
+      companyName.value = company.name;
+      streetAddress.value = company.street || '';
+      city.value = company.city || '';
+      state.value = company.state || '';
+      zipCode.value = company.zip || '';
+      companyOwner.value = company.owner || '';
+      companyEIN.value = company.ein || '';
+      companySEIN.value = company.sein || '';
+      companyType.value = company.type || '';
+      companies.splice(index, 1);
+      saveCompanies();
+      renderCompanySelect();
+      renderOwnerFilter();
+      renderCompanyList(ownerFilter.value);
+      renderCarousel();
+    }
+
+    function renderCarousel() {
+      const display = document.getElementById('carouselDisplay');
+      if (companies.length === 0) {
+        display.innerHTML = '<p>No companies to display.</p>';
+        return;
+      }
+      const company = companies[currentIndex];
+      const fullAddress = `${company.street || ''}, ${company.city || ''}, ${company.state || ''} ${company.zip || ''}`.trim();
+      display.innerHTML = `
+        <strong>${company.name}</strong><br/>
+        Type: ${company.type || 'N/A'}<br/>
+        Owner: ${company.owner || 'N/A'}<br/>
+        Address: ${fullAddress || 'N/A'}<br/>
+        EIN: ${company.ein || 'N/A'}<br/>
+        SEIN: ${company.sein || 'N/A'}
+      `;
+    }
+
+    function nextCompany() {
+      if (companies.length === 0) return;
+      currentIndex = (currentIndex + 1) % companies.length;
+      renderCarousel();
+    }
+
+    function prevCompany() {
+      if (companies.length === 0) return;
+      currentIndex = (currentIndex - 1 + companies.length) % companies.length;
+      renderCarousel();
+    }
+
+    function exportCompanies() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(companies, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "companies.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    companyForm.onsubmit = function (e) {
+      e.preventDefault();
+      const newCompany = {
+        name: companyName.value.trim(),
+        street: streetAddress.value.trim(),
+        city: city.value.trim(),
+        state: state.value.trim(),
+        zip: zipCode.value.trim(),
+        owner: companyOwner.value.trim(),
+        ein: companyEIN.value.trim(),
+        sein: companySEIN.value.trim(),
+        type: companyType.value
+      };
+      if (!newCompany.name) return;
+      companies.push(newCompany);
+      saveCompanies();
+      companyForm.reset();
+      renderCompanySelect();
+      renderOwnerFilter();
+      renderCompanyList(ownerFilter.value);
+      renderCarousel();
+    };
+
+    tabMenu.onchange = function () {
+      const selected = tabMenu.value;
+      localStorage.setItem('selectedTab', selected);
+      content.innerHTML = tabs[selected] || '<p>Section not found.</p>';
+    };
+
+    ownerFilter.onchange = () => renderCompanyList(ownerFilter.value);
+
+    // Initialize
+    loadCompanies();
+    renderCompanySelect();
+    renderOwnerFilter
