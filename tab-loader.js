@@ -27,3 +27,10 @@ export function loadTab(tabName, contentEl, baseURL) {
       contentEl.innerHTML = `<p class="error">Error loading "${tabName}" tab.</p>`;
     });
 }
+tabMenu.value = localStorage.getItem('lastTab') || tabMenu.value;
+tabMenu.addEventListener('change', e => {
+  localStorage.setItem('lastTab', e.target.value);
+  loadTab(e.target.value, contentEl, baseURL);
+});
+
+contentEl.innerHTML = `<p class="error">Error loading "${tabName}". <button onclick="loadTab('${tabName}', contentEl, baseURL)">Retry</button></p>`;
