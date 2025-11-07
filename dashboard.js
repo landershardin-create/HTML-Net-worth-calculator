@@ -166,3 +166,19 @@ renderCarousel();
 const savedTab = localStorage.getItem('selectedTab') || 'companymgr';
 tabMenu.value = savedTab;
 content.innerHTML = tabs[savedTab] || '<p>Section not found.</p>';
+
+ownerFilter.onchange = () => {
+  renderCompanyList(ownerFilter.value);
+  renderCompanySelectFiltered(ownerFilter.value);
+};
+
+function renderCompanySelectFiltered(owner) {
+  companySelect.innerHTML = '';
+  const filtered = owner ? companies.filter(c => c.owner === owner) : companies;
+  filtered.forEach(company => {
+    const option = document.createElement('option');
+    option.value = company.name;
+    option.textContent = company.name;
+    companySelect.appendChild(option);
+  });
+}
