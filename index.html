@@ -34,26 +34,66 @@
   </style>
 </head>
 <body>
-<div class="tab-container">
-  <label for="tabSelector">Choose a section:</label>
-  <select id="tabSelector" onchange="loadTab(this.value)">
-    <option value="home">Home</option>
-    <option value="businessmenu">Business Menu</option>
-    <option value="personalmenu">Personal Menu</option>
-    <option value="contributordashboard">Contributor Dashboard</option>
-  </select>
+  <div class="dropdown-container">
+  <details open>
+    <summary>Home</summary>
+    <button onclick="loadTab('home')">Overview</button>
+    <button onclick="loadTab('home-news')">News</button>
+  </details>
+
+  <details>
+    <summary>Business Menu</summary>
+    <button onclick="loadTab('businessmenu')">Dashboard</button>
+    <button onclick="loadTab('business-reports')">Reports</button>
+    <button onclick="loadTab('business-settings')">Settings</button>
+  </details>
+
+  <details>
+    <summary>Personal Menu</summary>
+    <button onclick="loadTab('personalmenu')">Dashboard</button>
+    <button onclick="loadTab('personal-budget')">Budget</button>
+    <button onclick="loadTab('personal-goals')">Goals</button>
+  </details>
+
+  <details>
+    <summary>Contributor Dashboard</summary>
+    <button onclick="loadTab('contributordashboard')">Main</button>
+    <button onclick="loadTab('contributor-tasks')">Tasks</button>
+    <button onclick="loadTab('contributor-feedback')">Feedback</button>
+  </details>
 </div>
 
-  <div id="content">Loading...</div>
+<div id="content">Loading...</div>
 
-  <script>
-    const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/';
-    const tabs = {
-      home: 'home.html',
-      businessmenu: 'business menu.html',
-      personalmenu: 'personal menu.html',
-      contributordashboard: 'contributor-dashboard.html',
-    };
+<script>
+  const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/';
+  const tabs = {
+    home: 'home.html',
+    'home-news': 'home-news.html',
+    businessmenu: 'business menu.html',
+    'business-reports': 'business-reports.html',
+    'business-settings': 'business-settings.html',
+    personalmenu: 'personal menu.html',
+    'personal-budget': 'personal-budget.html',
+    'personal-goals': 'personal-goals.html',
+    contributordashboard: 'contributor-dashboard.html',
+    'contributor-tasks': 'contributor-tasks.html',
+    'contributor-feedback': 'contributor-feedback.html',
+  };
+
+  function loadTab(tabName) {
+    const url = baseURL + tabs[tabName];
+    fetch(url)
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('content').innerHTML = html;
+      })
+      .catch(err => {
+        document.getElementById('content').innerHTML = 'Error loading content.';
+        console.error(err);
+      });
+  }
+</script>
 
     function loadTab(tabName) {
       document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
