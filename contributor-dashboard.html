@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contributor Dashboard</title>
+  <link rel="stylesheet" href="styles/contributor.css" />
+</head>
+<body>
+  <header>
+    <h1>🧑‍💼 Contributor Dashboard</h1>
+    <p>Empowering collaborators with clarity, role-based access, and branded onboarding.</p>
+  </header>
+
+  <main>
+    <!-- Contributor List -->
+    <section id="contributor-list">
+      <h2>👥 Contributor List</h2>
+      <div id="contributors"></div>
+    </section>
+
+    <!-- Role Manager -->
+    <section id="role-manager">
+      <h2>🔐 Role Manager</h2>
+      <div id="role-controls"></div>
+    </section>
+
+    <!-- Onboarding Tracker -->
+    <section id="onboarding-tracker">
+      <h2>🚀 Onboarding Tracker</h2>
+      <ul id="onboarding-checklist"></ul>
+    </section>
+
+    <!-- Permissions Matrix -->
+    <section id="permissions-matrix">
+      <h2>📊 Permissions Matrix</h2>
+      <table id="matrix-table"></table>
+    </section>
+
+    <!-- Profile Editor -->
+    <section id="profile-editor">
+      <h2>📝 Profile Editor</h2>
+      <form id="profile-form">
+        <input type="text" placeholder="Name" />
+        <input type="text" placeholder="Role" />
+        <textarea placeholder="Bio"></textarea>
+        <button type="submit">Save Profile</button>
+      </form>
+    </section>
+
+    <!-- Activity Log -->
+    <section id="activity-log">
+      <h2>📜 Activity Log</h2>
+      <div id="log-entries"></div>
+    </section>
+  </main>
+
+  <script>
+// Sample contributor data
+const contributors = [
+  { name: "Landers", role: "Admin", joined: "2025-10-01", status: "Active" },
+  { name: "Avery", role: "Editor", joined: "2025-10-15", status: "Onboarding" },
+];
+
+// Render contributor list
+function renderContributors() {
+  const container = document.getElementById("contributors");
+  container.innerHTML = contributors.map(c =>
+    `<div class="contributor-card">
+      <strong>${c.name}</strong> (${c.role}) — ${c.status}
+    </div>`
+  ).join("");
+}
+
+// Role manager logic (placeholder)
+function setupRoleManager() {
+  const container = document.getElementById("role-controls");
+  container.innerHTML = `<p>Role assignment tools coming soon.</p>`;
+}
+
+// Onboarding checklist
+function renderOnboardingChecklist() {
+  const checklist = [
+    "✅ Review Cash Flow Tracker",
+    "✅ Set Profile",
+    "🔲 Read Branding Guide"
+  ];
+  document.getElementById("onboarding-checklist").innerHTML = checklist.map(item =>
+    `<li>${item}</li>`
+  ).join("");
+}
+
+// Initialize dashboard
+renderContributors();
+setupRoleManager();
+renderOnboardingChecklist();
+</script>
+</body>
+</html>
