@@ -118,10 +118,6 @@
         });
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      loadTab(tabMenu.value);
-    });
-
     tabMenu.addEventListener('change', (event) => {
       loadTab(event.target.value);
     });
