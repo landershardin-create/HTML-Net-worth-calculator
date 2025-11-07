@@ -118,10 +118,6 @@
 
   window.onload = calculateTotals;
   
-  const isContributor = true; // Replace with session logic
-document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
-  cell.contentEditable = isContributor;
-});
 function applyRolePermissions(role) {
   const editable = role === "Contributor";
   document.querySelectorAll("td[contenteditable=true]").forEach(cell => {
