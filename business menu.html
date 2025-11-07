@@ -128,6 +128,21 @@
     tabMenu.addEventListener('change', (event) => {
       loadTab(event.target.value);
     });
-  </script>
+<script type="module">
+  import { loadTab, tabs } from './tab-loader.js';
+
+  const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/';
+  const contentEl = document.getElementById('content');
+  const tabMenu = document.getElementById('tabMenu');
+
+  window.addEventListener('DOMContentLoaded', () => {
+    loadTab(tabMenu.value, contentEl, baseURL);
+  });
+
+  tabMenu.addEventListener('change', e => {
+    loadTab(e.target.value, contentEl, baseURL);
+  });
+</script>
+</script>
 </body>
 </html>
