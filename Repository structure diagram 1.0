@@ -44,4 +44,5 @@
     ├── access-control.md     # Role and permission setup
     ├── onboarding.md         # Contributor onboarding guide
     ├── extensibility.md      # How to add new modules
+    ├── Repository diagram    # Repository stucture diagram 1.0
     └── testing.md            # QA and validation procedures
