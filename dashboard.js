@@ -131,11 +131,12 @@
         city: city.value.trim(),
         state: state.value.trim(),
         zip: zipCode.value.trim(),
-        owner: companyOwner.value.trim(),
+        owner: session.username,
         ein: companyEIN.value.trim(),
         sein: companySEIN.value.trim(),
-        type: companyType.value
-      };
+        type: companyType.value,
+        role: session.role
+    };
       if (!newCompany.name) return;
       companies.push(newCompany);
       saveCompanies();
