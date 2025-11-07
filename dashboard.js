@@ -300,8 +300,6 @@ tabMenu.onchange = function () {
   if (selected === 'contributormenu') renderContributorDashboard();
 };
 
-role: companyRole.value.trim() || 'Viewer'
-
 if (userRole === 'Viewer') {
   document.querySelector('#companyForm button').disabled = true;
 }
