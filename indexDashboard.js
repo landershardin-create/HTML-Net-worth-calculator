@@ -30,3 +30,15 @@ export function renderIndexDashboard(data) {
 
   return html;
 }
+
+export function renderContributorWidgets(userRole) {
+  if (userRole !== 'owner') return '';
+
+  return `
+    <div class="widget-row">
+      <div class="widget">Top Contributors</div>
+      <div class="widget">Recent Activity</div>
+      <div class="widget">Budget Alerts</div>
+    </div>
+  `;
+}
