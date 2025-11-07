@@ -66,7 +66,14 @@
 
     <!-- Balance Check -->
     <tr class="total-row"><td colspan="2">Assets = Liabilities + Equity</td><td contenteditable="true">20000</td></tr>
+    
+    <!-- Update these cells in your table -->
+    <tr class="total-row"><td colspan="2">Total Assets</td><td id="total-assets"></td></tr>
+    <tr class="total-row"><td colspan="2">Total Liabilities</td><td id="total-liabilities"></td></tr>
+    <tr class="total-row"><td colspan="2">Total Equity</td><td id="total-equity"></td></tr>
+    <tr class="total-row"><td colspan="2">Assets = Liabilities + Equity</td><td id="balance-check"></td></tr>
   </table>
+  
 <script>
   function updateCell(selector, value) {
     const cell = document.querySelector(selector);
@@ -118,10 +125,5 @@
   window.onload = calculateTotals;
 </script>
 
-<!-- Update these cells in your table -->
-<tr class="total-row"><td colspan="2">Total Assets</td><td id="total-assets"></td></tr>
-<tr class="total-row"><td colspan="2">Total Liabilities</td><td id="total-liabilities"></td></tr>
-<tr class="total-row"><td colspan="2">Total Equity</td><td id="total-equity"></td></tr>
-<tr class="total-row"><td colspan="2">Assets = Liabilities + Equity</td><td id="balance-check"></td></tr>
 </body>
 </html>
