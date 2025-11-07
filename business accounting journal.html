@@ -112,20 +112,21 @@
     }
 
     function addEntry() {
-      const account = accountSelect.value;
-      const description = document.getElementById('entry-description').value.trim();
-      const amount = parseFloat(document.getElementById('entry-amount').value);
-      if (account && description && !isNaN(amount)) {
-        accounts[account].push({ description, amount });
-        const row = journalTable.insertRow();
-        row.insertCell(0).textContent = account;
-        row.insertCell(1).textContent = description;
-        row.insertCell(2).textContent = amount.toFixed(2);
-        updateBalances();
-        document.getElementById('entry-description').value = '';
-        document.getElementById('entry-amount').value = '';
-      }
-    }
+  const account = accountSelect.value;
+  const description = document.getElementById('entry-description').value.trim();
+  const amount = parseFloat(document.getElementById('entry-amount').value);
+  if (account && description && !isNaN(amount)) {
+    accounts[account].push({ description, amount });
+    const row = journalTable.insertRow();
+    row.insertCell(0).textContent = account;
+    row.insertCell(1).textContent = description;
+    row.insertCell(2).textContent = amount.toFixed(2);
+    updateBalances();
+    localStorage.setItem('accounts', JSON.stringify(accounts));
+    document.getElementById('entry-description').value = '';
+    document.getElementById('entry-amount').value = '';
+  }
+}
 
     function updateBalances() {
       balanceTable.innerHTML = '';
@@ -161,7 +162,7 @@ function exportCSV() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'journal.csv';
+  a.download = `journal_${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
 }
 if (saved) {
@@ -180,10 +181,7 @@ if (saved) {
   }
   updateBalances();
 }
-function addEntry() {
-  // existing logic...
-  localStorage.setItem('accounts', JSON.stringify(accounts));
-}
+
 function applyRolePermissions(role) {
   const entrySection = document.querySelector('.section:nth-child(2)');
   entrySection.style.display = role === 'admin' ? 'block' : 'none';
