@@ -336,4 +336,9 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+function updateUIByRole(role) {
+  const contributorSection = document.querySelector('.company-manager');
+  contributorSection.style.display = role === 'Owner' || role === 'Editor' ? 'block' : 'none';
+}
+
 </script>
