@@ -53,6 +53,11 @@
         <input type="text" id="companyOwner" placeholder="Owner" />
         <input type="text" id="companyEIN" placeholder="SSN (XXX-XX-XXXX) or EIN (XX-XXXXXXX)" pattern="\d{3}-\d{2}-\d{4}|\d{2}-\d{7}" title="Format: SSN XXX-XX-XXXX or EIN XX-XXXXXXX" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
+       <select id="companyRole">
+          <option value="Viewer">Viewer</option>
+          <option value="Editor">Editor</option>
+          <option value="Owner">Owner</option>
+       </select>
         <select id="companyType">
           <option value="">Select type</option>
           <option value="Sole Proprietor">Sole Proprietor</option>
@@ -60,11 +65,6 @@
           <option value="LLC">LLC</option>
           <option value="Corporation">Corporation</option>
           <option value="Nonprofit">Nonprofit</option>
-          <select id="companyRole">
-          <option value="Viewer">Viewer</option>
-          <option value="Editor">Editor</option>
-          <option value="Owner">Owner</option>
-       </select>
         </select>
         <button type="submit">Add</button>
       </div>
