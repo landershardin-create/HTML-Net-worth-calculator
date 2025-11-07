@@ -110,9 +110,7 @@
     document.getElementById('total-expenses').textContent = `
 
 {expenseTotal.toLocaleString()}`;
-    document.getElementById('net-cash').textContent = `
-
-{netCash.toLocaleString()}`;
+    document.getElementById('net-cash').textContent = `$${netCash.toLocaleString()}`;
 
     const netCashCell = document.getElementById('net-cash');
     netCashCell.style.backgroundColor = netCash >= 0 ? '#d9edf7' : '#f8d7da';
