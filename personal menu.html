@@ -63,7 +63,7 @@
   <header>
     <div class="menu-container">
       <label for="tabMenu">Choose a section:</label>
-      <select id="tabMenu" aria-label="Dashboard section selector">
+      <select id="tabMenu" aria-label="Dashboard section selector"></select>
         <option value="" disabled selected>Select a section</option>
         <option value="personaljournal"> Personal Journal</option>
         <option value="personalbalancesheet">Personal Balance Sheet</option>
@@ -133,16 +133,6 @@ const roleTabs = {
   editor: ['personaljournal', 'personalbalancesheet', 'personalcashflow'],
   admin: Object.keys(tabs),
 };
-
-function populateMenu() {
-  tabMenu.innerHTML = '<option value="" disabled selected>Select a section</option>';
-  roleTabs[userRole].forEach(key => {
-    const option = document.createElement('option');
-    option.value = key;
-    option.textContent = key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/personal/, 'Personal ');
-    tabMenu.appendChild(option);
-  });
-}
   </script>
 </body>
 </html>
