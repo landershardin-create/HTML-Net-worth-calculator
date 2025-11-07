@@ -10,3 +10,10 @@
   background: #eee;
   border-radius: 4px;
 }
+.menu-container, .filter-export, .carousel-viewer, .company-manager {
+  margin: 20px;
+}
+.carousel-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
