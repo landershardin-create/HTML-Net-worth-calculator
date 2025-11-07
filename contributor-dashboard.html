@@ -13,42 +13,36 @@
   </header>
 
   <main>
-    <!-- Contributor List -->
     <section id="contributor-list">
       <h2>👥 Contributor List</h2>
       <div id="contributors"></div>
     </section>
 
-    <!-- Role Manager -->
-    <section id="role-manager">
+    <section id="role-manager" style="display:none;">
       <h2>🔐 Role Manager</h2>
       <div id="role-controls"></div>
     </section>
 
-    <!-- Onboarding Tracker -->
     <section id="onboarding-tracker">
       <h2>🚀 Onboarding Tracker</h2>
       <ul id="onboarding-checklist"></ul>
     </section>
 
-    <!-- Permissions Matrix -->
     <section id="permissions-matrix">
       <h2>📊 Permissions Matrix</h2>
       <table id="matrix-table"></table>
     </section>
 
-    <!-- Profile Editor -->
     <section id="profile-editor">
       <h2>📝 Profile Editor</h2>
       <form id="profile-form">
-        <input type="text" placeholder="Name" />
-        <input type="text" placeholder="Role" />
-        <textarea placeholder="Bio"></textarea>
+        <input type="text" id="name" placeholder="Name" />
+        <input type="text" id="role" placeholder="Role" />
+        <textarea id="bio" placeholder="Bio"></textarea>
         <button type="submit">Save Profile</button>
       </form>
     </section>
 
-    <!-- Activity Log -->
     <section id="activity-log">
       <h2>📜 Activity Log</h2>
       <div id="log-entries"></div>
@@ -56,13 +50,21 @@
   </main>
 
   <script>
-// Sample contributor data
 const contributors = [
   { name: "Landers", role: "Admin", joined: "2025-10-01", status: "Active" },
   { name: "Avery", role: "Editor", joined: "2025-10-15", status: "Onboarding" },
 ];
 
-// Render contributor list
+const permissions = {
+  Admin: ["Edit", "Delete", "Assign Roles"],
+  Editor: ["Edit", "Comment"],
+  Viewer: ["View"]
+};
+
+function getCurrentUserRole() {
+  return "Admin"; // Replace with session logic
+}
+
 function renderContributors() {
   const container = document.getElementById("contributors");
   container.innerHTML = contributors.map(c =>
@@ -72,13 +74,11 @@ function renderContributors() {
   ).join("");
 }
 
-// Role manager logic (placeholder)
 function setupRoleManager() {
   const container = document.getElementById("role-controls");
   container.innerHTML = `<p>Role assignment tools coming soon.</p>`;
 }
 
-// Onboarding checklist
 function renderOnboardingChecklist() {
   const checklist = [
     "✅ Review Cash Flow Tracker",
@@ -90,10 +90,46 @@ function renderOnboardingChecklist() {
   ).join("");
 }
 
+function renderPermissionsMatrix() {
+  const table = document.getElementById("matrix-table");
+  const roles = Object.keys(permissions);
+  const actions = [...new Set(roles.flatMap(role => permissions[role]))];
+
+  let html = `<tr><th>Role</th>${actions.map(a => `<th>${a}</th>`).join("")}</tr>`;
+  roles.forEach(role => {
+    html += `<tr><td>${role}</td>${actions.map(a =>
+      `<td>${permissions[role].includes(a) ? "✅" : "❌"}</td>`).join("")}</tr>`;
+  });
+  table.innerHTML = html;
+}
+
+function logActivity(message) {
+  const log = document.getElementById("log-entries");
+  const entry = document.createElement("div");
+  entry.textContent = `${new Date().toLocaleString()}: ${message}`;
+  log.appendChild(entry);
+}
+
+document.getElementById("profile-form").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const name = document.getElementById("name").value;
+  const role = document.getElementById("role").value;
+  const bio = document.getElementById("bio").value;
+  logActivity(`Profile updated for ${name} (${role})`);
+});
+
+function showAdminTools() {
+  if (getCurrentUserRole() === "Admin") {
+    document.getElementById("role-manager").style.display = "block";
+  }
+}
+
 // Initialize dashboard
 renderContributors();
 setupRoleManager();
 renderOnboardingChecklist();
+renderPermissionsMatrix();
+showAdminTools();
 </script>
 </body>
 </html>
