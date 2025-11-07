@@ -74,7 +74,9 @@
     </div>
   </header>
 
-  <main id="content" aria-live="polite"></main>
+  <main id="content" aria-live="polite">
+  <h1 class="visually-hidden">Dashboard Content</h1>
+</main>
 
   <script>
     const baseURL = 'https://raw.githubusercontent.com/landershardin-create/HTML-Business-and-Personal-Finance/modules/';
@@ -123,6 +125,10 @@
     tabMenu.addEventListener('change', (event) => {
       loadTab(event.target.value);
     });
+    window.addEventListener('DOMContentLoaded', () => {
+  tabMenu.selectedIndex = 0;
+  loadTab(tabMenu.value);
+});
   </script>
 </body>
 </html>
