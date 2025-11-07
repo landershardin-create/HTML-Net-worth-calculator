@@ -224,3 +224,16 @@ function renderCompanyList(filterOwner = '') {
     companyList.appendChild(tag);
   });
 }
+
+const session = {
+  username: 'landers',
+  role: 'Owner' // Can be 'Owner', 'Editor', or 'Viewer'
+};
+
+function canEdit(company) {
+  return session.role === 'Owner' || (session.role === 'Editor' && company.owner === session.username);
+}
+
+function canRemove(company) {
+  return session.role === 'Owner' && company.owner === session.username;
+}
