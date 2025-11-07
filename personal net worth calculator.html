@@ -105,3 +105,54 @@
 </div>
 
 <div id="editor" class="tab">
+  <section>
+    <h2>Edit Labels</h2>
+    <label>Cash & Bank Label: <input type="text" oninput="updateLabel('labelCash', this.value)" /></label>
+    <label>Investments Label: <input type="text" oninput="updateLabel('labelInvestments', this.value)" /></label>
+    <label>Real Estate Label: <input type="text" oninput="updateLabel('labelRealEstate', this.value)" /></label>
+    <label>Business Equity Label: <input type="text" oninput="updateLabel('labelBusinessEquity', this.value)" /></label>
+    <label>Branding Assets Label: <input type="text" oninput="updateLabel('labelBrandingAssets', this.value)" /></label>
+    <label>Mortgage Label: <input type="text" oninput="updateLabel('labelMortgage', this.value)" /></label>
+    <label>Credit Card Debt Label: <input type="text" oninput="updateLabel('labelCreditCard', this.value)" /></label>
+    <label>Business Debt Label: <input type="text" oninput="updateLabel('labelBusinessDebt', this.value)" /></label>
+    <label>Custom Tab Label: <input type="text" oninput="updateLabel('customTabLabel', this.value)" /></label>
+  </section>
+</div>
+
+<div id="customTab" class="tab">
+  <section>
+    <h2>Custom Tab</h2>
+    <p>This space is ready for your next module or contributor-specific tools.</p>
+  </section>
+</div>
+
+<script>
+function switchTab(tabId) {
+  document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+}
+
+function calculateNetWorth() {
+  const assets = [
+    parseFloat(document.getElementById('cash').value) || 0,
+    parseFloat(document.getElementById('investments').value) || 0,
+    parseFloat(document.getElementById('realEstate').value) || 0,
+    parseFloat(document.getElementById('businessEquity').value) || 0,
+    parseFloat(document.getElementById('brandingAssets').value) || 0
+  ];
+  const liabilities = [
+    parseFloat(document.getElementById('mortgage').value) || 0,
+    parseFloat(document.getElementById('creditCard').value) || 0,
+    parseFloat(document.getElementById('businessDebt').value) || 0
+  ];
+  const netWorth = assets.reduce((a, b) => a + b, 0) - liabilities.reduce((a, b) => a + b, 0);
+  document.getElementById('result').textContent = `Net Worth: $${netWorth.toFixed(2)}`;
+}
+
+function updateLabel(labelId, newText) {
+  document.getElementById(labelId).textContent = newText;
+}
+</script>
+
+</body>
+</html>
