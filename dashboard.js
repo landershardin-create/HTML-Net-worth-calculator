@@ -372,4 +372,60 @@ function exportCompanies() {
   link.download = 'companies.txt';
   link.click();
 }
+const userRole = sessionStorage.getItem('userRole'); // e.g., 'Viewer', 'Editor', 'Owner'
+document.querySelectorAll('.company-manager, .filter-export').forEach(el => {
+  el.style.display = (userRole === 'Owner' || userRole === 'Editor') ? 'block' : 'none';
+});
+function populateDropdowns(companies) {
+  const companySelect = document.getElementById('companySelect');
+  const ownerFilter = document.getElementById('ownerFilter');
+  const owners = new Set();
+
+  companies.forEach(company => {
+    const option = new Option(company.name, company.id);
+    companySelect.add(option);
+    owners.add(company.owner);
+  });
+
+  owners.forEach(owner => {
+    const option = new Option(owner, owner);
+    ownerFilter.add(option);
+  });
+}
+document.getElementById('tabMenu').addEventListener('change', e => {
+  const section = e.target.value;
+  document.getElementById('content').innerHTML = `<p>Loading ${section}...</p>`;
+  // Load relevant content dynamically here
+});
+let currentIndex = 0;
+let companyData = [];
+
+function updateCarousel() {
+  const display = document.getElementById('carouselDisplay');
+  const company = companyData[currentIndex];
+  display.innerHTML = company ? `<strong>${company.name}</strong><br>${company.city}, ${company.state}` : 'No company selected';
+}
+
+function prevCompany() {
+  if (companyData.length) {
+    currentIndex = (currentIndex - 1 + companyData.length) % companyData.length;
+    updateCarousel();
+  }
+}
+
+function nextCompany() {
+  if (companyData.length) {
+    currentIndex = (currentIndex + 1) % companyData.length;
+    updateCarousel();
+  }
+}
+function exportCompanies() {
+  const rows = companyData.map(c => [c.name, c.owner, c.city, c.state].join(','));
+  const csv = ['Name,Owner,City,State', ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'companies.csv';
+  link.click();
+}
 </script>
