@@ -125,6 +125,11 @@
   tabMenu.selectedIndex = 0;
   loadTab(tabMenu.value);
 });
+if (!tabName || !tabs[tabName]) {
+  showMessage('Please select a valid section.', 'error');
+  return;
+}
   </script>
+  <option value="" disabled selected>Select a section</option>
 </body>
 </html>
