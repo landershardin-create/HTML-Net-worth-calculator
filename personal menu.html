@@ -122,7 +122,8 @@
     tabMenu.addEventListener('change', (event) => {
       loadTab(event.target.value);
     });
-    window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => {
+  populateMenu();
   tabMenu.selectedIndex = 0;
   loadTab(tabMenu.value);
 });
@@ -133,6 +134,22 @@ const roleTabs = {
   editor: ['personaljournal', 'personalbalancesheet', 'personalcashflow'],
   admin: Object.keys(tabs),
 };
+const roleSelect = document.getElementById('roleSelect');
+let userRole = roleSelect.value;
+
+roleSelect.addEventListener('change', () => {
+  userRole = roleSelect.value;
+  populateMenu();
+  tabMenu.selectedIndex = 0;
+  loadTab(tabMenu.value);
+});
+}
   </script>
 </body>
+<label for="roleSelect">Role:</label>
+<select id="roleSelect">
+  <option value="viewer">Viewer</option>
+  <option value="editor">Editor</option>
+  <option value="admin">Admin</option>
+</select>
 </html>
