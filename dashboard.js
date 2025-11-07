@@ -436,3 +436,7 @@ document.getElementById('companyRole').addEventListener('change', function() {
 
 sessionStorage.setItem('selectedCompany', companyId);
 sessionStorage.setItem('userRole', role);
+
+if (role !== 'Owner') {
+  document.getElementById('companyEIN').disabled = true;
+}
