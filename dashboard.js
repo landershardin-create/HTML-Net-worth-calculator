@@ -619,3 +619,5 @@ document.addEventListener("DOMContentLoaded", () => {
   // Optionally trigger default load
   tabMenu.dispatchEvent(new Event("change"));
 });
+
+content.innerHTML = "<p>Loading...</p>";
