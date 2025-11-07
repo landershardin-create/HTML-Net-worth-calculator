@@ -127,6 +127,17 @@ function applyRolePermissions(role) {
 }
 const isContributor = true;
 applyRolePermissions(isContributor ? "Contributor" : "Viewer");
+
+cell.addEventListener("blur", calculateTotals);
+
+if (isNaN(amount)) {
+  cells[2].style.border = "2px solid red";
+} else {
+  cells[2].style.border = "1px solid #ccc";
+}
+
+const statusText = totalAssets === totalLiabilities + totalEquity ? "Balanced" : "Unbalanced";
+balanceCell.setAttribute("title", statusText);
 </script>
 <div style="text-align:right; font-size:0.9em; color:#555;">
   Role: <strong>Contributor</strong>
