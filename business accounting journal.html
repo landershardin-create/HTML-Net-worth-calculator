@@ -140,12 +140,6 @@
     // Save accounts to localStorage
 localStorage.setItem('accounts', JSON.stringify(accounts));
 
-// Load on page load
-const saved = localStorage.getItem('accounts');
-if (saved) {
-  Object.assign(accounts, JSON.parse(saved));
-  // Rebuild dropdown and tables...
-}
 const userRole = 'admin'; // Example role
 
 if (userRole !== 'admin') {
@@ -165,6 +159,169 @@ function exportCSV() {
   a.download = `journal_${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Business Journal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+    }
+    .section {
+      margin-bottom: 2rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select, button {
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      width: 100%;
+      max-width: 400px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Business Journal</h1>
+
+  <div class="section">
+    <h2>Add New Account</h2>
+    <label for="new-account-name">Account Name:</label>
+    <input type="text" id="new-account-name" placeholder="e.g. Sales Revenue" />
+    <button onclick="addNewAccount()">Add Account</button>
+  </div>
+
+  <div class="section">
+    <h2>Add Entry to Account</h2>
+    <label for="entry-account">Select Account:</label>
+    <select id="entry-account"></select>
+
+    <label for="entry-description">Description:</label>
+    <input type="text" id="entry-description" placeholder="e.g. Invoice #123" />
+
+    <label for="entry-amount">Amount ($):</label>
+    <input type="number" id="entry-amount" />
+
+    <button onclick="addEntry()">Add Entry</button>
+  </div>
+
+  <div class="section">
+    <h2>Journal Entries</h2>
+    <table id="journal-table">
+      <thead>
+        <tr>
+          <th>Account</th>
+          <th>Description</th>
+          <th>Amount ($)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Account Balances</h2>
+    <table id="balance-table">
+      <thead>
+        <tr>
+          <th>Account</th>
+          <th>Total ($)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const accounts = {};
+    const journalTable = document.querySelector('#journal-table tbody');
+    const balanceTable = document.querySelector('#balance-table tbody');
+    const accountSelect = document.getElementById('entry-account');
+
+    function addNewAccount() {
+      const name = document.getElementById('new-account-name').value.trim();
+      if (name && !accounts[name]) {
+        accounts[name] = [];
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        accountSelect.appendChild(option);
+        updateBalances();
+        document.getElementById('new-account-name').value = '';
+      }
+    }
+
+    function addEntry() {
+  const account = accountSelect.value;
+  const description = document.getElementById('entry-description').value.trim();
+  const amount = parseFloat(document.getElementById('entry-amount').value);
+  if (account && description && !isNaN(amount)) {
+    accounts[account].push({ description, amount });
+    const row = journalTable.insertRow();
+    row.insertCell(0).textContent = account;
+    row.insertCell(1).textContent = description;
+    row.insertCell(2).textContent = amount.toFixed(2);
+    updateBalances();
+    localStorage.setItem('accounts', JSON.stringify(accounts));
+    document.getElementById('entry-description').value = '';
+    document.getElementById('entry-amount').value = '';
+  }
+}
+
+    function updateBalances() {
+      balanceTable.innerHTML = '';
+      for (const account in accounts) {
+        const total = accounts[account].reduce((sum, entry) => sum + entry.amount, 0);
+        const row = balanceTable.insertRow();
+        row.insertCell(0).textContent = account;
+        row.insertCell(1).textContent = `$${total.toFixed(2)}`;
+      }
+    }
+    // Save accounts to localStorage
+localStorage.setItem('accounts', JSON.stringify(accounts));
+
+
+const userRole = 'admin'; // Example role
+
+if (userRole !== 'admin') {
+  document.querySelector('.section:nth-child(2)').style.display = 'none'; // Hide entry form
+}
+function exportCSV() {
+  let csv = 'Account,Description,Amount\n';
+  for (const account in accounts) {
+    accounts[account].forEach(entry => {
+      csv += `${account},${entry.description},${entry.amount}\n`;
+    });
+  }
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `journal_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+const saved = localStorage.getItem('accounts');
 if (saved) {
   Object.assign(accounts, JSON.parse(saved));
   for (const account in accounts) {
@@ -182,6 +339,16 @@ if (saved) {
   updateBalances();
 }
 
+function applyRolePermissions(role) {
+  const entrySection = document.querySelector('.section:nth-child(2)');
+  entrySection.style.display = role === 'admin' ? 'block' : 'none';
+}
+applyRolePermissions(userRole);
+a.download = `journal_${new Date().toISOString().split('T')[0]}.csv`;
+  </script>
+  <button onclick="exportCSV()">Export Journal as CSV</button>
+</body>
+</html>
 function applyRolePermissions(role) {
   const entrySection = document.querySelector('.section:nth-child(2)');
   entrySection.style.display = role === 'admin' ? 'block' : 'none';
