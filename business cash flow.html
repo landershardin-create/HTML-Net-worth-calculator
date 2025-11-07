@@ -104,10 +104,10 @@
 
       document.getElementById('total-income').textContent = `
 
-{incomeTotal}`;
-      document.getElementById('total-expenses').textContent = `
+{incomeTotal.toLocaleString()}`;
+document.getElementById('total-expenses').textContent = `
 
-{expenseTotal}`;
+{expenseTotal.toLocaleString()}`;
       document.getElementById('net-cash').textContent = `$${incomeTotal - expenseTotal}`;
     }
 
