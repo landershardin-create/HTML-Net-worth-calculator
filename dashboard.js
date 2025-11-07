@@ -364,4 +364,12 @@ function updateUIByRole(role) {
   const managerSection = document.querySelector('.company-manager');
   managerSection.style.display = ['Owner', 'Editor'].includes(role) ? 'block' : 'none';
 }
+function exportCompanies() {
+  const companies = [...document.querySelectorAll('#companyList div')].map(div => div.textContent);
+  const blob = new Blob([companies.join('\n')], { type: 'text/plain' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'companies.txt';
+  link.click();
+}
 </script>
