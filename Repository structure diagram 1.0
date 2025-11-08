@@ -38,17 +38,17 @@
 │   └── onboarding.js                       # Contributor onboarding flows (not available)
 │
 ├── /modules/                               # Dashboard feature modules
-│   ├── business-selector.html
-│   ├── contributor-manager.html
-│   ├── cash-flow-tracker.html
-│   ├── journal-entries.html
-│   ├── balance-sheet.html
-│   ├── personnel-records.html
-│   ├── balance-sheet.html
-│   ├── business-selector.html
-│   ├── contributor-manager.html
-│   ├── cash-flow-tracker.html
-│   ├── journal-entries.html
+│   ├── business accounting journal.html
+│   ├── business balance sheet.html
+│   ├── business cash flow.html
+│   ├── business income and expense.html
+│   ├── business menu.html
+│   ├── business net worth.html
+│   ├── business payroll registy.html
+│   ├── business personnel registry.html
+│   ├── business timesheet.html
+│   ├── company dashboard.html
+│   ├── contributor dashboard.html
 │   ├── balance-sheet.html
 │   ├── personnel-records.html
 │   ├── business-selector.html
