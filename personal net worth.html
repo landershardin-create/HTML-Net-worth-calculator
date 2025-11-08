@@ -1,83 +1,122 @@
-<!-- net-worth.html -->
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Personal Net Worth Report</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Net Worth Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2em; }
-    table { border-collapse: collapse; width: 60%; margin-bottom: 2em; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f0f0f0; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f4f4f4;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    select {
+      padding: 5px;
+      font-size: 1em;
+    }
+
+    nav {
+      margin: 20px 0;
+    }
+
+    button {
+      margin-right: 10px;
+      padding: 10px 15px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    #profileHeader, #financialSummary {
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
-  <h1>Personal Net Worth Report
-    <header class="profile-header">
-    <h1>Landers Orenthal Hardin</h1>
-    <p><strong>Role:</strong> Business Owner & Technical Architect</p>
-    <p><strong>Location:</strong> Harvest, Alabama</p>
-    <p><em>Empowering financial clarity through modular, accessible dashboards.</em></p>
+  <header>
+    <h1>Personal Net Worth Report</h1>
+    <select id="profileSelector" onchange="loadProfile()">
+      <option value="profile1">Alex Morgan</option>
+      <option value="profile2">Jordan Lee</option>
+      <option value="profile3">Taylor Kim</option>
+    </select>
   </header>
-  </h1>
-  <div id="report"></div>
+
+  <section id="profileHeader">
+    <!-- Populated dynamically -->
+  </section>
+
+  <nav>
+    <button onclick="showSummary('monthly')">Monthly</button>
+    <button onclick="showSummary('quarterly')">Quarterly</button>
+    <button onclick="showSummary('annual')">Annual</button>
+  </nav>
+
+  <section id="financialSummary">
+    <!-- Summary content injected here -->
+  </section>
 
   <script>
-    async function generateNetWorthReport() {
-      const response = await fetch('journal.html');
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const rows = doc.querySelectorAll('#journal tbody tr');
-
-      let totalAssets = 0;
-      let totalLiabilities = 0;
-      const assets = [];
-      const liabilities = [];
-
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const date = cells[0].textContent.trim();
-        const account = cells[1].textContent.trim();
-        const type = cells[2].textContent.trim();
-        const amount = parseFloat(cells[3].textContent.trim());
-
-        if (type === 'Asset') {
-          totalAssets += amount;
-          assets.push({ account, amount });
-        } else if (type === 'Liability') {
-          totalLiabilities += amount;
-          liabilities.push({ account, amount });
+    const profiles = {
+      profile1: {
+        name: "Alex Morgan",
+        role: "Investor",
+        netWorth: "$2.5M",
+        summaries: {
+          monthly: "Monthly summary: +$15K net gain.",
+          quarterly: "Quarterly summary: +$45K net gain.",
+          annual: "Annual summary: +$180K net gain."
         }
-      });
+      },
+      profile2: {
+        name: "Jordan Lee",
+        role: "Entrepreneur",
+        netWorth: "$1.2M",
+        summaries: {
+          monthly: "Monthly summary: +$8K net gain.",
+          quarterly: "Quarterly summary: +$24K net gain.",
+          annual: "Annual summary: +$96K net gain."
+        }
+      },
+      profile3: {
+        name: "Taylor Kim",
+        role: "Freelancer",
+        netWorth: "$350K",
+        summaries: {
+          monthly: "Monthly summary: +$3K net gain.",
+          quarterly: "Quarterly summary: +$9K net gain.",
+          annual: "Annual summary: +$36K net gain."
+        }
+      }
+    };
 
-      const netWorth = totalAssets - totalLiabilities;
-
-      document.getElementById('report').innerHTML = `
-        <table>
-          <tr><th>Category</th><th>Amount</th></tr>
-          <tr><td>Total Assets</td><td>
-
-{totalAssets.toFixed(2)}</td></tr>
-          <tr><td>Total Liabilities</td><td>
-
-{totalLiabilities.toFixed(2)}</td></tr>
-          <tr><td><strong>Net Worth</strong></td><td><strong>$${netWorth.toFixed(2)}</strong></td></tr>
-        </table>
-
-        <h2>Asset Breakdown</h2>
-        <table>
-          <tr><th>Account</th><th>Amount</th></tr>
-          ${assets.map(a => `<tr><td>${a.account}</td><td>$${a.amount.toFixed(2)}</td></tr>`).join('')}
-        </table>
-
-        <h2>Liability Breakdown</h2>
-        <table>
-          <tr><th>Account</th><th>Amount</th></tr>
-          ${liabilities.map(l => `<tr><td>${l.account}</td><td>$${l.amount.toFixed(2)}</td></tr>`).join('')}
-        </table>
+    function loadProfile() {
+      const selected = document.getElementById("profileSelector").value;
+      const profile = profiles[selected];
+      document.getElementById("profileHeader").innerHTML = `
+        <h2>${profile.name}</h2>
+        <p>Role: ${profile.role}</p>
+        <p>Net Worth: ${profile.netWorth}</p>
       `;
+      showSummary("monthly");
     }
 
-    generateNetWorthReport();
+    function showSummary(period) {
+      const selected = document.getElementById("profileSelector").value;
+      const summary = profiles[selected].summaries[period];
+      document.getElementById("financialSummary").innerHTML = `<p>${summary}</p>`;
+    }
+
+    window.onload = loadProfile;
   </script>
 </body>
 </html>
