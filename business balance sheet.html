@@ -2,129 +2,133 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Balance Sheet Report</title>
+  <title>Business Balance Sheet Report</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 2em;
-      background-color: #f9f9f9;
-      color: #333;
+      font-family: sans-serif;
+      margin: 2rem;
+      background: #f4f4f4;
     }
-    h1, h2 {
-      color: #2c3e50;
+    .company-header {
+      border-bottom: 2px solid #333;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+    }
+    .company-header h2 {
+      margin: 0;
+    }
+    .company-header .meta {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .balance-sheet {
+      margin-bottom: 2rem;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 2em;
+      background: #fff;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 0.75em;
-      text-align: left;
+      padding: 0.5rem;
+      text-align: right;
     }
     th {
-      background-color: #ecf0f1;
+      background: #eee;
+      text-align: left;
     }
-    .summary {
+    .section-title {
+      background: #ddd;
       font-weight: bold;
-      background-color: #dff0d8;
     }
   </style>
 </head>
 <body>
-  <h1>Business Balance Sheet
-    <!-- Company Header -->
-    <div class="company-header" role="region" aria-label="Company Summary">
-        <h2 id="headerCompanyName">Company Name</h2>
-        <p id="headerLocation">City, State</p>
-        <p id="headerType">Type: <span></span></p>
-        <p id="headerRole">Role: <span></span></p>
-    </div>
-  </h1>
-  <p><strong>As of:</strong> December 31, 2025</p>
 
-  <h2>Assets</h2>
-  <table id="assets-table">
-    <thead>
-      <tr><th>Account</th><th>Amount</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <h2>Liabilities</h2>
-  <table id="liabilities-table">
-    <thead>
-      <tr><th>Account</th><th>Amount</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <h2>Equity</h2>
-  <table id="equity-table">
-    <thead>
-      <tr><th>Account</th><th>Amount</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <h2>Summary</h2>
-  <table>
-    <tbody>
-      <tr class="summary"><td>Total Assets</td><td id="total-assets">$0.00</td></tr>
-      <tr class="summary"><td>Total Liabilities</td><td id="total-liabilities">$0.00</td></tr>
-      <tr class="summary"><td>Total Equity</td><td id="total-equity">$0.00</td></tr>
-      <tr class="summary"><td>Assets = Liabilities + Equity</td><td id="balance-check">✅ Balanced</td></tr>
-    </tbody>
-  </table>
+  <div id="report-container"></div>
 
   <script>
-    const journal = [
-      { account: "Cash", category: "asset", amount: 12000 },
-      { account: "Accounts Receivable", category: "asset", amount: 4500 },
-      { account: "Equipment", category: "asset", amount: 8000 },
-      { account: "Accounts Payable", category: "liability", amount: 3000 },
-      { account: "Loan Payable", category: "liability", amount: 7000 },
-      { account: "Owner's Capital", category: "equity", amount: 10000 },
-      { account: "Retained Earnings", category: "equity", amount: 5500 }
+    // Simulated dashboard data
+    const dashboardCompanies = [
+      {
+        id: "acme",
+        name: "Acme Corp",
+        location: "Harvest, AL",
+        reportDate: "2025-11-08",
+        balanceSheet: {
+          assets: { Cash: 120000, Receivables: 85000, Inventory: 60000 },
+          liabilities: { Payables: 40000, Loans: 75000 },
+          equity: { OwnersEquity: 150000 }
+        }
+      },
+      {
+        id: "beta",
+        name: "Beta LLC",
+        location: "Huntsville, AL",
+        reportDate: "2025-11-08",
+        balanceSheet: {
+          assets: { Cash: 95000, Receivables: 62000, Inventory: 30000 },
+          liabilities: { Payables: 25000, Loans: 50000 },
+          equity: { OwnersEquity: 112000 }
+        }
+      }
     ];
 
-    function formatCurrency(amount) {
-      return `$${amount.toFixed(2)}`;
+    function renderBalanceSheet(company) {
+      const { name, location, reportDate, balanceSheet } = company;
+      const container = document.getElementById("report-container");
+
+      const headerHTML = `
+        <div class="company-header">
+          <h2>${name}</h2>
+          <div class="meta">Report Date: ${reportDate} | Location: ${location}</div>
+        </div>
+      `;
+
+      const assets = Object.entries(balanceSheet.assets);
+      const liabilities = Object.entries(balanceSheet.liabilities);
+      const equity = Object.entries(balanceSheet.equity);
+
+      const totalAssets = assets.reduce((sum, [, val]) => sum + val, 0);
+      const totalLiabilities = liabilities.reduce((sum, [, val]) => sum + val, 0);
+      const totalEquity = equity.reduce((sum, [, val]) => sum + val, 0);
+
+      const tableHTML = `
+        <div class="balance-sheet">
+          <table>
+            <tr><th colspan="2" class="section-title">Assets</th></tr>
+            ${assets.map(([k, v]) => `<tr><td>${k}</td><td>
+
+{v.toLocaleString()}</td></tr>`).join("")}
+            <tr><td>Total Assets</td><td><strong>
+
+{totalAssets.toLocaleString()}</strong></td></tr>
+
+            <tr><th colspan="2" class="section-title">Liabilities</th></tr>
+            ${liabilities.map(([k, v]) => `<tr><td>${k}</td><td>
+
+{v.toLocaleString()}</td></tr>`).join("")}
+            <tr><td>Total Liabilities</td><td><strong>
+
+{totalLiabilities.toLocaleString()}</strong></td></tr>
+
+            <tr><th colspan="2" class="section-title">Equity</th></tr>
+            ${equity.map(([k, v]) => `<tr><td>${k}</td><td>
+
+{v.toLocaleString()}</td></tr>`).join("")}
+            <tr><td>Total Equity</td><td><strong>
+
+{totalEquity.toLocaleString()}</strong></td></tr>
+          </table>
+        </div>
+      `;
+
+      container.innerHTML += headerHTML + tableHTML;
     }
 
-    function populateBalanceSheet() {
-      let totalAssets = 0;
-      let totalLiabilities = 0;
-      let totalEquity = 0;
-
-      const assetsBody = document.querySelector("#assets-table tbody");
-      const liabilitiesBody = document.querySelector("#liabilities-table tbody");
-      const equityBody = document.querySelector("#equity-table tbody");
-
-      journal.forEach(entry => {
-        const row = `<tr><td>${entry.account}</td><td>${formatCurrency(entry.amount)}</td></tr>`;
-        if (entry.category === "asset") {
-          assetsBody.innerHTML += row;
-          totalAssets += entry.amount;
-        } else if (entry.category === "liability") {
-          liabilitiesBody.innerHTML += row;
-          totalLiabilities += entry.amount;
-        } else if (entry.category === "equity") {
-          equityBody.innerHTML += row;
-          totalEquity += entry.amount;
-        }
-      });
-
-      document.getElementById("total-assets").textContent = formatCurrency(totalAssets);
-      document.getElementById("total-liabilities").textContent = formatCurrency(totalLiabilities);
-      document.getElementById("total-equity").textContent = formatCurrency(totalEquity);
-
-      const balanced = totalAssets === (totalLiabilities + totalEquity);
-      document.getElementById("balance-check").textContent = balanced ? "✅ Balanced" : "❌ Not Balanced";
-    }
-
-    populateBalanceSheet();
+    // Render all companies
+    dashboardCompanies.forEach(renderBalanceSheet);
   </script>
 </body>
 </html>
