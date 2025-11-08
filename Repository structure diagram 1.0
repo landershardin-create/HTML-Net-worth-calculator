@@ -44,6 +44,19 @@
 │   ├── journal-entries.html
 │   ├── balance-sheet.html
 │   ├── personnel-records.html
+│   ├── balance-sheet.html
+│   ├── business-selector.html
+│   ├── contributor-manager.html
+│   ├── cash-flow-tracker.html
+│   ├── journal-entries.html
+│   ├── balance-sheet.html
+│   ├── personnel-records.html
+│   ├── business-selector.html
+│   ├── contributor-manager.html
+│   ├── cash-flow-tracker.html
+│   ├── journal-entries.html
+│   ├── balance-sheet.html
+│   ├── personnel-records.html
 │   └── export-storage.html
 │
 ├── /data/                                  # Sample data and templates
