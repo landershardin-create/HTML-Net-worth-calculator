@@ -2,28 +2,28 @@
 
 /finance-dashboard/
 │
-├── .github/workflow                       #
-├── .gitignore                             # Git exclusions
-├── index.html                             # Entry point of the dashboard
-├── indexDashboard.js                      # Index dashboard script
-├── indexOnboarding.js                     # Index onboarding script
-├── indexRoleViews.js                      # Index role views script
-├── indexStyles.js                         # Index style script
-├── indexStorage.js                        # Index storage sheet
-├── indexSummaryCards.js                   # Index summary cards
-├── README.md                              # Project overview and contributor guide
-├── SECURITY.md                            #  
-├── LICENSE                                # Open-source license (MIT, GPL, etc.)
+├── .github/workflow                        #
+├── .gitignore                              # Git exclusions
+├── index.html                              # Entry point of the dashboard
+├── indexDashboard.js                       # Index dashboard script
+├── indexOnboarding.js                      # Index onboarding script
+├── indexRoleViews.js                       # Index role views script
+├── indexStyles.js                          # Index style script
+├── indexStorage.js                         # Index storage sheet
+├── indexSummaryCards.js                    # Index summary cards
+├── README.md                               # Project overview and contributor guide
+├── SECURITY.md                             #  
+├── LICENSE                                 # Open-source license (MIT, GPL, etc.)
 │
-├── /assets/                               # Static assets (images, fonts, icons)
-│   ├── /images/                           # Logos, illustrations, UI icons
-│   ├── /fonts/                            # Custom or branded fonts
-│   └── /branding/                         # Business-specific visual assets
+├── /assets/                                # Static assets (images, fonts, icons) (not available)
+│   ├── /images/                            # Logos, illustrations, UI icons (not available)
+│   ├── /fonts/                             # Custom or branded fonts (not available)
+│   └── /branding/                          # Business-specific visual assets (not available)
 │
 ├── /css/                                   # Styling and themes
-│   ├── business style sheet.css            # Core styles
-│   ├── main.css                              # Core styles
-│   ├── main.css                              # Core styles
+│   ├── business style sheet.css            # Personal styles
+│   ├── personal style sheet.css            # personal styles
+│   ├── style sheet.css                     # Style sheet
 │   ├── branding.css                        # Business-specific branding (not available)
 │   └── responsive.css                      # Mobile and adaptive layout (not available)
 │
@@ -31,7 +31,7 @@
 │   ├── app.js                              # Main dashboard logic (not available)
 │   ├── dashboard.js                        # Dashboard
 │   ├── tab-loader.js                       # Tab loader 
-│   ├── router.js                           # Tab and module navigation 
+│   ├── router.js                           # Tab and module navigation (not available)
 │   ├── storage.js                          # Persistent storage and export logic (not available)
 │   ├── access.js                           # Role-based access control (not available)
 │   ├── local storage .js                   # Local persistent storage script
@@ -47,15 +47,16 @@
 │   └── export-storage.html
 │
 ├── /data/                                  # Sample data and templates
-│   ├── sample-business.json
-│   ├── sample-journal.csv
+│   ├── sample-business.json.               # (not available)
+│   ├── sample-journal.csv.                 # (not available)
 │   └── contributors-template.json
 │
 └── /docs/                                  # Documentation and guides
-    ├── setup.md                            # Installation and configuration
-    ├── styling.md                          # Branding and visual customization
-    ├── access-control.md                   # Role and permission setup
-    ├── onboarding.md                       # Contributor onboarding guide
-    ├── extensibility.md                    # How to add new modules
-    ├── Repository diagram                  # Repository stucture diagram 1.0
-    └── testing.md                          # QA and validation procedures
+    ├── setup.md                            # Installation and configuration (not available)
+    ├── README.md                             # 
+    ├── styling.md                          # Branding and visual customization (not available)
+    ├── access-control.md                   # Role and permission setup (not available)
+    ├── onboarding.md                       # Contributor onboarding guide (not available)
+    ├── extensibility.md                    # How to add new modules (not available)
+    ├── Repository diagram                  # Repository stucture diagram 1.0 (not available)
+    └── testing.md                          # QA and validation procedures (not available)
