@@ -6,29 +6,38 @@
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
     .register { max-width: 1000px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
-    h1 { text-align: center; margin-bottom: 30px; }
+    h1 { text-align: center; margin-bottom: 10px; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
     th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
     th { background-color: #eee; }
     .business-header { margin-top: 40px; font-size: 1.2em; color: #333; }
     .summary { font-weight: bold; margin-top: 10px; }
+    .company-header { text-align: center; margin-bottom: 20px; }
+    #companySelect { margin: 10px auto 30px; display: block; padding: 8px; font-size: 1em; }
   </style>
 </head>
 <body>
 
   <div class="register">
-    <h1>Payroll Register
-      <!-- Company Header -->
+    <h1>Payroll Register</h1>
+
+    <!-- Company Header -->
     <div class="company-header" role="region" aria-label="Company Summary">
-        <h2 id="headerCompanyName">Company Name</h2>
-        <p id="headerLocation">City, State</p>
-        <p id="headerType">Type: <span></span></p>
-        <p id="headerRole">Role: <span></span></p>
+      <h2 id="headerCompanyName">Company Name</h2>
+      <p id="headerLocation">City, State</p>
+      <p id="headerType">Type: <span></span></p>
+      <p id="headerRole">Role: <span></span></p>
     </div>
-    </h1>
+
+    <!-- Company Selector -->
+    <label for="companySelect"><strong>Select Company:</strong></label>
+    <select id="companySelect" onchange="showCompany()">
+      <option value="acme">Acme Corp</option>
+      <option value="zenith">Zenith LLC</option>
+    </select>
 
     <!-- Business: Acme Corp -->
-    <div class="business-section">
+    <div class="business-section" id="acme">
       <div class="business-header">Business: Acme Corp</div>
       <table>
         <thead>
@@ -72,7 +81,7 @@
     </div>
 
     <!-- Business: Zenith LLC -->
-    <div class="business-section">
+    <div class="business-section" id="zenith" style="display:none;">
       <div class="business-header">Business: Zenith LLC</div>
       <table>
         <thead>
@@ -107,6 +116,14 @@
       <div class="summary">Total Net Pay: $7,200</div>
     </div>
   </div>
+
+  <script>
+    function showCompany() {
+      const selected = document.getElementById("companySelect").value;
+      document.getElementById("acme").style.display = selected === "acme" ? "block" : "none";
+      document.getElementById("zenith").style.display = selected === "zenith" ? "block" : "none";
+    }
+  </script>
 
 </body>
 </html>
