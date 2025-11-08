@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GitHub Tabbed Dashboard with Company Manager</title>
+  <title>GitHub Tabbed Dashboard with Personal Info Manager</title>
   <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin/HTML-Business-and-Personal-Finance/css/stylesheet.css" />
 </head>
 <body>
@@ -13,126 +13,122 @@
     <select id="ownerFilter">
       <option value="">All Owners</option>
     </select>
-    <button onclick="exportCompanies()">Export Companies</button>
+    <button onclick="exportProfiles()">Export Profiles</button>
   </div>
 
   <div id="content"></div>
 
   <!-- Carousel -->
   <div class="carousel-viewer">
-    <h3>Company Carousel Viewer</h3>
+    <h3>Personal Info Carousel Viewer</h3>
     <div id="carouselDisplay" class="carousel-card"></div>
     <div style="margin-top:10px;">
-      <button onclick="prevCompany()">Previous</button>
-      <button onclick="nextCompany()">Next</button>
+      <button onclick="prevProfile()">Previous</button>
+      <button onclick="nextProfile()">Next</button>
     </div>
   </div>
 
-  <!-- Company Manager -->
+  <!-- Personal Info Manager -->
   <div class="company-manager">
-    <h3>Manage Companies</h3>
-    <form id="companyForm">
+    <h3>Manage Personal Info</h3>
+    <form id="profileForm">
       <div class="form-group">
-        <input type="text" id="companyName" placeholder="Company name" required />
+        <input type="text" id="firstName" placeholder="First Name" required />
+        <input type="text" id="middleName" placeholder="Middle Name" />
+        <input type="text" id="lastName" placeholder="Last Name" required />
         <input type="text" id="streetAddress" placeholder="Street Address" />
         <input type="text" id="city" placeholder="City" />
         <input type="text" id="state" placeholder="State" />
         <input type="text" id="zipCode" placeholder="ZIP Code" />
-        <input type="text" id="companyOwner" placeholder="Owner" />
-        <input type="text" id="companyEIN" placeholder="SSN (XXX-XX-XXXX) or EIN (XX-XXXXXXX)" pattern="\d{3}-\d{2}-\d{4}|\d{2}-\d{7}" title="Format: SSN XXX-XX-XXXX or EIN XX-XXXXXXX" />
-        <input type="text" id="companySEIN" placeholder="State EIN #" />
-        <select id="companyRole">
+        <input type="text" id="profileOwner" placeholder="Owner" />
+        <select id="profileRole">
           <option value="Viewer">Viewer</option>
           <option value="Editor">Editor</option>
           <option value="Owner">Owner</option>
         </select>
-        <select id="companyType">
-          <option value="">Select type</option>
-          <option value="Sole Proprietor">Sole Proprietor</option>
-          <option value="Partnership">Partnership</option>
-          <option value="LLC">LLC</option>
-          <option value="Corporation">Corporation</option>
-          <option value="Nonprofit">Nonprofit</option>
+        <select id="profileType">
+          <option value="">Select category</option>
+          <option value="Friend">Friend</option>
+          <option value="Family">Family</option>
+          <option value="Colleague">Colleague</option>
+          <option value="Other">Other</option>
         </select>
         <button type="submit">Add</button>
       </div>
     </form>
-    <div class="company-list" id="companyList"></div>
+    <div class="company-list" id="profileList"></div>
   </div>
 
   <!-- Embedded JavaScript -->
   <script>
-    const companies = [];
+    const profiles = [];
     let carouselIndex = 0;
 
-    document.getElementById('companyForm').addEventListener('submit', function(e) {
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const company = {
-        name: companyName.value,
+      const profile = {
+        firstName: firstName.value,
+        middleName: middleName.value,
+        lastName: lastName.value,
         address: streetAddress.value,
         city: city.value,
         state: state.value,
         zip: zipCode.value,
-        owner: companyOwner.value,
-        ein: companyEIN.value,
-        sein: companySEIN.value,
-        role: companyRole.value,
-        type: companyType.value
+        owner: profileOwner.value,
+        role: profileRole.value,
+        type: profileType.value
       };
-      companies.push(company);
-      updateCompanyList();
-      updateCompanySelect();
+      profiles.push(profile);
+      updateProfileList();
       updateOwnerFilter();
       updateCarousel();
       this.reset();
     });
 
-    function updateCompanyList() {
+    function updateProfileList() {
       const ownerFilter = document.getElementById('ownerFilter').value;
-      const list = companies.filter(c => !ownerFilter || c.owner === ownerFilter);
-      companyList.innerHTML = list.map(c => `<div>${c.name} (${c.owner}) - ${c.type}</div>`).join('');
-    }
-
-    function updateCompanySelect() {
-      companySelect.innerHTML = companies.map(c => `<option>${c.name}</option>`).join('');
+      const list = profiles.filter(p => !ownerFilter || p.owner === ownerFilter);
+      profileList.innerHTML = list.map(p =>
+        `<div>${p.firstName} ${p.middleName} ${p.lastName} (${p.owner}) - ${p.type}</div>`
+      ).join('');
     }
 
     function updateOwnerFilter() {
-      const owners = [...new Set(companies.map(c => c.owner))];
+      const owners = [...new Set(profiles.map(p => p.owner))];
       ownerFilter.innerHTML = `<option value="">All Owners</option>` + owners.map(o => `<option value="${o}">${o}</option>`).join('');
     }
 
     function updateCarousel() {
-      if (companies.length === 0) {
-        carouselDisplay.innerHTML = '<em>No companies added yet.</em>';
+      if (profiles.length === 0) {
+        carouselDisplay.innerHTML = '<em>No profiles added yet.</em>';
         return;
       }
-      const c = companies[carouselIndex % companies.length];
-      carouselDisplay.innerHTML = `<strong>${c.name}</strong><br>${c.city}, ${c.state}<br>Owner: ${c.owner}<br>Type: ${c.type}`;
+      const p = profiles[carouselIndex % profiles.length];
+      carouselDisplay.innerHTML = `<strong>${p.firstName} ${p.middleName} ${p.lastName}</strong><br>${p.city}, ${p.state}<br>Owner: ${p.owner}<br>Category: ${p.type}`;
     }
 
-    function prevCompany() {
-      carouselIndex = (carouselIndex - 1 + companies.length) % companies.length;
+    function prevProfile() {
+      carouselIndex = (carouselIndex - 1 + profiles.length) % profiles.length;
       updateCarousel();
     }
 
-    function nextCompany() {
-      carouselIndex = (carouselIndex + 1) % companies.length;
+    function nextProfile() {
+      carouselIndex = (carouselIndex + 1) % profiles.length;
       updateCarousel();
     }
 
-    function exportCompanies() {
-      const blob = new Blob([JSON.stringify(companies, null, 2)], { type: 'application/json' });
+    function exportProfiles() {
+      const blob = new Blob([JSON.stringify(profiles, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'companies.json';
+      a.download = 'profiles.json';
       a.click();
       URL.revokeObjectURL(url);
     }
 
-    document.getElementById('ownerFilter').addEventListener('change', updateCompanyList);
-    document.getElementById('tabMenu').addEventListener('change', function() {
+    document.getElementById('ownerFilter').addEventListener('change', updateProfileList);
+    document.getElementById('tabMenu')?.addEventListener('change', function() {
       content.innerHTML = `<p>Selected tab: <strong>${this.value}</strong></p>`;
     });
   </script>
