@@ -22,6 +22,7 @@
 │   ├── router.js             # Tab and module navigation
 │   ├── storage.js            # Persistent storage and export logic
 │   ├── access.js             # Role-based access control
+│   ├── local storage .js     # Local persistent storage script
 │   └── onboarding.js         # Contributor onboarding flows
 │
 ├── /modules/                 # Dashboard feature modules
