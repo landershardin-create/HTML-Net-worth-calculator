@@ -2,146 +2,143 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Personal Journal & Account Manager</title>
   <style>
-    body { font-family: sans-serif; margin: 0; padding: 1rem; background: #f4f4f4; }
-    header, section { margin-bottom: 2rem; }
-    #profile-header { background: #222; color: #fff; padding: 1rem; }
-    #profile-selector button { margin-right: 0.5rem; }
-    input, select, button { margin: 0.25rem 0; padding: 0.5rem; }
-    .card { background: #fff; padding: 1rem; margin-bottom: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    body { font-family: sans-serif; margin: 20px; }
+    .section { margin-bottom: 40px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; margin-bottom: 4px; }
+    select, input, textarea { width: 100%; padding: 8px; }
+    .profile-header { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; }
+    .summary-buttons button { margin-right: 10px; }
   </style>
 </head>
 <body>
-  <header id="profile-header"></header>
-  <section id="profile-selector"></section>
 
-  <main>
-    <section id="account-manager" class="card"></section>
-    <section id="journal-entry-form" class="card"></section>
-    <section id="journal-entries" class="card"></section>
-    <section id="financial-summary" class="card"></section>
-  </main>
+  <!-- 👤 Profile Header -->
+  <div class="profile-header">
+    <label for="profileSelect">Active Profile:</label>
+    <select id="profileSelect" name="activeProfile">
+      <option value="">-- Select Profile --</option>
+      <option value="personal">Personal</option>
+      <option value="freelance">Freelance</option>
+      <option value="family">Family Budget</option>
+    </select>
+  </div>
+
+  <!-- 📊 Summary Generator -->
+  <div class="section" id="summaryGenerator">
+    <h2>Generate Financial Summary</h2>
+    <div class="summary-buttons">
+      <button type="button" onclick="generateSummary('monthly')">Monthly</button>
+      <button type="button" onclick="generateSummary('quarterly')">Quarterly</button>
+      <button type="button" onclick="generateSummary('annual')">Annual</button>
+    </div>
+  </div>
+
+  <!-- 📘 Journal Manager -->
+  <div class="section" id="journalManager">
+    <h2>Journal Manager</h2>
+    <form id="journalForm">
+      <div class="form-group">
+        <label for="journalProfile">Profile:</label>
+        <select id="journalProfile" name="profileId" required>
+          <option value="">-- Select Profile --</option>
+          <option value="personal">Personal</option>
+          <option value="freelance">Freelance</option>
+          <option value="family">Family Budget</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="journalTitle">Journal Title:</label>
+        <input type="text" id="journalTitle" name="journalTitle" required />
+      </div>
+
+      <div class="form-group">
+        <label for="journalDescription">Description:</label>
+        <textarea id="journalDescription" name="journalDescription"></textarea>
+      </div>
+
+      <button type="submit">Create Journal</button>
+    </form>
+
+    <!-- 🧾 Entry Section -->
+    <div id="journalEntries">
+      <h3>Journal Entries</h3>
+      <form id="entryForm">
+        <div class="form-group">
+          <label for="entryProfile">Profile:</label>
+          <select id="entryProfile" name="profileId" required>
+            <option value="">-- Select Profile --</option>
+            <option value="personal">Personal</option>
+            <option value="freelance">Freelance</option>
+            <option value="family">Family Budget</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="linkedAccount">Linked Account:</label>
+          <select id="linkedAccount" name="accountId">
+            <option value="">-- Select Account --</option>
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="entryLabel">Entry Label:</label>
+          <input type="text" id="entryLabel" name="entryLabel" required />
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount:</label>
+          <input type="number" id="amount" name="amount" required />
+        </div>
+
+        <button type="submit">Add Entry</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 🧮 Account Manager -->
+  <div class="section" id="accountManager">
+    <h2>Account Manager</h2>
+    <form id="accountForm">
+      <div class="form-group">
+        <label for="accountProfile">Profile:</label>
+        <select id="accountProfile" name="profileId" required>
+          <option value="">-- Select Profile --</option>
+          <option value="personal">Personal</option>
+          <option value="freelance">Freelance</option>
+          <option value="family">Family Budget</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="accountName">Account Name:</label>
+        <input type="text" id="accountName" name="accountName" required />
+      </div>
+
+      <div class="form-group">
+        <label for="accountType">Account Type:</label>
+        <input type="text" id="accountType" name="accountType" />
+      </div>
+
+      <button type="submit">Create Account</button>
+    </form>
+  </div>
 
   <script>
-    const profiles = [
-      { id: 1, name: "Landers", avatar: "🛀⚔️💸", theme: "dark" },
-      { id: 2, name: "Guest", avatar: "👤", theme: "light" }
-    ];
-
-    let currentProfileId = 1;
-
-    const accounts = {
-      1: [{ id: "acc1", name: "Checking", balance: 1200 }],
-      2: [{ id: "acc2", name: "Savings", balance: 5000 }]
-    };
-
-    const journalEntries = {
-      1: [],
-      2: []
-    };
-
-    function switchProfile(id) {
-      currentProfileId = id;
-      renderProfileHeader();
-      renderAccounts();
-      renderJournalForm();
-      renderJournalEntries();
-      renderFinancialSummary();
+    function generateSummary(period) {
+      const profile = document.getElementById('profileSelect').value;
+      if (!profile) {
+        alert('Please select a profile first.');
+        return;
+      }
+      alert(`Generating ${period} summary for profile: ${profile}`);
+      // Insert logic to fetch and display summary
     }
-
-    function renderProfileSelector() {
-      const selector = document.getElementById("profile-selector");
-      selector.innerHTML = "<h2>Select Profile</h2>" + profiles.map(p =>
-        `<button onclick="switchProfile(${p.id})">${p.avatar} ${p.name}</button>`
-      ).join("");
-    }
-
-    function renderProfileHeader() {
-      const profile = profiles.find(p => p.id === currentProfileId);
-      document.getElementById("profile-header").innerHTML =
-        `<h1>${profile.avatar} ${profile.name}'s Journal</h1>`;
-    }
-
-    function renderAccounts() {
-      const container = document.getElementById("account-manager");
-      const profileAccounts = accounts[currentProfileId] || [];
-      container.innerHTML = `
-        <h2>Accounts</h2>
-        ${profileAccounts.map(a => `<div>${a.name}: $${a.balance.toFixed(2)}</div>`).join("")}
-        <button onclick="addAccount()">Add Account</button>
-      `;
-    }
-
-    function addAccount() {
-      const name = prompt("Account name?");
-      const balance = parseFloat(prompt("Initial balance?"));
-      if (!name || isNaN(balance)) return;
-      const newAccount = { id: `acc${Date.now()}`, name, balance };
-      accounts[currentProfileId].push(newAccount);
-      renderAccounts();
-      renderJournalForm();
-    }
-
-    function renderJournalForm() {
-      const form = document.getElementById("journal-entry-form");
-      const accountOptions = accounts[currentProfileId]
-        .map(a => `<option value="${a.name}">${a.name}</option>`).join("");
-
-      form.innerHTML = `
-        <h2>New Entry</h2>
-        <input type="date" id="entry-date" />
-        <input type="text" id="entry-note" placeholder="Note" />
-        <select id="entry-account">${accountOptions}</select>
-        <button onclick="addJournalEntry()">Add Entry</button>
-      `;
-    }
-
-    function addJournalEntry() {
-      const date = document.getElementById("entry-date").value;
-      const note = document.getElementById("entry-note").value;
-      const account = document.getElementById("entry-account").value;
-      if (!date || !note || !account) return;
-      journalEntries[currentProfileId].push({ date, note, account });
-      renderJournalEntries();
-      renderFinancialSummary();
-    }
-
-    function renderJournalEntries() {
-      const container = document.getElementById("journal-entries");
-      const entries = journalEntries[currentProfileId] || [];
-      container.innerHTML = `
-        <h2>Journal Entries</h2>
-        ${entries.length === 0 ? "<p>No entries yet.</p>" :
-          entries.map(e => `<div>${e.date}: ${e.note} (${e.account})</div>`).join("")}
-      `;
-    }
-
-    function renderFinancialSummary() {
-      const container = document.getElementById("financial-summary");
-      const entries = journalEntries[currentProfileId];
-      const summary = {};
-
-      entries.forEach(e => {
-        summary[e.account] = (summary[e.account] || 0) + 1;
-      });
-
-      container.innerHTML = `
-        <h2>Financial Summary</h2>
-        ${Object.keys(summary).length === 0 ? "<p>No data yet.</p>" :
-          Object.entries(summary).map(([acc, count]) =>
-            `<div>${acc}: ${count} entr${count === 1 ? "y" : "ies"}</div>`).join("")}
-      `;
-    }
-
-    // Initial render
-    renderProfileSelector();
-    renderProfileHeader();
-    renderAccounts();
-    renderJournalForm();
-    renderJournalEntries();
-    renderFinancialSummary();
   </script>
+
 </body>
 </html>
