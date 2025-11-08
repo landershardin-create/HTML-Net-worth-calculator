@@ -53,10 +53,10 @@
 │
 └── /docs/                                  # Documentation and guides
     ├── setup.md                            # Installation and configuration (not available)
-    ├── README.md                             # 
+    ├── README.md                           # Project overview and contributor guide
     ├── styling.md                          # Branding and visual customization (not available)
     ├── access-control.md                   # Role and permission setup (not available)
     ├── onboarding.md                       # Contributor onboarding guide (not available)
     ├── extensibility.md                    # How to add new modules (not available)
-    ├── Repository Structure diagram 1.0    # Repository stucture diagram 1.0 (not available)
+    ├── Repository Structure diagram 1.0    # Repository stucture diagram 1.0
     └── testing.md                          # QA and validation procedures (not available)
