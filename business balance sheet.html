@@ -17,6 +17,7 @@
       width: 100%;
       border-collapse: collapse;
       background-color: #fff;
+      margin-bottom: 2em;
     }
     th, td {
       padding: 0.5em;
@@ -26,18 +27,33 @@
     h2 {
       margin-top: 1em;
     }
+    .summary {
+      font-weight: bold;
+      background-color: #eef;
+    }
   </style>
 </head>
 <body>
-  <h1>Business Balance Sheet Report
-    <!-- Company Header -->
-    <div class="company-header" role="region" aria-label="Company Summary">
-        <h2 id="headerCompanyName">Company Name</h2>
-        <p id="headerLocation">City, State</p>
-        <p id="headerType">Type: <span></span></p>
-        <p id="headerRole">Role: <span></span></p>
-    </div>
-  </h1>
+  <h1>Business Balance Sheet Report</h1>
+
+  <!-- Company Header -->
+  <div class="company-header" role="region" aria-label="Company Summary">
+    <h2 id="headerCompanyName">Company Name</h2>
+    <p id="headerLocation">City, State</p>
+    <p id="headerType">Type: <span></span></p>
+    <p id="headerRole">Role: <span></span></p>
+  </div>
+
+  <!-- Multi-Company Selector -->
+  <div class="company-selector">
+    <label for="companySelect">Select Companies:</label>
+    <select id="companySelect" multiple size="3">
+      <option value="companyA">Company A</option>
+      <option value="companyB">Company B</option>
+      <option value="companyC">Company C</option>
+    </select>
+  </div>
+
   <div id="balanceSheetContainer"></div>
 
   <script>
@@ -59,33 +75,69 @@
       }
     };
 
-    function renderBalanceSheet(companyKey) {
-      const data = balanceSheets[companyKey];
+    function renderBalanceSheets(companyKeys) {
       const container = document.getElementById("balanceSheetContainer");
-      container.innerHTML = `
-        <h2>Balance Sheet - ${companyKey}</h2>
-        <table>
-          <thead><tr><th>Category</th><th>Item</th><th>Amount</th></tr></thead>
-          <tbody>
-            ${Object.entries(data.assets).map(([item, amount]) =>
-              `<tr><td>Assets</td><td>${item}</td><td>$${amount.toLocaleString()}</td></tr>`
-            ).join("")}
-            ${Object.entries(data.liabilities).map(([item, amount]) =>
-              `<tr><td>Liabilities</td><td>${item}</td><td>$${amount.toLocaleString()}</td></tr>`
-            ).join("")}
-            ${Object.entries(data.equity).map(([item, amount]) =>
-              `<tr><td>Equity</td><td>${item}</td><td>$${amount.toLocaleString()}</td></tr>`
-            ).join("")}
-          </tbody>
-        </table>
-      `;
+      let totalAssets = 0, totalLiabilities = 0, totalEquity = 0;
+
+      container.innerHTML = companyKeys.map(companyKey => {
+        const data = balanceSheets[companyKey];
+        const assetSum = Object.values(data.assets).reduce((a, b) => a + b, 0);
+        const liabilitySum = Object.values(data.liabilities).reduce((a, b) => a + b, 0);
+        const equitySum = Object.values(data.equity).reduce((a, b) => a + b, 0);
+
+        totalAssets += assetSum;
+        totalLiabilities += liabilitySum;
+        totalEquity += equitySum;
+
+        return `
+          <h2>Balance Sheet - ${companyKey}</h2>
+          <table>
+            <thead><tr><th>Category</th><th>Item</th><th>Amount</th></tr></thead>
+            <tbody>
+              ${Object.entries(data.assets).map(([item, amount]) =>
+                `<tr><td>Assets</td><td>${item}</td><td>$${amount.toLocaleString()}</td></tr>`
+              ).join("")}
+              ${Object.entries(data.liabilities).map(([item, amount]) =>
+                `<tr><td>Liabilities</td><td>${item}</td><td>$${amount.toLocaleString()}</td></tr>`
+              ).join("")}
+              ${Object.entries(data.equity).map(([item, amount]) =>
+                `<tr><td>Equity</td><td>${item}</td><td>
+
+{amount.toLocaleString()}</td></tr>`
+              ).join("")}
+            </tbody>
+          </table>
+        `;
+      }).join("");
+
+      if (companyKeys.length > 1) {
+        container.innerHTML += `
+          <h2>Combined Summary</h2>
+          <table>
+            <thead><tr><th>Category</th><th>Total Amount</th></tr></thead>
+            <tbody>
+              <tr class="summary"><td>Assets</td><td>
+
+{totalAssets.toLocaleString()}</td></tr>
+              <tr class="summary"><td>Liabilities</td><td>
+
+{totalLiabilities.toLocaleString()}</td></tr>
+              <tr class="summary"><td>Equity</td><td>
+
+{totalEquity.toLocaleString()}</td></tr>
+            </tbody>
+          </table>
+        `;
+      }
     }
 
     document.getElementById("companySelect").addEventListener("change", (e) => {
-      renderBalanceSheet(e.target.value);
+      const selected = Array.from(e.target.selectedOptions).map(opt => opt.value);
+      renderBalanceSheets(selected);
     });
 
-    renderBalanceSheet("companyA");
+    // Initial render
+    renderBalanceSheets(["companyA"]);
   </script>
 </body>
 </html>
