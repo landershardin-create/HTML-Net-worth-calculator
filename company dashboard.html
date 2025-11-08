@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Company Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .company-manager {
+      padding: 20px;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+    }
+    .company-manager h3 {
+      margin-top: 0;
+    }
+    .company-list {
+      margin-top: 10px;
+    }
+    .company-list span {
+      display: inline-block;
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+      margin: 5px;
+      border-radius: 4px;
+    }
+    .company-list span button {
+      margin-left: 8px;
+      background: none;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    select, input, button {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: none;
+    }
+    .menu-container {
+      background-color: #333;
+      padding: 15px;
+      color: white;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-container">
+    <label for="companySelect">Companies:</label>
+    <select id="companySelect" multiple></select>
+  </div>
+
+  <div class="company-manager">
+    <h3>Manage Companies</h3>
+    <form id="companyForm">
+      <input type="text" id="newCompany" placeholder="Add new company..." required />
+      <button type="submit">Add</button>
+    </form>
+    <div class="company-list" id="companyList"></div>
+  </div>
+
+  <script>
+    let companies = ['Alpha Corp', 'Beta LLC', 'Gamma Inc'];
+
+    const companySelect = document.getElementById('companySelect');
+    const companyForm = document.getElementById('companyForm');
+    const newCompanyInput = document.getElementById('newCompany');
+    const companyList = document.getElementById('companyList');
+
+    function renderCompanySelect() {
+      companySelect.innerHTML = '';
+      companies.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        companySelect.appendChild(option);
+      });
+    }
+
+    function renderCompanyList() {
+      companyList.innerHTML = '';
+      companies.forEach((name, index) => {
+        const tag = document.createElement('span');
+        tag.textContent = name;
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = '×';
+        removeBtn.title = `Remove ${name}`;
+        removeBtn.onclick = () => {
+          companies.splice(index, 1);
+          renderCompanySelect();
+          renderCompanyList();
+        };
+        tag.appendChild(removeBtn);
+        companyList.appendChild(tag);
+      });
+    }
+
+    companyForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newName = newCompanyInput.value.trim();
+      if (newName && !companies.includes(newName)) {
+        companies.push(newName);
+        renderCompanySelect();
+        renderCompanyList();
+        newCompanyInput.value = '';
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCompanySelect();
+      renderCompanyList();
+    });
+  </script>
+</body>
+</html>
