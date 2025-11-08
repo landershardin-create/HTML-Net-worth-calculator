@@ -1,59 +1,112 @@
-<!-- balance-sheet.html -->
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Personal Balance Sheet</title>
+  <meta charset="UTF-8" />
+  <title>Profile Balance Sheet</title>
   <style>
-    body { font-family: Arial; margin: 2em; }
-    table { border-collapse: collapse; width: 50%; margin-bottom: 2em; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f4f4f4; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f9f9f9;
+    }
+    header {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    #reportContainer {
+      margin-top: 2rem;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.5rem;
+      border-bottom: 1px solid #ccc;
+    }
   </style>
 </head>
 <body>
-  <h1>Personal Balance Sheet Report
-   <header class="profile-header">
-    <h1>Landers Orenthal Hardin</h1>
-    <p><strong>Role:</strong> Business Owner & Technical Architect</p>
-    <p><strong>Location:</strong> Harvest, Alabama</p>
-    <p><em>Empowering financial clarity through modular, accessible dashboards.</em></p>
+  <header>
+    <h1>Balance Sheet Report</h1>
+    <select id="profileSelector"></select>
+    <select id="periodSelector">
+      <option value="monthly">Monthly</option>
+      <option value="quarterly">Quarterly</option>
+      <option value="annual">Annual</option>
+    </select>
   </header>
-  </h1>
-  <div id="report"></div>
+
+  <section id="profileHeader"></section>
+  <section id="reportContainer"></section>
 
   <script>
-    async function loadJournalData() {
-      const response = await fetch('journal.html');
-      const text = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(text, 'text/html');
-      const rows = doc.querySelectorAll('#journal tbody tr');
-
-      const totals = { Asset: 0, Liability: 0 };
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const type = cells[2].textContent.trim();
-        const amount = parseFloat(cells[3].textContent.trim());
-        if (type === 'Asset' || type === 'Liability') {
-          totals[type] += amount;
+    const profiles = [
+      {
+        id: "alpha",
+        name: "Alpha Corp",
+        summaries: {
+          monthly: { assets: 10000, liabilities: 4000 },
+          quarterly: { assets: 30000, liabilities: 12000 },
+          annual: { assets: 120000, liabilities: 48000 }
         }
+      },
+      {
+        id: "beta",
+        name: "Beta LLC",
+        summaries: {
+          monthly: { assets: 8000, liabilities: 3000 },
+          quarterly: { assets: 24000, liabilities: 9000 },
+          annual: { assets: 96000, liabilities: 36000 }
+        }
+      }
+    ];
+
+    const profileSelector = document.getElementById("profileSelector");
+    const periodSelector = document.getElementById("periodSelector");
+    const profileHeader = document.getElementById("profileHeader");
+    const reportContainer = document.getElementById("reportContainer");
+
+    function populateProfiles() {
+      profiles.forEach(profile => {
+        const option = document.createElement("option");
+        option.value = profile.id;
+        option.textContent = profile.name;
+        profileSelector.appendChild(option);
       });
+    }
 
-      const equity = totals.Asset - totals.Liability;
-      document.getElementById('report').innerHTML = `
+    function renderReport() {
+      const selectedProfileId = profileSelector.value;
+      const selectedPeriod = periodSelector.value;
+      const profile = profiles.find(p => p.id === selectedProfileId);
+      const summary = profile.summaries[selectedPeriod];
+
+      profileHeader.innerHTML = `<h2>${profile.name} - ${selectedPeriod.charAt(0).toUpperCase() + selectedPeriod.slice(1)} Summary</h2>`;
+      reportContainer.innerHTML = `
         <table>
-          <tr><th>Category</th><th>Amount</th></tr>
-          <tr><td>Assets</td><td>
+          <tr><th>Assets</th><td>
 
-{totals.Asset.toFixed(2)}</td></tr>
-          <tr><td>Liabilities</td><td>
+{summary.assets.toLocaleString()}</td></tr>
+          <tr><th>Liabilities</th><td>
 
-{totals.Liability.toFixed(2)}</td></tr>
-          <tr><td>Equity</td><td>$${equity.toFixed(2)}</td></tr>
+{summary.liabilities.toLocaleString()}</td></tr>
+          <tr><th>Equity</th><td>$${(summary.assets - summary.liabilities).toLocaleString()}</td></tr>
         </table>
       `;
     }
 
-    loadJournalData();
+    profileSelector.addEventListener("change", renderReport);
+    periodSelector.addEventListener("change", renderReport);
+
+    populateProfiles();
+    profileSelector.value = profiles[0].id;
+    renderReport();
   </script>
 </body>
 </html>
