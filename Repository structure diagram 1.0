@@ -20,6 +20,10 @@
 │   ├── /fonts/                             # Custom or branded fonts (not available)
 │   └── /branding/                          # Business-specific visual assets (not available)
 │
+├── /C++/                                   # C++ coding modules
+│   ├── basic C++ login-system.cpp          # Basic C++ login system
+│   └── 
+│
 ├── /css/                                   # Styling and themes
 │   ├── business style sheet.css            # Personal styles
 │   ├── personal style sheet.css            # personal styles
