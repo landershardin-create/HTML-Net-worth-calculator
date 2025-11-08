@@ -2,119 +2,90 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Business Balance Sheet Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Business Balance Sheet</title>
   <style>
     body {
-      font-family: sans-serif;
-      margin: 2rem;
-      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background-color: #f9f9f9;
     }
-    .company-header {
-      border-bottom: 2px solid #333;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-    }
-    .company-header h2 {
-      margin: 0;
-    }
-    .company-header .meta {
-      font-size: 0.9rem;
-      color: #555;
-    }
-    .balance-sheet {
-      margin-bottom: 2rem;
+    .company-selector {
+      margin-bottom: 1em;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      background: #fff;
+      background-color: #fff;
     }
     th, td {
+      padding: 0.5em;
       border: 1px solid #ccc;
-      padding: 0.5rem;
-      text-align: right;
-    }
-    th {
-      background: #eee;
       text-align: left;
     }
-    .section-title {
-      background: #ddd;
-      font-weight: bold;
+    h2 {
+      margin-top: 1em;
     }
   </style>
 </head>
 <body>
+  <div class="company-selector">
+    <label for="companySelect">Select Company:</label>
+    <select id="companySelect">
+      <option value="companyA">Company A</option>
+      <option value="companyB">Company B</option>
+      <option value="companyC">Company C</option>
+    </select>
+  </div>
 
-  <div id="report-container"></div>
+  <div id="balanceSheetContainer"></div>
 
   <script>
-    const dashboardCompanies = [
-      {
-        id: "acme",
-        name: "Acme Corp",
-        location: "Harvest, AL",
-        reportDate: "2025-11-08",
-        balanceSheet: {
-          assets: { Cash: 120000, Receivables: 85000, Inventory: 60000 },
-          liabilities: { Payables: 40000, Loans: 75000 },
-          equity: { OwnersEquity: 150000 }
-        }
+    const balanceSheets = {
+      companyA: {
+        assets: { cash: 50000, inventory: 30000, equipment: 70000 },
+        liabilities: { loans: 40000, accountsPayable: 20000 },
+        equity: { retainedEarnings: 90000 }
       },
-      {
-        id: "beta",
-        name: "Beta LLC",
-        location: "Huntsville, AL",
-        reportDate: "2025-11-08",
-        balanceSheet: {
-          assets: { Cash: 95000, Receivables: 62000, Inventory: 30000 },
-          liabilities: { Payables: 25000, Loans: 50000 },
-          equity: { OwnersEquity: 112000 }
-        }
+      companyB: {
+        assets: { cash: 80000, inventory: 50000, equipment: 120000 },
+        liabilities: { loans: 60000, accountsPayable: 30000 },
+        equity: { retainedEarnings: 160000 }
+      },
+      companyC: {
+        assets: { cash: 30000, inventory: 20000, equipment: 40000 },
+        liabilities: { loans: 25000, accountsPayable: 15000 },
+        equity: { retainedEarnings: 50000 }
       }
-    ];
+    };
 
-    function renderBalanceSheet(company) {
-      const { name, location, reportDate, balanceSheet } = company;
-      const container = document.getElementById("report-container");
-
-      const headerHTML = `
-        <div class="company-header">
-          <h2>${name}</h2>
-          <div class="meta">Report Date: ${reportDate} | Location: ${location}</div>
-        </div>
+    function renderBalanceSheet(companyKey) {
+      const data = balanceSheets[companyKey];
+      const container = document.getElementById("balanceSheetContainer");
+      container.innerHTML = `
+        <h2>Balance Sheet - ${companyKey}</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Item</th><th>Amount</th></tr></thead>
+          <tbody>
+            ${Object.entries(data.assets).map(([item, amount]) =>
+              `<tr><td>Assets</td><td>${item}</td><td>$${amount.toLocaleString()}</td></tr>`
+            ).join("")}
+            ${Object.entries(data.liabilities).map(([item, amount]) =>
+              `<tr><td>Liabilities</td><td>${item}</td><td>$${amount.toLocaleString()}</td></tr>`
+            ).join("")}
+            ${Object.entries(data.equity).map(([item, amount]) =>
+              `<tr><td>Equity</td><td>${item}</td><td>$${amount.toLocaleString()}</td></tr>`
+            ).join("")}
+          </tbody>
+        </table>
       `;
-
-      const assets = Object.entries(balanceSheet.assets);
-      const liabilities = Object.entries(balanceSheet.liabilities);
-      const equity = Object.entries(balanceSheet.equity);
-
-      const totalAssets = assets.reduce((sum, [, val]) => sum + val, 0);
-      const totalLiabilities = liabilities.reduce((sum, [, val]) => sum + val, 0);
-      const totalEquity = equity.reduce((sum, [, val]) => sum + val, 0);
-
-      const tableHTML = `
-        <div class="balance-sheet">
-          <table>
-            <tr><th colspan="2" class="section-title">Assets</th></tr>
-            ${assets.map(([k, v]) => `<tr><td>${k}</td><td>${v.toLocaleString()}</td></tr>`).join("")}
-            <tr><td>Total Assets</td><td><strong>${totalAssets.toLocaleString()}</strong></td></tr>
-
-            <tr><th colspan="2" class="section-title">Liabilities</th></tr>
-            ${liabilities.map(([k, v]) => `<tr><td>${k}</td><td>${v.toLocaleString()}</td></tr>`).join("")}
-            <tr><td>Total Liabilities</td><td><strong>${totalLiabilities.toLocaleString()}</strong></td></tr>
-
-            <tr><th colspan="2" class="section-title">Equity</th></tr>
-            ${equity.map(([k, v]) => `<tr><td>${k}</td><td>${v.toLocaleString()}</td></tr>`).join("")}
-            <tr><td>Total Equity</td><td><strong>${totalEquity.toLocaleString()}</strong></td></tr>
-          </table>
-        </div>
-      `;
-
-      container.innerHTML += headerHTML + tableHTML;
     }
 
-    dashboardCompanies.forEach(renderBalanceSheet);
+    document.getElementById("companySelect").addEventListener("change", (e) => {
+      renderBalanceSheet(e.target.value);
+    });
+
+    renderBalanceSheet("companyA");
   </script>
 </body>
 </html>
