@@ -1,119 +1,80 @@
+<!-- net-worth-report.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Business Net Worth Tracker</title>
+  <title>Business Net Worth Report</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2rem;
-      background-color: #f9f9f9;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 2rem;
-    }
-    th, td {
-      padding: 0.75rem;
-      border: 1px solid #ccc;
-      text-align: left;
-    }
-    th {
-      background-color: #e0e0e0;
-    }
-    tfoot td {
-      font-weight: bold;
-      background-color: #f0f0f0;
-    }
-    .section-title {
-      font-size: 1.2rem;
-      margin-top: 2rem;
-      color: #333;
-    }
+    body { font-family: sans-serif; margin: 2em; }
+    h1 { color: #2c3e50; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f0f0f0; }
+    .asset { color: green; }
+    .liability { color: red; }
+    .summary { margin-top: 1em; font-size: 1.2em; }
   </style>
 </head>
 <body>
-  <h1>Business Net Worth Dashboard</h1>
-
-  <div class="section-title">Assets</div>
-  <table id="assets-table">
+  <h1>Business Net Worth Report</h1>
+  <div class="summary" id="summary"></div>
+  <table id="report">
     <thead>
       <tr>
-        <th>Category</th>
-        <th>Description</th>
-        <th>Value ($)</th>
+        <th>Account</th>
+        <th>Type</th>
+        <th>Balance</th>
       </tr>
     </thead>
-    <tbody>
-      <tr><td>Cash</td><td>Business Checking Account</td><td>12000</td></tr>
-      <tr><td>Receivables</td><td>Client Invoices</td><td>5000</td></tr>
-      <tr><td>Equipment</td><td>Laptops & Tools</td><td>8000</td></tr>
-    </tbody>
+    <tbody></tbody>
   </table>
 
-  <div class="section-title">Liabilities</div>
-  <table id="liabilities-table">
-    <thead>
-      <tr>
-        <th>Category</th>
-        <th>Description</th>
-        <th>Amount ($)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Loans</td><td>Startup Loan</td><td>7000</td></tr>
-      <tr><td>Credit</td><td>Business Credit Card</td><td>2000</td></tr>
-    </tbody>
-  </table>
+  <script>
+    async function loadAccounts() {
+      const response = await fetch('journal.html');
+      const text = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      const rows = doc.querySelectorAll('#accounts tbody tr');
 
-  <div class="section-title">Net Worth Summary</div>
-  <table id="net-worth-table">
-    <tfoot>
-      <tr>
-        <td colspan="2">Total Assets</td>
-        <td id="total-assets">$25000</td>
-      </tr>
-      <tr>
-        <td colspan="2">Total Liabilities</td>
-        <td id="total-liabilities">$9000</td>
-      </tr>
-      <tr>
-        <td colspan="2">Net Worth</td>
-        <td id="net-worth">$16000</td>
-      </tr>
-    </tfoot>
-  </table>
+      let totalAssets = 0;
+      let totalLiabilities = 0;
+      const reportBody = document.querySelector('#report tbody');
 
-<script>
-  function calculateNetWorth() {
-    const assetRows = document.querySelectorAll('#assets-table tbody tr');
-    const liabilityRows = document.querySelectorAll('#liabilities-table tbody tr');
-    let assetTotal = 0, liabilityTotal = 0;
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const [account, type, balanceStr] = Array.from(cells).map(cell => cell.textContent);
+        const balance = parseFloat(balanceStr);
 
-    assetRows.forEach(row => {
-      assetTotal += parseFloat(row.cells[2].textContent) || 0;
-    });
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td>${account}</td>
+          <td>${type}</td>
+          <td class="${type.toLowerCase()}">
 
-    liabilityRows.forEach(row => {
-      liabilityTotal += parseFloat(row.cells[2].textContent) || 0;
-    });
+{balance.toFixed(2)}</td>
+        `;
+        reportBody.appendChild(newRow);
 
-    document.getElementById('total-assets').textContent = `
+        if (type === 'Asset') totalAssets += balance;
+        else if (type === 'Liability') totalLiabilities += balance;
+      });
 
-{assetTotal}`;
-    document.getElementById('total-liabilities').textContent = `
+      const netWorth = totalAssets - totalLiabilities;
+      document.getElementById('summary').innerHTML = `
+        <p><strong>Total Assets:</strong> <span class="asset">
 
-{liabilityTotal}`;
-    document.getElementById('net-worth').textContent = `$${assetTotal - liabilityTotal}`;
-  }
+{totalAssets.toFixed(2)}</span></p>
+        <p><strong>Total Liabilities:</strong> <span class="liability">
 
-  calculateNetWorth();
-</script>
+{totalLiabilities.toFixed(2)}</span></p>
+        <p><strong>Net Worth:</strong> <strong>
+
+{netWorth.toFixed(2)}</strong></p>
+      `;
+    }
+
+    loadAccounts();
+  </script>
 </body>
 </html>
