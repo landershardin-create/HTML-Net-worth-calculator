@@ -49,15 +49,17 @@
 │   ├── business timesheet.html
 │   ├── company dashboard.html
 │   ├── contributor dashboard.html
-│   ├── balance-sheet.html
-│   ├── personnel-records.html
-│   ├── business-selector.html
-│   ├── contributor-manager.html
-│   ├── cash-flow-tracker.html
-│   ├── journal-entries.html
-│   ├── balance-sheet.html
-│   ├── personnel-records.html
-│   └── export-storage.html
+│   ├── dashboard original.html
+│   ├── dashboard.html
+│   ├── home.html
+│   ├── index_original_1.html
+│   ├── personal accounting journal.html
+│   ├── personal balance sheet.html
+│   ├── personal cash flow.html
+│   ├── personal dashboard.html
+│   ├── personal income and expense.html
+│   ├── personal menu.html
+│   └── personal net worth.html
 │
 ├── /data/                                  # Sample data and templates
 │   ├── sample-business.json.               # (not available)
