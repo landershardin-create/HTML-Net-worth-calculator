@@ -1,158 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- net-worth.html -->
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Personal Net Worth Calculator</title>
+  <title>Net Worth Report</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f4f8;
-      margin: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    section {
-      background: #fff;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      margin: 10px 0;
-    }
-    input[type="number"], input[type="text"] {
-      margin-left: 10px;
-      padding: 5px;
-      width: 160px;
-    }
-    .tab {
-      display: none;
-    }
-    .tab.active {
-      display: block;
-    }
-    .tab-buttons {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .tab-buttons button {
-      margin: 0 10px;
-      padding: 10px 20px;
-      border: none;
-      background: #0078D4;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .tab-buttons button:hover {
-      background: #005a9e;
-    }
-    #calculateBtn {
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      color: white;
-      font-weight: bold;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      display: block;
-      margin: 20px auto;
-    }
-    #calculateBtn:hover {
-      background: linear-gradient(135deg, #0072ff, #00c6ff);
-    }
-    #result {
-      text-align: center;
-      font-size: 1.2em;
-      color: #0072ff;
-    }
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    table { border-collapse: collapse; width: 60%; margin-bottom: 2em; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f0f0f0; }
   </style>
 </head>
 <body>
+  <h1>Personal Net Worth Report</h1>
+  <div id="report"></div>
 
-<h1>Personal Net Worth Calculator</h1>
+  <script>
+    async function generateNetWorthReport() {
+      const response = await fetch('journal.html');
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const rows = doc.querySelectorAll('#journal tbody tr');
 
-<div class="tab-buttons">
-  <button onclick="switchTab('calculator')">💰 Calculator</button>
-  <button onclick="switchTab('editor')">🛠️ Edit Labels</button>
-  <button onclick="switchTab('customTab')">🧩 <span id="customTabLabel">Custom Tab</span></button>
-</div>
+      let totalAssets = 0;
+      let totalLiabilities = 0;
+      const assets = [];
+      const liabilities = [];
 
-<div id="calculator" class="tab active">
-  <section id="assets">
-    <h2>Assets</h2>
-    <label><span id="labelCash">Cash & Bank:</span> <input type="number" id="cash" /></label>
-    <label><span id="labelInvestments">Investments:</span> <input type="number" id="investments" /></label>
-    <label><span id="labelRealEstate">Real Estate:</span> <input type="number" id="realEstate" /></label>
-    <label><span id="labelBusinessEquity">Business Equity:</span> <input type="number" id="businessEquity" /></label>
-    <label><span id="labelBrandingAssets">Branding Assets:</span> <input type="number" id="brandingAssets" /></label>
-  </section>
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const date = cells[0].textContent.trim();
+        const account = cells[1].textContent.trim();
+        const type = cells[2].textContent.trim();
+        const amount = parseFloat(cells[3].textContent.trim());
 
-  <section id="liabilities">
-    <h2>Liabilities</h2>
-    <label><span id="labelMortgage">Mortgage:</span> <input type="number" id="mortgage" /></label>
-    <label><span id="labelCreditCard">Credit Card Debt:</span> <input type="number" id="creditCard" /></label>
-    <label><span id="labelBusinessDebt">Business Debt:</span> <input type="number" id="businessDebt" /></label>
-  </section>
+        if (type === 'Asset') {
+          totalAssets += amount;
+          assets.push({ account, amount });
+        } else if (type === 'Liability') {
+          totalLiabilities += amount;
+          liabilities.push({ account, amount });
+        }
+      });
 
-  <button id="calculateBtn" onclick="calculateNetWorth()">✨ Calculate Net Worth</button>
-  <h3 id="result">Net Worth: $0.00</h3>
-</div>
+      const netWorth = totalAssets - totalLiabilities;
 
-<div id="editor" class="tab">
-  <section>
-    <h2>Edit Labels</h2>
-    <label>Cash & Bank Label: <input type="text" oninput="updateLabel('labelCash', this.value)" /></label>
-    <label>Investments Label: <input type="text" oninput="updateLabel('labelInvestments', this.value)" /></label>
-    <label>Real Estate Label: <input type="text" oninput="updateLabel('labelRealEstate', this.value)" /></label>
-    <label>Business Equity Label: <input type="text" oninput="updateLabel('labelBusinessEquity', this.value)" /></label>
-    <label>Branding Assets Label: <input type="text" oninput="updateLabel('labelBrandingAssets', this.value)" /></label>
-    <label>Mortgage Label: <input type="text" oninput="updateLabel('labelMortgage', this.value)" /></label>
-    <label>Credit Card Debt Label: <input type="text" oninput="updateLabel('labelCreditCard', this.value)" /></label>
-    <label>Business Debt Label: <input type="text" oninput="updateLabel('labelBusinessDebt', this.value)" /></label>
-    <label>Custom Tab Label: <input type="text" oninput="updateLabel('customTabLabel', this.value)" /></label>
-  </section>
-</div>
+      document.getElementById('report').innerHTML = `
+        <table>
+          <tr><th>Category</th><th>Amount</th></tr>
+          <tr><td>Total Assets</td><td>
 
-<div id="customTab" class="tab">
-  <section>
-    <h2>Custom Tab</h2>
-    <p>This space is ready for your next module or contributor-specific tools.</p>
-  </section>
-</div>
+{totalAssets.toFixed(2)}</td></tr>
+          <tr><td>Total Liabilities</td><td>
 
-<script>
-function switchTab(tabId) {
-  document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
-}
+{totalLiabilities.toFixed(2)}</td></tr>
+          <tr><td><strong>Net Worth</strong></td><td><strong>$${netWorth.toFixed(2)}</strong></td></tr>
+        </table>
 
-function calculateNetWorth() {
-  const assets = [
-    parseFloat(document.getElementById('cash').value) || 0,
-    parseFloat(document.getElementById('investments').value) || 0,
-    parseFloat(document.getElementById('realEstate').value) || 0,
-    parseFloat(document.getElementById('businessEquity').value) || 0,
-    parseFloat(document.getElementById('brandingAssets').value) || 0
-  ];
-  const liabilities = [
-    parseFloat(document.getElementById('mortgage').value) || 0,
-    parseFloat(document.getElementById('creditCard').value) || 0,
-    parseFloat(document.getElementById('businessDebt').value) || 0
-  ];
-  const netWorth = assets.reduce((a, b) => a + b, 0) - liabilities.reduce((a, b) => a + b, 0);
-  document.getElementById('result').textContent = `Net Worth: $${netWorth.toFixed(2)}`;
-}
+        <h2>Asset Breakdown</h2>
+        <table>
+          <tr><th>Account</th><th>Amount</th></tr>
+          ${assets.map(a => `<tr><td>${a.account}</td><td>$${a.amount.toFixed(2)}</td></tr>`).join('')}
+        </table>
 
-function updateLabel(labelId, newText) {
-  document.getElementById(labelId).textContent = newText;
-}
-</script>
+        <h2>Liability Breakdown</h2>
+        <table>
+          <tr><th>Account</th><th>Amount</th></tr>
+          ${liabilities.map(l => `<tr><td>${l.account}</td><td>$${l.amount.toFixed(2)}</td></tr>`).join('')}
+        </table>
+      `;
+    }
 
+    generateNetWorthReport();
+  </script>
 </body>
 </html>
