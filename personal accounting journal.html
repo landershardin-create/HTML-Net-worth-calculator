@@ -3,12 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Accounting Journal & Account Manager</title>
+  <title>Personal Account & Journal Manager</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 40px;
       background-color: #f4f4f4;
+    }
+    header.profile-header {
+      background-color: #2196F3;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    header.profile-header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    header.profile-header p {
+      margin: 5px 0;
+      font-size: 16px;
     }
     h2 {
       margin-top: 40px;
@@ -41,70 +56,57 @@
     .add-btn { background-color: #2196F3; }
     .remove-btn { background-color: #f44336; }
     .submit-btn { background-color: #4CAF50; width: 100%; font-size: 16px; }
+    .journal-entry {
+      background-color: #fff;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
 
-  <h2>Create New Account</h2>
+  <header class="profile-header">
+    <h1>Landers Orenthal Hardin</h1>
+    <p><strong>Role:</strong> Business Owner & Technical Architect</p>
+    <p><strong>Location:</strong> Harvest, Alabama</p>
+    <p><em>Empowering financial clarity through modular, accessible dashboards.</em></p>
+  </header>
+
+  <h2>My Accounts</h2>
   <form id="accountForm">
     <table>
       <tr>
         <td><label for="accountName">Account Name</label></td>
-        <td><input type="text" id="accountName" required /></td>
+        <td><input type="text" id="accountName" placeholder="e.g., Emergency Fund" required /></td>
       </tr>
       <tr>
-        <td><label for="accountType">Account Type</label></td>
+        <td><label for="accountType">Category</label></td>
         <td>
           <select id="accountType" required>
-            <option value="">Select type</option>
-            <option value="Asset">Asset</option>
-            <option value="Liability">Liability</option>
-            <option value="Equity">Equity</option>
-            <option value="Revenue">Revenue</option>
-            <option value="Expense">Expense</option>
+            <option value="">Select category</option>
+            <option value="Savings">Savings</option>
+            <option value="Bills">Bills</option>
+            <option value="Investments">Investments</option>
+            <option value="Income">Income</option>
+            <option value="Spending">Spending</option>
           </select>
         </td>
       </tr>
     </table>
-    <button type="submit" class="btn submit-btn">Create Account</button>
+    <button type="submit" class="btn submit-btn">Add Account</button>
   </form>
 
-  <h2>Journal Entry</h2>
-  <form id="journalForm">
-    <table id="journalTable">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Account</th>
-          <th>Debit ($)</th>
-          <th>Credit ($)</th>
-          <th>Description</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="date" name="date[]" required /></td>
-          <td>
-            <select name="account[]" class="accountSelect" required>
-              <option value="">Select account</option>
-            </select>
-          </td>
-          <td><input type="number" name="debit[]" step="0.01" /></td>
-          <td><input type="number" name="credit[]" step="0.01" /></td>
-          <td><input type="text" name="description[]" /></td>
-          <td><button type="button" class="btn remove-btn" onclick="removeRow(this)">Remove</button></td>
-        </tr>
-      </tbody>
-    </table>
-    <button type="button" class="btn add-btn" onclick="addRow()">Add Row</button>
-    <button type="submit" class="btn submit-btn">Submit Journal</button>
-  </form>
+  <h2>My Journal Entries</h2>
+  <div id="journalEntries"></div>
+  <button type="button" class="btn add-btn" onclick="addJournalEntry()">New Journal Entry</button>
+  <button type="button" class="btn submit-btn" onclick="submitAllEntries()">Save All Entries</button>
 
   <script>
     const accountForm = document.getElementById("accountForm");
-    const journalForm = document.getElementById("journalForm");
     const accountSelects = document.getElementsByClassName("accountSelect");
+    let journalEntryCount = 0;
 
     accountForm.addEventListener("submit", function(e) {
       e.preventDefault();
@@ -114,36 +116,75 @@
         for (let select of accountSelects) {
           const option = document.createElement("option");
           option.value = name;
-          option.text = `${name} (${type})`;
+          option.text = `${name} [${type}]`;
           select.appendChild(option);
         }
-        alert(`Account "${name}" created as ${type}.`);
+        alert(`Account "${name}" added under ${type}.`);
         accountForm.reset();
       }
     });
 
-    function addRow() {
-      const table = document.getElementById("journalTable").getElementsByTagName("tbody")[0];
-      const newRow = table.rows[0].cloneNode(true);
+    function addJournalEntry() {
+      journalEntryCount++;
+      const container = document.createElement("div");
+      container.className = "journal-entry";
+      container.innerHTML = `
+        <h3>Entry #${journalEntryCount}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Account</th>
+              <th>Debit ($)</th>
+              <th>Credit ($)</th>
+              <th>Description</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="date" name="date[]" required /></td>
+              <td>
+                <select name="account[]" class="accountSelect" required>
+                  ${accountSelects[0]?.innerHTML || '<option value="">Select account</option>'}
+                </select>
+              </td>
+              <td><input type="number" name="debit[]" step="0.01" /></td>
+              <td><input type="number" name="credit[]" step="0.01" /></td>
+              <td><input type="text" name="description[]" /></td>
+              <td><button type="button" class="btn remove-btn" onclick="removeLine(this)">Remove Line</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" class="btn add-btn" onclick="addLine(this)">Add Line</button>
+        <button type="button" class="btn remove-btn" onclick="removeJournalEntry(this)">Remove Entry</button>
+        <hr/>
+      `;
+      document.getElementById("journalEntries").appendChild(container);
+    }
+
+    function addLine(button) {
+      const tbody = button.previousElementSibling.querySelector("tbody");
+      const newRow = tbody.rows[0].cloneNode(true);
       newRow.querySelectorAll("input").forEach(input => input.value = "");
-      const newSelect = newRow.querySelector("select");
-      newSelect.innerHTML = accountSelects[0].innerHTML;
-      table.appendChild(newRow);
+      newRow.querySelector("select").innerHTML = accountSelects[0].innerHTML;
+      tbody.appendChild(newRow);
     }
 
-    function removeRow(button) {
+    function removeLine(button) {
       const row = button.closest("tr");
-      const table = document.getElementById("journalTable").getElementsByTagName("tbody")[0];
-      if (table.rows.length > 1) {
-        row.remove();
-      }
+      const tbody = row.parentElement;
+      if (tbody.rows.length > 1) row.remove();
     }
 
-    journalForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      alert("Journal entries submitted!");
-      // Add logic here to process or export the data
-    });
+    function removeJournalEntry(button) {
+      button.closest(".journal-entry").remove();
+    }
+
+    function submitAllEntries() {
+      alert("All journal entries saved!");
+      // Add logic to process or export grouped entries
+    }
   </script>
 </body>
 </html>
