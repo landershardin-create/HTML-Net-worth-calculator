@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GitHub Tabbed Dashboard with Company Manager</title>
   <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin/HTML-Business-and-Personal-Finance/css/stylesheet.css" />
-  <style>
-    /* [Same styles as before — unchanged] */
-  </style>
 </head>
 <body>
+  <!-- Menu -->
   <div class="menu-container">
     <label for="tabMenu">Choose a section:</label>
     <select id="tabMenu">
@@ -23,6 +21,7 @@
     <select id="companySelect" multiple></select>
   </div>
 
+  <!-- Filter + Export -->
   <div class="filter-export">
     <label for="ownerFilter">Filter by Owner:</label>
     <select id="ownerFilter">
@@ -33,6 +32,7 @@
 
   <div id="content"></div>
 
+  <!-- Carousel -->
   <div class="carousel-viewer">
     <h3>Company Carousel Viewer</h3>
     <div id="carouselDisplay" class="carousel-card"></div>
@@ -42,6 +42,7 @@
     </div>
   </div>
 
+  <!-- Company Manager -->
   <div class="company-manager">
     <h3>Manage Companies</h3>
     <form id="companyForm">
@@ -54,11 +55,11 @@
         <input type="text" id="companyOwner" placeholder="Owner" />
         <input type="text" id="companyEIN" placeholder="SSN (XXX-XX-XXXX) or EIN (XX-XXXXXXX)" pattern="\d{3}-\d{2}-\d{4}|\d{2}-\d{7}" title="Format: SSN XXX-XX-XXXX or EIN XX-XXXXXXX" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
-       <select id="companyRole">
+        <select id="companyRole">
           <option value="Viewer">Viewer</option>
           <option value="Editor">Editor</option>
           <option value="Owner">Owner</option>
-       </select>
+        </select>
         <select id="companyType">
           <option value="">Select type</option>
           <option value="Sole Proprietor">Sole Proprietor</option>
@@ -69,9 +70,85 @@
         </select>
         <button type="submit">Add</button>
       </div>
-       
     </form>
     <div class="company-list" id="companyList"></div>
   </div>
 
-<script src="https://raw.githubusercontent.com/landershardin/HTML-Business-and-Personal-Finance/js/dashboard.js" defer></script>
+  <!-- Embedded JavaScript -->
+  <script>
+    const companies = [];
+    let carouselIndex = 0;
+
+    document.getElementById('companyForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const company = {
+        name: companyName.value,
+        address: streetAddress.value,
+        city: city.value,
+        state: state.value,
+        zip: zipCode.value,
+        owner: companyOwner.value,
+        ein: companyEIN.value,
+        sein: companySEIN.value,
+        role: companyRole.value,
+        type: companyType.value
+      };
+      companies.push(company);
+      updateCompanyList();
+      updateCompanySelect();
+      updateOwnerFilter();
+      updateCarousel();
+      this.reset();
+    });
+
+    function updateCompanyList() {
+      const ownerFilter = document.getElementById('ownerFilter').value;
+      const list = companies.filter(c => !ownerFilter || c.owner === ownerFilter);
+      companyList.innerHTML = list.map(c => `<div>${c.name} (${c.owner}) - ${c.type}</div>`).join('');
+    }
+
+    function updateCompanySelect() {
+      companySelect.innerHTML = companies.map(c => `<option>${c.name}</option>`).join('');
+    }
+
+    function updateOwnerFilter() {
+      const owners = [...new Set(companies.map(c => c.owner))];
+      ownerFilter.innerHTML = `<option value="">All Owners</option>` + owners.map(o => `<option value="${o}">${o}</option>`).join('');
+    }
+
+    function updateCarousel() {
+      if (companies.length === 0) {
+        carouselDisplay.innerHTML = '<em>No companies added yet.</em>';
+        return;
+      }
+      const c = companies[carouselIndex % companies.length];
+      carouselDisplay.innerHTML = `<strong>${c.name}</strong><br>${c.city}, ${c.state}<br>Owner: ${c.owner}<br>Type: ${c.type}`;
+    }
+
+    function prevCompany() {
+      carouselIndex = (carouselIndex - 1 + companies.length) % companies.length;
+      updateCarousel();
+    }
+
+    function nextCompany() {
+      carouselIndex = (carouselIndex + 1) % companies.length;
+      updateCarousel();
+    }
+
+    function exportCompanies() {
+      const blob = new Blob([JSON.stringify(companies, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'companies.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('ownerFilter').addEventListener('change', updateCompanyList);
+    document.getElementById('tabMenu').addEventListener('change', function() {
+      content.innerHTML = `<p>Selected tab: <strong>${this.value}</strong></p>`;
+    });
+  </script>
+</body>
+</html>
