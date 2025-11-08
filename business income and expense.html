@@ -1,86 +1,202 @@
-<!-- report.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Income & Expense Report</title>
+  <title>Cash Flow Report</title>
   <style>
-    body { font-family: Arial; margin: 2em; }
-    h1 { color: #333; }
-    table { border-collapse: collapse; width: 100%; margin-top: 1em; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f4f4f4; }
-    .income { color: green; }
-    .expense { color: red; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    select {
+      margin-bottom: 1em;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2em;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.75em;
+      text-align: left;
+    }
+    th {
+      background-color: #ecf0f1;
+    }
+    .summary {
+      font-weight: bold;
+      background-color: #dff0d8;
+    }
+    caption {
+      text-align: left;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+    }
   </style>
 </head>
 <body>
-  <h1>Business Income & Expense Report
-    <!-- Company Header -->
-    <div class="company-header" role="region" aria-label="Company Summary">
-        <h2 id="headerCompanyName">Company Name</h2>
-        <p id="headerLocation">City, State</p>
-        <p id="headerType">Type: <span></span></p>
-        <p id="headerRole">Role: <span></span></p>
-    </div>
-  </h1>
-  <div id="summary"></div>
-  <table id="report">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Description</th>
-        <th>Category</th>
-        <th>Amount</th>
-        <th>Type</th>
-      </tr>
-    </thead>
+  <h1>Business Cash Flow Report</h1>
+
+  <!-- Company Selector -->
+  <label for="companySelect"><strong>Select Company:</strong></label>
+  <select id="companySelect" multiple size="2">
+    <option value="AlphaCorp">AlphaCorp</option>
+    <option value="BetaEnterprises">BetaEnterprises</option>
+  </select>
+
+  <!-- Company Header -->
+  <div class="company-header" role="region" aria-label="Company Summary">
+    <h2 id="headerCompanyName">Company Name</h2>
+    <p id="headerLocation">City, State</p>
+    <p id="headerType">Type: <span id="headerTypeValue"></span></p>
+    <p id="headerRole">Role: <span id="headerRoleValue"></span></p>
+  </div>
+
+  <p><strong>Reporting Period:</strong> January 1 – December 31, 2025</p>
+
+  <h2>Operating Activities</h2>
+  <table id="operating-table">
+    <thead><tr><th>Description</th><th>Date</th><th>Amount</th></tr></thead>
     <tbody></tbody>
   </table>
 
+  <h2>Investing Activities</h2>
+  <table id="investing-table">
+    <thead><tr><th>Description</th><th>Date</th><th>Amount</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Financing Activities</h2>
+  <table id="financing-table">
+    <thead><tr><th>Description</th><th>Date</th><th>Amount</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Summary</h2>
+  <table>
+    <tbody>
+      <tr class="summary"><td>Net Cash from Operating</td><td id="total-operating">$0.00</td></tr>
+      <tr class="summary"><td>Net Cash from Investing</td><td id="total-investing">$0.00</td></tr>
+      <tr class="summary"><td>Net Cash from Financing</td><td id="total-financing">$0.00</td></tr>
+      <tr class="summary"><td>Net Cash Flow</td><td id="net-cash">$0.00</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Company Breakdown</h2>
+  <div id="companyBreakdown"></div>
+
   <script>
-    async function loadJournal() {
-      const response = await fetch('journal.html');
-      const text = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(text, 'text/html');
-      const rows = doc.querySelectorAll('#journal tbody tr');
+    const companies = {
+      AlphaCorp: {
+        name: "AlphaCorp",
+        location: "New York, NY",
+        type: "Retail",
+        role: "Owner",
+        journal: [
+          { activity: "operating", description: "Sales revenue", date: "2025-01-10", amount: 15000 },
+          { activity: "operating", description: "Rent payment", date: "2025-02-01", amount: -3000 },
+          { activity: "investing", description: "New store equipment", date: "2025-03-15", amount: -4000 },
+          { activity: "financing", description: "Bank loan", date: "2025-04-20", amount: 8000 }
+        ]
+      },
+      BetaEnterprises: {
+        name: "BetaEnterprises",
+        location: "Austin, TX",
+        type: "Tech Services",
+        role: "Consultant",
+        journal: [
+          { activity: "operating", description: "Client payments", date: "2025-01-20", amount: 10000 },
+          { activity: "operating", description: "Software subscriptions", date: "2025-02-05", amount: -2000 },
+          { activity: "investing", description: "Laptop purchase", date: "2025-03-10", amount: -1500 },
+          { activity: "financing", description: "Owner draw", date: "2025-04-01", amount: -1000 }
+        ]
+      }
+    };
 
-      let incomeTotal = 0;
-      let expenseTotal = 0;
-      const reportBody = document.querySelector('#report tbody');
-
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const [date, desc, category, amountStr, type] = Array.from(cells).map(cell => cell.textContent);
-        const amount = parseFloat(amountStr);
-
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-          <td>${date}</td>
-          <td>${desc}</td>
-          <td>${category}</td>
-          <td class="${type.toLowerCase()}">$${amount.toFixed(2)}</td>
-          <td>${type}</td>
-        `;
-        reportBody.appendChild(newRow);
-
-        if (type === 'Income') incomeTotal += amount;
-        else if (type === 'Expense') expenseTotal += amount;
-      });
-
-      document.getElementById('summary').innerHTML = `
-        <p><strong>Total Income:</strong> <span class="income">
-
-{incomeTotal.toFixed(2)}</span></p>
-        <p><strong>Total Expenses:</strong> <span class="expense">
-
-{expenseTotal.toFixed(2)}</span></p>
-        <p><strong>Net Profit:</strong> <span>${(incomeTotal - expenseTotal).toFixed(2)}</span></p>
-      `;
+    function formatCurrency(amount) {
+      return `$${amount.toFixed(2)}`;
     }
 
-    loadJournal();
+    function populateCashFlow(selectedKeys) {
+      const operatingBody = document.querySelector("#operating-table tbody");
+      const investingBody = document.querySelector("#investing-table tbody");
+      const financingBody = document.querySelector("#financing-table tbody");
+      const breakdownContainer = document.getElementById("companyBreakdown");
+
+      operatingBody.innerHTML = "";
+      investingBody.innerHTML = "";
+      financingBody.innerHTML = "";
+      breakdownContainer.innerHTML = "";
+
+      let totalOperating = 0, totalInvesting = 0, totalFinancing = 0;
+      let headerNames = [], headerLocations = [], headerTypes = new Set(), headerRoles = new Set();
+
+      selectedKeys.forEach(key => {
+        const { journal, name, location, type, role } = companies[key];
+        headerNames.push(name);
+        headerLocations.push(location);
+        headerTypes.add(type);
+        headerRoles.add(role);
+
+        let companyOperating = 0, companyInvesting = 0, companyFinancing = 0;
+
+        journal.forEach(entry => {
+          const row = `<tr><td>${entry.description}</td><td>${entry.date}</td><td>${formatCurrency(entry.amount)}</td></tr>`;
+          if (entry.activity === "operating") {
+            operatingBody.innerHTML += row;
+            companyOperating += entry.amount;
+            totalOperating += entry.amount;
+          } else if (entry.activity === "investing") {
+            investingBody.innerHTML += row;
+            companyInvesting += entry.amount;
+            totalInvesting += entry.amount;
+          } else if (entry.activity === "financing") {
+            financingBody.innerHTML += row;
+            companyFinancing += entry.amount;
+            totalFinancing += entry.amount;
+          }
+        });
+
+        const companySummary = `
+          <table>
+            <caption>${name}</caption>
+            <tbody>
+              <tr><td>Operating</td><td>${formatCurrency(companyOperating)}</td></tr>
+              <tr><td>Investing</td><td>${formatCurrency(companyInvesting)}</td></tr>
+              <tr><td>Financing</td><td>${formatCurrency(companyFinancing)}</td></tr>
+              <tr class="summary"><td>Net Cash Flow</td><td>${formatCurrency(companyOperating + companyInvesting + companyFinancing)}</td></tr>
+            </tbody>
+          </table>
+        `;
+        breakdownContainer.innerHTML += companySummary;
+      });
+
+      document.getElementById("headerCompanyName").textContent = headerNames.join(" + ");
+      document.getElementById("headerLocation").textContent = [...new Set(headerLocations)].join(", ");
+      document.getElementById("headerTypeValue").textContent = [...headerTypes].join(" / ");
+      document.getElementById("headerRoleValue").textContent = [...headerRoles].join(" / ");
+
+      document.getElementById("total-operating").textContent = formatCurrency(totalOperating);
+      document.getElementById("total-investing").textContent = formatCurrency(totalInvesting);
+      document.getElementById("total-financing").textContent = formatCurrency(totalFinancing);
+      document.getElementById("net-cash").textContent = formatCurrency(totalOperating + totalInvesting + totalFinancing);
+    }
+
+    document.getElementById("companySelect").addEventListener("change", e => {
+      const selected = Array.from(e.target.selectedOptions).map(opt => opt.value);
+      populateCashFlow(selected);
+    });
+
+    // Initial load with all companies selected
+    populateCashFlow(Object.keys(companies));
   </script>
 </body>
 </html>
