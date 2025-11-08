@@ -1,85 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- cash-flow.html -->
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Personal Cash Flow Tracker</title>
+  <title>Personal Cash Flow Report</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2em;
-      background: #f4f4f4;
-    }
-    h1 {
-      text-align: center;
-    }
-    .section {
-      background: #fff;
-      padding: 1em;
-      margin-bottom: 1em;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      margin-top: 0.5em;
-    }
-    input[type="number"] {
-      width: 100%;
-      padding: 0.5em;
-      margin-top: 0.2em;
-    }
-    button {
-      margin-top: 1em;
-      padding: 0.5em 1em;
-    }
-    #summary {
-      font-weight: bold;
-      font-size: 1.2em;
-    }
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    table { border-collapse: collapse; width: 60%; margin-bottom: 2em; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f0f0f0; }
   </style>
 </head>
 <body>
-  <h1>Personal Cash Flow Tracker</h1>
-
-  <div class="section">
-    <h2>Income</h2>
-    <label>Salary: <input type="number" id="salary" /></label>
-    <label>Other Income: <input type="number" id="otherIncome" /></label>
-  </div>
-
-  <div class="section">
-    <h2>Expenses</h2>
-    <label>Rent/Mortgage: <input type="number" id="rent" /></label>
-    <label>Utilities: <input type="number" id="utilities" /></label>
-    <label>Groceries: <input type="number" id="groceries" /></label>
-    <label>Transportation: <input type="number" id="transportation" /></label>
-    <label>Other Expenses: <input type="number" id="otherExpenses" /></label>
-  </div>
-
-  <div class="section">
-    <button onclick="calculateCashFlow()">Calculate Cash Flow</button>
-    <p id="summary"></p>
-  </div>
+  <h1>Cash Flow Report</h1>
+  <div id="report"></div>
 
   <script>
-    function calculateCashFlow() {
-      const income = 
-        Number(document.getElementById('salary').value) +
-        Number(document.getElementById('otherIncome').value);
+    async function generateCashFlowReport() {
+      const response = await fetch('journal.html');
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const rows = doc.querySelectorAll('#journal tbody tr');
 
-      const expenses = 
-        Number(document.getElementById('rent').value) +
-        Number(document.getElementById('utilities').value) +
-        Number(document.getElementById('groceries').value) +
-        Number(document.getElementById('transportation').value) +
-        Number(document.getElementById('otherExpenses').value);
+      let inflow = 0, outflow = 0;
+      const details = [];
 
-      const netCashFlow = income - expenses;
-      const summary = document.getElementById('summary');
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const date = cells[0].textContent.trim();
+        const account = cells[1].textContent.trim();
+        const type = cells[2].textContent.trim();
+        const amount = parseFloat(cells[3].textContent.trim());
+        const direction = cells[4].textContent.trim();
 
-      summary.textContent = `Net Cash Flow: $${netCashFlow.toFixed(2)} (${netCashFlow >= 0 ? 'Surplus' : 'Deficit'})`;
-    }
-  </script>
-</body>
-</html>
+        if (direction === 'Inflow') inflow += amount;
+        else if (direction === 'Outflow') outflow += amount;
+
+        details.push({ date, account, type, amount, direction });
+      });
+
+      const netFlow = inflow - outflow;
+
+      document.getElementById('report').innerHTML = `
+        <table>
+          <tr><th>Category</th><th>Amount</th></tr>
+          <tr><td>Total Inflows</td><td>
+
+{inflow.toFixed(2)}</td></tr>
+          <tr><td>Total Outflows</td><td>
+
+{outflow.toFixed(2)}</td></tr>
+          <tr><td>Net Cash Flow</td><td>$${netFlow.toFixed(2)}</td></tr>
+        </table>
+        <h2>Transaction Details</h2>
+        <table>
+          <tr><th>Date</th><th>Account</th><th>Type</th><th>Amount</th><th>Direction</th></tr>
+          ${details.map(d => `
+            <tr>
+              <td>${d.date}</td><td>${d.account}</td><td>${d.type}</td>
+              <td>$${d.amount.toFixed(2)}</td><td>${d.direction}</td>
+            </tr>`).join('')}
+        </table>
