@@ -13,6 +13,11 @@
     h1, h2 {
       color: #2c3e50;
     }
+    select {
+      margin-bottom: 1em;
+      padding: 0.5em;
+      font-size: 1em;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -33,38 +38,40 @@
   </style>
 </head>
 <body>
-  <h1>Business Cash Flow Report
-    <!-- Company Header -->
-    <div class="company-header" role="region" aria-label="Company Summary">
-        <h2 id="headerCompanyName">Company Name</h2>
-        <p id="headerLocation">City, State</p>
-        <p id="headerType">Type: <span></span></p>
-        <p id="headerRole">Role: <span></span></p>
-    </div>
-  </h1>
+  <h1>Business Cash Flow Report</h1>
+
+  <!-- Company Selector -->
+  <label for="companySelect"><strong>Select Company:</strong></label>
+  <select id="companySelect">
+    <option value="AlphaCorp">AlphaCorp</option>
+    <option value="BetaEnterprises">BetaEnterprises</option>
+  </select>
+
+  <!-- Company Header -->
+  <div class="company-header" role="region" aria-label="Company Summary">
+    <h2 id="headerCompanyName">Company Name</h2>
+    <p id="headerLocation">City, State</p>
+    <p id="headerType">Type: <span id="headerTypeValue"></span></p>
+    <p id="headerRole">Role: <span id="headerRoleValue"></span></p>
+  </div>
+
   <p><strong>Reporting Period:</strong> January 1 – December 31, 2025</p>
 
   <h2>Operating Activities</h2>
   <table id="operating-table">
-    <thead>
-      <tr><th>Description</th><th>Date</th><th>Amount</th></tr>
-    </thead>
+    <thead><tr><th>Description</th><th>Date</th><th>Amount</th></tr></thead>
     <tbody></tbody>
   </table>
 
   <h2>Investing Activities</h2>
   <table id="investing-table">
-    <thead>
-      <tr><th>Description</th><th>Date</th><th>Amount</th></tr>
-    </thead>
+    <thead><tr><th>Description</th><th>Date</th><th>Amount</th></tr></thead>
     <tbody></tbody>
   </table>
 
   <h2>Financing Activities</h2>
   <table id="financing-table">
-    <thead>
-      <tr><th>Description</th><th>Date</th><th>Amount</th></tr>
-    </thead>
+    <thead><tr><th>Description</th><th>Date</th><th>Amount</th></tr></thead>
     <tbody></tbody>
   </table>
 
@@ -79,28 +86,54 @@
   </table>
 
   <script>
-    const journal = [
-      { activity: "operating", description: "Cash received from customers", date: "2025-01-15", amount: 12000 },
-      { activity: "operating", description: "Cash paid to suppliers", date: "2025-02-10", amount: -4000 },
-      { activity: "operating", description: "Cash paid for salaries", date: "2025-03-05", amount: -3000 },
-      { activity: "investing", description: "Purchase of equipment", date: "2025-04-20", amount: -5000 },
-      { activity: "investing", description: "Sale of old assets", date: "2025-06-15", amount: 2000 },
-      { activity: "financing", description: "Loan received", date: "2025-07-10", amount: 7000 },
-      { activity: "financing", description: "Owner withdrawal", date: "2025-08-25", amount: -2500 }
-    ];
+    const companies = {
+      AlphaCorp: {
+        name: "AlphaCorp",
+        location: "New York, NY",
+        type: "Retail",
+        role: "Owner",
+        journal: [
+          { activity: "operating", description: "Sales revenue", date: "2025-01-10", amount: 15000 },
+          { activity: "operating", description: "Rent payment", date: "2025-02-01", amount: -3000 },
+          { activity: "investing", description: "New store equipment", date: "2025-03-15", amount: -4000 },
+          { activity: "financing", description: "Bank loan", date: "2025-04-20", amount: 8000 }
+        ]
+      },
+      BetaEnterprises: {
+        name: "BetaEnterprises",
+        location: "Austin, TX",
+        type: "Tech Services",
+        role: "Consultant",
+        journal: [
+          { activity: "operating", description: "Client payments", date: "2025-01-20", amount: 10000 },
+          { activity: "operating", description: "Software subscriptions", date: "2025-02-05", amount: -2000 },
+          { activity: "investing", description: "Laptop purchase", date: "2025-03-10", amount: -1500 },
+          { activity: "financing", description: "Owner draw", date: "2025-04-01", amount: -1000 }
+        ]
+      }
+    };
 
     function formatCurrency(amount) {
       return `$${amount.toFixed(2)}`;
     }
 
-    function populateCashFlow() {
-      let totalOperating = 0;
-      let totalInvesting = 0;
-      let totalFinancing = 0;
+    function populateCashFlow(companyKey) {
+      const company = companies[companyKey];
+      const { journal, name, location, type, role } = company;
 
+      document.getElementById("headerCompanyName").textContent = name;
+      document.getElementById("headerLocation").textContent = location;
+      document.getElementById("headerTypeValue").textContent = type;
+      document.getElementById("headerRoleValue").textContent = role;
+
+      let totalOperating = 0, totalInvesting = 0, totalFinancing = 0;
       const operatingBody = document.querySelector("#operating-table tbody");
       const investingBody = document.querySelector("#investing-table tbody");
       const financingBody = document.querySelector("#financing-table tbody");
+
+      operatingBody.innerHTML = "";
+      investingBody.innerHTML = "";
+      financingBody.innerHTML = "";
 
       journal.forEach(entry => {
         const row = `<tr><td>${entry.description}</td><td>${entry.date}</td><td>${formatCurrency(entry.amount)}</td></tr>`;
@@ -122,7 +155,12 @@
       document.getElementById("net-cash").textContent = formatCurrency(totalOperating + totalInvesting + totalFinancing);
     }
 
-    populateCashFlow();
+    document.getElementById("companySelect").addEventListener("change", e => {
+      populateCashFlow(e.target.value);
+    });
+
+    // Initial load
+    populateCashFlow("AlphaCorp");
   </script>
 </body>
 </html>
