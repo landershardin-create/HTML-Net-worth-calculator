@@ -58,5 +58,5 @@
     ├── access-control.md                   # Role and permission setup (not available)
     ├── onboarding.md                       # Contributor onboarding guide (not available)
     ├── extensibility.md                    # How to add new modules (not available)
-    ├── Repository diagram                  # Repository stucture diagram 1.0 (not available)
+    ├── Repository Structure diagram 1.0    # Repository stucture diagram 1.0 (not available)
     └── testing.md                          # QA and validation procedures (not available)
