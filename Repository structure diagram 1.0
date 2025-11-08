@@ -15,7 +15,7 @@
 ├── SECURITY.md                             #  
 ├── LICENSE                                 # Open-source license (MIT, GPL, etc.)
 │
-├── /assets/                                # Static assets (images, fonts, icons) (not available)
+├── /assets/                                # Static assets (images, fonts, icons)
 │   ├── /images/                            # Logos, illustrations, UI icons (not available)
 │   ├── /fonts/                             # Custom or branded fonts (not available)
 │   └── /branding/                          # Business-specific visual assets (not available)
