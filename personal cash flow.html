@@ -1,69 +1,149 @@
-<!-- cash-flow.html -->
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Personal Cash Flow Report</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2em; }
-    table { border-collapse: collapse; width: 60%; margin-bottom: 2em; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f0f0f0; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background: #f9f9f9;
+    }
+    header, section {
+      margin-bottom: 2em;
+    }
+    select, button {
+      padding: 0.5em;
+      margin-right: 1em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    th, td {
+      padding: 0.75em;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    #profileHeader {
+      background: #eef;
+      padding: 1em;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
-  <h1>Personal Cash Flow Report
-    <header class="profile-header">
-    <h1>Landers Orenthal Hardin</h1>
-    <p><strong>Role:</strong> Business Owner & Technical Architect</p>
-    <p><strong>Location:</strong> Harvest, Alabama</p>
-    <p><em>Empowering financial clarity through modular, accessible dashboards.</em></p>
+  <header>
+    <h1>Personal Cash Flow Report</h1>
+    <label for="profileSelector">Select Profile:</label>
+    <select id="profileSelector" onchange="loadProfile(this.value)">
+      <option value="profile1">Alice - Personal</option>
+      <option value="profile2">Bob - Business</option>
+      <option value="profile3">Charlie - Freelance</option>
+    </select>
   </header>
-  </h1>
-  <div id="report"></div>
+
+  <section id="profileHeader">
+    <h2 id="profileName">Alice - Personal</h2>
+    <p id="profileSummary">Net Worth: $12,500 | Last Updated: Oct 2025</p>
+  </section>
+
+  <section id="summaryControls">
+    <button onclick="setPeriod('monthly')">Monthly</button>
+    <button onclick="setPeriod('quarterly')">Quarterly</button>
+    <button onclick="setPeriod('annual')">Annual</button>
+  </section>
+
+  <section id="cashFlowReport">
+    <h3 id="reportTitle">Cash Flow Summary - Monthly</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>Income</th>
+          <th>Expenses</th>
+          <th>Net</th>
+        </tr>
+      </thead>
+      <tbody id="reportBody">
+        <!-- Dynamic rows inserted here -->
+      </tbody>
+    </table>
+  </section>
 
   <script>
-    async function generateCashFlowReport() {
-      const response = await fetch('journal.html');
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const rows = doc.querySelectorAll('#journal tbody tr');
+    const profiles = {
+      profile1: {
+        name: "Alice - Personal",
+        summary: "Net Worth: $12,500 | Last Updated: Oct 2025",
+        reports: {
+          monthly: { income: 4000, expenses: 3200 },
+          quarterly: { income: 12000, expenses: 9600 },
+          annual: { income: 48000, expenses: 38400 }
+        }
+      },
+      profile2: {
+        name: "Bob - Business",
+        summary: "Net Worth: $85,000 | Last Updated: Oct 2025",
+        reports: {
+          monthly: { income: 15000, expenses: 11000 },
+          quarterly: { income: 45000, expenses: 33000 },
+          annual: { income: 180000, expenses: 132000 }
+        }
+      },
+      profile3: {
+        name: "Charlie - Freelance",
+        summary: "Net Worth: $22,000 | Last Updated: Oct 2025",
+        reports: {
+          monthly: { income: 5000, expenses: 2500 },
+          quarterly: { income: 15000, expenses: 7500 },
+          annual: { income: 60000, expenses: 30000 }
+        }
+      }
+    };
 
-      let inflow = 0, outflow = 0;
-      const details = [];
+    let currentProfile = "profile1";
+    let currentPeriod = "monthly";
 
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const date = cells[0].textContent.trim();
-        const account = cells[1].textContent.trim();
-        const type = cells[2].textContent.trim();
-        const amount = parseFloat(cells[3].textContent.trim());
-        const direction = cells[4].textContent.trim();
+    function loadProfile(profileId) {
+      currentProfile = profileId;
+      const profile = profiles[profileId];
+      document.getElementById("profileName").textContent = profile.name;
+      document.getElementById("profileSummary").textContent = profile.summary;
+      renderReport();
+    }
 
-        if (direction === 'Inflow') inflow += amount;
-        else if (direction === 'Outflow') outflow += amount;
+    function setPeriod(period) {
+      currentPeriod = period;
+      renderReport();
+    }
 
-        details.push({ date, account, type, amount, direction });
-      });
+    function renderReport() {
+      const report = profiles[currentProfile].reports[currentPeriod];
+      const tbody = document.getElementById("reportBody");
+      const title = document.getElementById("reportTitle");
+      title.textContent = `Cash Flow Summary - ${capitalize(currentPeriod)}`;
+      tbody.innerHTML = `
+        <tr>
+          <td>${capitalize(currentPeriod)}</td>
+          <td>
 
-      const netFlow = inflow - outflow;
+{report.income.toLocaleString()}</td>
+          <td>
 
-      document.getElementById('report').innerHTML = `
-        <table>
-          <tr><th>Category</th><th>Amount</th></tr>
-          <tr><td>Total Inflows</td><td>
+{report.expenses.toLocaleString()}</td>
+          <td>$${(report.income - report.expenses).toLocaleString()}</td>
+        </tr>
+      `;
+    }
 
-{inflow.toFixed(2)}</td></tr>
-          <tr><td>Total Outflows</td><td>
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 
-{outflow.toFixed(2)}</td></tr>
-          <tr><td>Net Cash Flow</td><td>$${netFlow.toFixed(2)}</td></tr>
-        </table>
-        <h2>Transaction Details</h2>
-        <table>
-          <tr><th>Date</th><th>Account</th><th>Type</th><th>Amount</th><th>Direction</th></tr>
-          ${details.map(d => `
-            <tr>
-              <td>${d.date}</td><td>${d.account}</td><td>${d.type}</td>
-              <td>$${d.amount.toFixed(2)}</td><td>${d.direction}</td>
-            </tr>`).join('')}
-        </table>
+    window.onload = () => renderReport();
+  </script>
+</body>
+</html>
