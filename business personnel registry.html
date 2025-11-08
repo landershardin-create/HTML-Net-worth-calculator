@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Personnel Records Manager</title>
+  <title>Multi-Company Personnel Manager</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -114,22 +114,26 @@
 </head>
 <body>
   <div class="container">
-    <h2>Company Personnel Records
-      <!-- Company Header -->
-    <div class="company-header" role="region" aria-label="Company Summary">
-        <h2 id="headerCompanyName">Company Name</h2>
-        <p id="headerLocation">City, State</p>
-        <p id="headerType">Type: <span></span></p>
-        <p id="headerRole">Role: <span></span></p>
+    <h2>Multi-Company Personnel Manager</h2>
+
+    <div class="form-group">
+      <label for="companySelect">Select Company:</label>
+      <select id="companySelect"></select>
     </div>
-    </h2>
 
     <div class="form-group">
       <label for="role">Select Role:</label>
-      <select id="role" aria-label="User role">
+      <select id="role">
         <option value="Admin">Admin</option>
         <option value="Viewer">Viewer</option>
       </select>
+    </div>
+
+    <div class="company-header" role="region" aria-label="Company Summary">
+      <h2 id="headerCompanyName"></h2>
+      <p id="headerLocation"></p>
+      <p id="headerType"></p>
+      <p id="headerRole"></p>
     </div>
 
     <div id="adminPanel">
@@ -182,23 +186,43 @@
   </div>
 
   <script>
+    const companies = [
+      { name: "Alpha Corp", location: "New York, NY", type: "Tech", contributors: ["Admin", "Viewer"] },
+      { name: "Beta LLC", location: "Austin, TX", type: "Finance", contributors: ["Admin"] },
+      { name: "Gamma Inc", location: "Seattle, WA", type: "Retail", contributors: ["Viewer"] },
+      { name: "Delta Partners", location: "Chicago, IL", type: "Consulting", contributors: ["Admin", "Viewer"] }
+    ];
+
     const form = document.getElementById('personnelForm');
     const tableBody = document.querySelector('#recordsTable tbody');
     const searchInput = document.getElementById('searchInput');
     const roleSelect = document.getElementById('role');
+    const companySelect = document.getElementById('companySelect');
     const adminPanel = document.getElementById('adminPanel');
 
-    let records = [];
+    let currentCompany = companies[0].name;
+    let companyRecords = {};
 
-    const allBusinesses = [
-      { name: "Alpha Corp", contributors: ["Admin", "Viewer"] },
-      { name: "Beta LLC", contributors: ["Admin"] },
-      { name: "Gamma Inc", contributors: ["Viewer"] },
-      { name: "Delta Partners", contributors: ["Admin", "Viewer"] }
-    ];
+    function populateCompanySelect() {
+      companies.forEach(c => {
+        const option = document.createElement('option');
+        option.value = c.name;
+        option.textContent = c.name;
+        companySelect.appendChild(option);
+      });
+      companySelect.value = currentCompany;
+    }
+
+    function updateCompanyHeader(name) {
+      const company = companies.find(c => c.name === name);
+      document.getElementById('headerCompanyName').textContent = company.name;
+      document.getElementById('headerLocation').textContent = company.location;
+      document.getElementById('headerType').innerHTML = `Type: <span>${company.type}</span>`;
+      document.getElementById('headerRole').innerHTML = `Role: <span>${roleSelect.value}</span>`;
+    }
 
     function getFilteredBusinesses(role) {
-      return allBusinesses.filter(b => b.contributors.includes(role));
+      return companies.filter(c => c.contributors.includes(role));
     }
 
     function renderBusinessDropdown(role) {
@@ -219,33 +243,10 @@
       container.appendChild(select);
     }
 
-    roleSelect.addEventListener('change', () => {
-      const role = roleSelect.value;
-      adminPanel.style.display = role === 'Admin' ? 'block' : 'none';
-      renderBusinessDropdown(role);
-      renderTable();
-    });
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const selectedBusinesses = Array.from(document.getElementById('businessNames').selectedOptions).map(opt => opt.value);
-      const record = {
-        name: document.getElementById('name').value.trim(),
-        position: document.getElementById('position').value.trim(),
-        department: document.getElementById('department').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        businesses: selectedBusinesses
-      };
-      records.push(record);
-      form.reset();
-      renderTable();
-    });
-
-    searchInput.addEventListener('input', renderTable);
-
     function renderTable() {
       const role = roleSelect.value;
       const query = searchInput.value.toLowerCase();
+      const records = companyRecords[currentCompany] || [];
       tableBody.innerHTML = '';
 
       records
@@ -266,8 +267,8 @@
             <td>${record.businesses.join(', ')}</td>
             <td>
               ${role === 'Admin' ? `
-                <button class="btn edit-btn" onclick="editRecord(${index})" aria-label="Edit ${record.name}">Edit</button>
-                <button class="btn delete-btn" onclick="deleteRecord(${index})" aria-label="Delete ${record.name}">Delete</button>
+                <button class="btn edit-btn" onclick="editRecord(${index})">Edit</button>
+                <button class="btn delete-btn" onclick="deleteRecord(${index})">Delete</button>
               ` : '—'}
             </td>
           `;
@@ -276,12 +277,12 @@
     }
 
     function deleteRecord(index) {
-      records.splice(index, 1);
+      companyRecords[currentCompany].splice(index, 1);
       renderTable();
     }
 
     function editRecord(index) {
-      const record = records[index];
+      const record = companyRecords[currentCompany][index];
       document.getElementById('name').value = record.name;
       document.getElementById('position').value = record.position;
       document.getElementById('department').value = record.department;
@@ -289,17 +290,159 @@
 
       renderBusinessDropdown(roleSelect.value);
       const businessSelect = document.getElementById('businessNames');
-      Array.from(businessSelect.options).forEach(opt => {
-        opt.selected = record.businesses.includes(opt.value);
+      Array.from(businessSelect.options
+
+<script>
+  const companies = [
+    { name: "Alpha Corp", location: "New York, NY", type: "Tech", contributors: ["Admin", "Viewer"] },
+    { name: "Beta LLC", location: "Austin, TX", type: "Finance", contributors: ["Admin"] },
+    { name: "Gamma Inc", location: "Seattle, WA", type: "Retail", contributors: ["Viewer"] },
+    { name: "Delta Partners", location: "Chicago, IL", type: "Consulting", contributors: ["Admin", "Viewer"] }
+  ];
+
+  const form = document.getElementById('personnelForm');
+  const tableBody = document.querySelector('#recordsTable tbody');
+  const searchInput = document.getElementById('searchInput');
+  const roleSelect = document.getElementById('role');
+  const companySelect = document.getElementById('companySelect');
+  const adminPanel = document.getElementById('adminPanel');
+
+  let currentCompany = companies[0].name;
+  let companyRecords = {};
+
+  function populateCompanySelect() {
+    companies.forEach(c => {
+      const option = document.createElement('option');
+      option.value = c.name;
+      option.textContent = c.name;
+      companySelect.appendChild(option);
+    });
+    companySelect.value = currentCompany;
+  }
+
+  function updateCompanyHeader(name) {
+    const company = companies.find(c => c.name === name);
+    document.getElementById('headerCompanyName').textContent = company.name;
+    document.getElementById('headerLocation').textContent = company.location;
+    document.getElementById('headerType').innerHTML = `Type: <span>${company.type}</span>`;
+    document.getElementById('headerRole').innerHTML = `Role: <span>${roleSelect.value}</span>`;
+  }
+
+  function getFilteredBusinesses(role) {
+    return companies.filter(c => c.contributors.includes(role));
+  }
+
+  function renderBusinessDropdown(role) {
+    const container = document.getElementById('businessDropdownContainer');
+    container.innerHTML = '';
+
+    const select = document.createElement('select');
+    select.id = 'businessNames';
+    select.multiple = true;
+
+    getFilteredBusinesses(role).forEach(b => {
+      const option = document.createElement('option');
+      option.value = b.name;
+      option.textContent = b.name;
+      select.appendChild(option);
+    });
+
+    container.appendChild(select);
+  }
+
+  function renderTable() {
+    const role = roleSelect.value;
+    const query = searchInput.value.toLowerCase();
+    const records = companyRecords[currentCompany] || [];
+    tableBody.innerHTML = '';
+
+    records
+      .filter(record =>
+        Object.values(record).some(val =>
+          Array.isArray(val)
+            ? val.join(', ').toLowerCase().includes(query)
+            : val.toLowerCase().includes(query)
+        )
+      )
+      .forEach((record, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${record.name}</td>
+          <td>${record.position}</td>
+          <td>${record.department}</td>
+          <td>${record.email}</td>
+          <td>${record.businesses.join(', ')}</td>
+          <td>
+            ${role === 'Admin' ? `
+              <button class="btn edit-btn" onclick="editRecord(${index})">Edit</button>
+              <button class="btn delete-btn" onclick="deleteRecord(${index})">Delete</button>
+            ` : '—'}
+          </td>
+        `;
+        tableBody.appendChild(row);
       });
+  }
 
-      records.splice(index, 1);
-      renderTable();
-    }
+  function deleteRecord(index) {
+    companyRecords[currentCompany].splice(index, 1);
+    renderTable();
+  }
 
-    // Initial render
+  function editRecord(index) {
+    const record = companyRecords[currentCompany][index];
+    document.getElementById('name').value = record.name;
+    document.getElementById('position').value = record.position;
+    document.getElementById('department').value = record.department;
+    document.getElementById('email').value = record.email;
+
+    renderBusinessDropdown(roleSelect.value);
+    const businessSelect = document.getElementById('businessNames');
+    Array.from(businessSelect.options).forEach(opt => {
+      opt.selected = record.businesses.includes(opt.value);
+    });
+
+    companyRecords[currentCompany].splice(index, 1);
+    renderTable();
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const selectedBusinesses = Array.from(document.getElementById('businessNames').selectedOptions).map(opt => opt.value);
+    const record = {
+      name: document.getElementById('name').value.trim(),
+      position: document.getElementById('position').value.trim(),
+      department: document.getElementById('department').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      businesses: selectedBusinesses
+    };
+    if (!companyRecords[currentCompany]) companyRecords[currentCompany] = [];
+    companyRecords[currentCompany].push(record);
+    form.reset();
+    renderTable();
+  });
+
+  roleSelect.addEventListener('change', () => {
+    const role = roleSelect.value;
+    adminPanel.style.display = role === 'Admin' ? 'block' : 'none';
+    updateCompanyHeader(currentCompany);
+    renderBusinessDropdown(role);
+    renderTable();
+  });
+
+  companySelect.addEventListener('change', (e) => {
+    currentCompany = e.target.value;
+    updateCompanyHeader(currentCompany);
     renderBusinessDropdown(roleSelect.value);
     renderTable();
-  </script>
+  });
+
+  searchInput.addEventListener('input', renderTable);
+
+  // Initial setup
+  populateCompanySelect();
+  updateCompanyHeader(currentCompany);
+  renderBusinessDropdown(roleSelect.value);
+  renderTable();
+</script>
 </body>
 </html>
