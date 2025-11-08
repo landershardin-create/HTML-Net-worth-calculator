@@ -29,15 +29,15 @@
   </style>
 </head>
 <body>
-  <div class="company-selector">
-    <label for="companySelect">Select Company:</label>
-    <select id="companySelect">
-      <option value="companyA">Company A</option>
-      <option value="companyB">Company B</option>
-      <option value="companyC">Company C</option>
-    </select>
-  </div>
-
+  <h1>Business Balance Sheet Report
+    <!-- Company Header -->
+    <div class="company-header" role="region" aria-label="Company Summary">
+        <h2 id="headerCompanyName">Company Name</h2>
+        <p id="headerLocation">City, State</p>
+        <p id="headerType">Type: <span></span></p>
+        <p id="headerRole">Role: <span></span></p>
+    </div>
+  </h1>
   <div id="balanceSheetContainer"></div>
 
   <script>
