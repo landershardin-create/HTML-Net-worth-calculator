@@ -2,14 +2,16 @@
 
 /finance-dashboard/
 │
-├── .github/workflow           # 
+├── .github/workflow          # 
 ├── index.html                # Entry point of the dashboard
 ├── indexDashboard.js         # Index dashboard script
 ├── indexOnboarding.js        # Index onboarding script
-├── indexRoleView.js          # Index role view script
-├── indexStyles.js             # Index style script
+├── indexRoleViews.js         # Index role views script
+├── indexStyles.js            # Index style script
 ├── indexStorage.js           # Index storage sheet
-├── README.md                 # Project overview and contributor guide
+├── indexSummaryCards.js       # Index summary cards
+├── README.md                  # Project overview and contributor guide
+├── SECURITY.md               #  
 ├── LICENSE                   # Open-source license (MIT, GPL, etc.)
 ├── .gitignore                # Git exclusions
 │
