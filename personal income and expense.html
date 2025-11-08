@@ -1,75 +1,131 @@
-<!-- income-expense.html -->
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Personal Income and Expense Report</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Income & Expense Report</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2em; }
-    table { border-collapse: collapse; width: 60%; margin-bottom: 2em; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f0f0f0; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #profileHeader {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+    }
+    #summaryControls button {
+      margin: 10px 5px;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+    #financialSummary {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
-  <h1>Personal Income and Expense Report
-    <header class="profile-header">
-    <h1>Landers Orenthal Hardin</h1>
-    <p><strong>Role:</strong> Business Owner & Technical Architect</p>
-    <p><strong>Location:</strong> Harvest, Alabama</p>
-    <p><em>Empowering financial clarity through modular, accessible dashboards.</em></p>
+  <header>
+    <h1>Income & Expense Dashboard</h1>
+    <select id="profileSelector" onchange="loadProfile()">
+      <option value="profile1">Alice Johnson</option>
+      <option value="profile2">Bob Smith</option>
+      <option value="profile3">Charlie Lee</option>
+    </select>
   </header>
-  </h1>
-  <div id="report"></div>
+
+  <section id="profileHeader"></section>
+
+  <section id="summaryControls">
+    <button onclick="generateSummary('monthly')">Monthly Summary</button>
+    <button onclick="generateSummary('quarterly')">Quarterly Summary</button>
+    <button onclick="generateSummary('annual')">Annual Summary</button>
+  </section>
+
+  <section id="financialSummary"></section>
 
   <script>
-    async function generateReport() {
-      const response = await fetch('journal.html');
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const rows = doc.querySelectorAll('#journal tbody tr');
+    const profiles = {
+      profile1: {
+        name: "Alice Johnson",
+        income: [3000, 3200, 3100, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4100],
+        expenses: [1500, 1600, 1550, 1700, 1650, 1800, 1750, 1900, 1850, 2000, 1950, 2100]
+      },
+      profile2: {
+        name: "Bob Smith",
+        income: [4000, 4200, 4100, 4300, 4400, 4500, 4600, 4700, 4800, 4900, 5000, 5100],
+        expenses: [2000, 2100, 2050, 2200, 2150, 2300, 2250, 2400, 2350, 2500, 2450, 2600]
+      },
+      profile3: {
+        name: "Charlie Lee",
+        income: [2500, 2700, 2600, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600],
+        expenses: [1200, 1300, 1250, 1400, 1350, 1500, 1450, 1600, 1550, 1700, 1650, 1800]
+      }
+    };
 
-      let incomeTotal = 0, expenseTotal = 0;
-      const transactions = [];
+    let currentProfile = "profile1";
 
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const date = cells[0].textContent.trim();
-        const account = cells[1].textContent.trim();
-        const type = cells[2].textContent.trim();
-        const amount = parseFloat(cells[3].textContent.trim());
-
-        if (type === 'Income') incomeTotal += amount;
-        else if (type === 'Expense') expenseTotal += amount;
-
-        transactions.push({ date, account, type, amount });
-      });
-
-      const net = incomeTotal - expenseTotal;
-
-      document.getElementById('report').innerHTML = `
-        <table>
-          <tr><th>Category</th><th>Amount</th></tr>
-          <tr><td>Total Income</td><td>
-
-{incomeTotal.toFixed(2)}</td></tr>
-          <tr><td>Total Expenses</td><td>
-
-{expenseTotal.toFixed(2)}</td></tr>
-          <tr><td>Net</td><td>$${net.toFixed(2)}</td></tr>
-        </table>
-        <h2>Transaction Details</h2>
-        <table>
-          <tr><th>Date</th><th>Account</th><th>Type</th><th>Amount</th></tr>
-          ${transactions.map(t => `
-            <tr>
-              <td>${t.date}</td><td>${t.account}</td><td>${t.type}</td>
-              <td>$${t.amount.toFixed(2)}</td>
-            </tr>`).join('')}
-        </table>
-      `;
+    function loadProfile() {
+      currentProfile = document.getElementById("profileSelector").value;
+      const profile = profiles[currentProfile];
+      document.getElementById("profileHeader").innerHTML = `<h2>${profile.name}</h2>`;
+      document.getElementById("financialSummary").innerHTML = "";
     }
 
-    generateReport();
+    function generateSummary(type) {
+      const profile = profiles[currentProfile];
+      let income = profile.income;
+      let expenses = profile.expenses;
+      let summary = "";
+
+      if (type === "monthly") {
+        summary = income.map((inc, i) => {
+          return `<p><strong>Month ${i + 1}:</strong> Income:
+
+{inc}, Expenses: 
+
+{expenses[i]}, Net: $${inc - expenses[i]}</p>`;
+        }).join("");
+      } else if (type === "quarterly") {
+        summary = "";
+        for (let i = 0; i < 4; i++) {
+          let incSum = income.slice(i * 3, i * 3 + 3).reduce((a, b) => a + b, 0);
+          let expSum = expenses.slice(i * 3, i * 3 + 3).reduce((a, b) => a + b, 0);
+          summary += `<p><strong>Q${i + 1}:</strong> Income:
+
+{incSum}, Expenses: 
+
+{expSum}, Net:
+
+{incSum - expSum}</p>`;
+        }
+      } else if (type === "annual") {
+        let incSum = income.reduce((a, b) => a + b, 0);
+        let expSum = expenses.reduce((a, b) => a + b, 0);
+        summary = `<p><strong>Annual:</strong> Income: 
+
+{incSum}, Expenses:
+
+{expSum}, Net: 
+
+{incSum - expSum}</p>`;
+      }
+
+      document.getElementById("financialSummary").innerHTML = summary;
+    }
+
+    window.onload = loadProfile;
   </script>
 </body>
 </html>
