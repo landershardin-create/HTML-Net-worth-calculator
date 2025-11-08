@@ -3,124 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Company Manager</title>
+  <title>GitHub Tabbed Dashboard with Company Manager</title>
+  <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin/HTML-Business-and-Personal-Finance/css/stylesheet.css" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-    .company-manager {
-      padding: 20px;
-      background-color: #fff;
-      border-top: 1px solid #ccc;
-    }
-    .company-manager h3 {
-      margin-top: 0;
-    }
-    .company-list {
-      margin-top: 10px;
-    }
-    .company-list span {
-      display: inline-block;
-      background-color: #007bff;
-      color: white;
-      padding: 5px 10px;
-      margin: 5px;
-      border-radius: 4px;
-    }
-    .company-list span button {
-      margin-left: 8px;
-      background: none;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    select, input, button {
-      padding: 8px;
-      font-size: 16px;
-      border-radius: 4px;
-      border: none;
-    }
-    .menu-container {
-      background-color: #333;
-      padding: 15px;
-      color: white;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 15px;
-    }
+    /* [Same styles as before — unchanged] */
   </style>
 </head>
 <body>
   <div class="menu-container">
+    <label for="tabMenu">Choose a section:</label>
+    <select id="tabMenu">
+      <option value="companymgr">Company Information</option>
+      <option value="businessmenu">Business Menu</option>
+      <option value="personalmenu">Personal Menu</option>
+      <option value="contributormenu">Contributor Dashboard</option>
+    </select>
+
     <label for="companySelect">Companies:</label>
     <select id="companySelect" multiple></select>
+  </div>
+
+  <div class="filter-export">
+    <label for="ownerFilter">Filter by Owner:</label>
+    <select id="ownerFilter">
+      <option value="">All Owners</option>
+    </select>
+    <button onclick="exportCompanies()">Export Companies</button>
+  </div>
+
+  <div id="content"></div>
+
+  <div class="carousel-viewer">
+    <h3>Company Carousel Viewer</h3>
+    <div id="carouselDisplay" class="carousel-card"></div>
+    <div style="margin-top:10px;">
+      <button onclick="prevCompany()">Previous</button>
+      <button onclick="nextCompany()">Next</button>
+    </div>
   </div>
 
   <div class="company-manager">
     <h3>Manage Companies</h3>
     <form id="companyForm">
-      <input type="text" id="newCompany" placeholder="Add new company..." required />
-      <button type="submit">Add</button>
+      <div class="form-group">
+        <input type="text" id="companyName" placeholder="Company name" required />
+        <input type="text" id="streetAddress" placeholder="Street Address" />
+        <input type="text" id="city" placeholder="City" />
+        <input type="text" id="state" placeholder="State" />
+        <input type="text" id="zipCode" placeholder="ZIP Code" />
+        <input type="text" id="companyOwner" placeholder="Owner" />
+        <input type="text" id="companyEIN" placeholder="SSN (XXX-XX-XXXX) or EIN (XX-XXXXXXX)" pattern="\d{3}-\d{2}-\d{4}|\d{2}-\d{7}" title="Format: SSN XXX-XX-XXXX or EIN XX-XXXXXXX" />
+        <input type="text" id="companySEIN" placeholder="State EIN #" />
+       <select id="companyRole">
+          <option value="Viewer">Viewer</option>
+          <option value="Editor">Editor</option>
+          <option value="Owner">Owner</option>
+       </select>
+        <select id="companyType">
+          <option value="">Select type</option>
+          <option value="Sole Proprietor">Sole Proprietor</option>
+          <option value="Partnership">Partnership</option>
+          <option value="LLC">LLC</option>
+          <option value="Corporation">Corporation</option>
+          <option value="Nonprofit">Nonprofit</option>
+        </select>
+        <button type="submit">Add</button>
+      </div>
+       
     </form>
     <div class="company-list" id="companyList"></div>
   </div>
 
-  <script>
-    let companies = ['Alpha Corp', 'Beta LLC', 'Gamma Inc'];
-
-    const companySelect = document.getElementById('companySelect');
-    const companyForm = document.getElementById('companyForm');
-    const newCompanyInput = document.getElementById('newCompany');
-    const companyList = document.getElementById('companyList');
-
-    function renderCompanySelect() {
-      companySelect.innerHTML = '';
-      companies.forEach(name => {
-        const option = document.createElement('option');
-        option.value = name;
-        option.textContent = name;
-        companySelect.appendChild(option);
-      });
-    }
-
-    function renderCompanyList() {
-      companyList.innerHTML = '';
-      companies.forEach((name, index) => {
-        const tag = document.createElement('span');
-        tag.textContent = name;
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = '×';
-        removeBtn.title = `Remove ${name}`;
-        removeBtn.onclick = () => {
-          companies.splice(index, 1);
-          renderCompanySelect();
-          renderCompanyList();
-        };
-        tag.appendChild(removeBtn);
-        companyList.appendChild(tag);
-      });
-    }
-
-    companyForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const newName = newCompanyInput.value.trim();
-      if (newName && !companies.includes(newName)) {
-        companies.push(newName);
-        renderCompanySelect();
-        renderCompanyList();
-        newCompanyInput.value = '';
-      }
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      renderCompanySelect();
-      renderCompanyList();
-    });
-  </script>
-</body>
-</html>
+<script src="https://raw.githubusercontent.com/landershardin/HTML-Business-and-Personal-Finance/js/dashboard.js" defer></script>
