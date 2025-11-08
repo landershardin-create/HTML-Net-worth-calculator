@@ -1,34 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- income-expense.html -->
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Personal Income & Expense Tracker</title>
+  <title>Income and Expense Report</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
-    h1 { text-align: center; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
-    th { background-color: #eee; }
-    input[type="number"] { width: 100px; }
-    .summary { margin-top: 20px; font-size: 1.2em; }
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    table { border-collapse: collapse; width: 60%; margin-bottom: 2em; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f0f0f0; }
   </style>
 </head>
 <body>
-  <h1>Income & Expense Tracker</h1>
+  <h1>Income and Expense Report</h1>
+  <div id="report"></div>
 
-  <table id="tracker">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Description</th>
-        <th>Income ($)</th>
-        <th>Expense ($)</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><input type="date" /></td>
-        <td><input type="text" placeholder="Description" /></td>
-        <td><input type="number" class="income" value="0" /></td>
-        <td>
+  <script>
+    async function generateReport() {
+      const response = await fetch('journal.html');
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const rows = doc.querySelectorAll('#journal tbody tr');
+
+      let incomeTotal = 0, expenseTotal = 0;
+      const transactions = [];
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const date = cells[0].textContent.trim();
+        const account = cells[1].textContent.trim();
+        const type = cells[2].textContent.trim();
+        const amount = parseFloat(cells[3].textContent.trim());
+
+        if (type === 'Income') incomeTotal += amount;
+        else if (type === 'Expense') expenseTotal += amount;
+
+        transactions.push({ date, account, type, amount });
+      });
+
+      const net = incomeTotal - expenseTotal;
+
+      document.getElementById('report').innerHTML = `
+        <table>
+          <tr><th>Category</th><th>Amount</th></tr>
+          <tr><td>Total Income</td><td>
+
+{incomeTotal.toFixed(2)}</td></tr>
+          <tr><td>Total Expenses</td><td>
+
+{expenseTotal.toFixed(2)}</td></tr>
+          <tr><td>Net</td><td>$${net.toFixed(2)}</td></tr>
+        </table>
+        <h2>Transaction Details</h2>
+        <table>
+          <tr><th>Date</th><th>Account</th><th>Type</th><th>Amount</th></tr>
+          ${transactions.map(t => `
+            <tr>
+              <td>${t.date}</td><td>${t.account}</td><td>${t.type}</td>
+              <td>$${t.amount.toFixed(2)}</td>
+            </tr>`).join('')}
+        </table>
+      `;
+    }
+
+    generateReport();
+  </script>
+</body>
+</html>
