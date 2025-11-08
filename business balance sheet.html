@@ -49,7 +49,6 @@
   <div id="report-container"></div>
 
   <script>
-    // Simulated dashboard data
     const dashboardCompanies = [
       {
         id: "acme",
@@ -98,28 +97,16 @@
         <div class="balance-sheet">
           <table>
             <tr><th colspan="2" class="section-title">Assets</th></tr>
-            ${assets.map(([k, v]) => `<tr><td>${k}</td><td>
-
-{v.toLocaleString()}</td></tr>`).join("")}
-            <tr><td>Total Assets</td><td><strong>
-
-{totalAssets.toLocaleString()}</strong></td></tr>
+            ${assets.map(([k, v]) => `<tr><td>${k}</td><td>${v.toLocaleString()}</td></tr>`).join("")}
+            <tr><td>Total Assets</td><td><strong>${totalAssets.toLocaleString()}</strong></td></tr>
 
             <tr><th colspan="2" class="section-title">Liabilities</th></tr>
-            ${liabilities.map(([k, v]) => `<tr><td>${k}</td><td>
-
-{v.toLocaleString()}</td></tr>`).join("")}
-            <tr><td>Total Liabilities</td><td><strong>
-
-{totalLiabilities.toLocaleString()}</strong></td></tr>
+            ${liabilities.map(([k, v]) => `<tr><td>${k}</td><td>${v.toLocaleString()}</td></tr>`).join("")}
+            <tr><td>Total Liabilities</td><td><strong>${totalLiabilities.toLocaleString()}</strong></td></tr>
 
             <tr><th colspan="2" class="section-title">Equity</th></tr>
-            ${equity.map(([k, v]) => `<tr><td>${k}</td><td>
-
-{v.toLocaleString()}</td></tr>`).join("")}
-            <tr><td>Total Equity</td><td><strong>
-
-{totalEquity.toLocaleString()}</strong></td></tr>
+            ${equity.map(([k, v]) => `<tr><td>${k}</td><td>${v.toLocaleString()}</td></tr>`).join("")}
+            <tr><td>Total Equity</td><td><strong>${totalEquity.toLocaleString()}</strong></td></tr>
           </table>
         </div>
       `;
@@ -127,7 +114,6 @@
       container.innerHTML += headerHTML + tableHTML;
     }
 
-    // Render all companies
     dashboardCompanies.forEach(renderBalanceSheet);
   </script>
 </body>
