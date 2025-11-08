@@ -13,7 +13,7 @@
 ├── indexSummaryCards.js                    # Index summary cards
 ├── README.md                               # Project overview and contributor guide
 ├── SECURITY.md                             #  
-├── LICENSE                                 # Open-source license (MIT, GPL, etc.)
+├── LICENSE                                 # Open-source license (MIT, GPL, etc.) (not available)
 │
 ├── /assets/                                # Static assets (images, fonts, icons)
 │   ├── /images/                            # Logos, illustrations, UI icons (not available)
