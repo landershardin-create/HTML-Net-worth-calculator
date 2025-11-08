@@ -1,102 +1,78 @@
+<!-- report.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Income & Expense Report</title>
   <style>
-    body {
-      font-family: sans-serif;
-      margin: 2em;
-      background: #f4f4f4;
-    }
-    h1, h2 {
-      color: #2c3e50;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 2em;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 0.75em;
-      text-align: left;
-    }
-    th {
-      background-color: #ecf0f1;
-    }
-    .summary {
-      font-weight: bold;
-      background-color: #dff0d8;
-    }
+    body { font-family: Arial; margin: 2em; }
+    h1 { color: #333; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1em; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f4f4f4; }
+    .income { color: green; }
+    .expense { color: red; }
   </style>
 </head>
 <body>
-  <h1>Business Income and Expense Report</h1>
-  <p><strong>Reporting Period:</strong> January 1 – December 31, 2025</p>
-
-  <h2>Income</h2>
-  <table id="income-table">
+  <h1>Business Income & Expense Report</h1>
+  <div id="summary"></div>
+  <table id="report">
     <thead>
-      <tr><th>Account</th><th>Date</th><th>Amount</th></tr>
+      <tr>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Category</th>
+        <th>Amount</th>
+        <th>Type</th>
+      </tr>
     </thead>
     <tbody></tbody>
-  </table>
-
-  <h2>Expenses</h2>
-  <table id="expense-table">
-    <thead>
-      <tr><th>Account</th><th>Date</th><th>Amount</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <h2>Summary</h2>
-  <table>
-    <tbody>
-      <tr class="summary"><td>Total Income</td><td id="total-income">$0.00</td></tr>
-      <tr class="summary"><td>Total Expenses</td><td id="total-expense">$0.00</td></tr>
-      <tr class="summary"><td>Net Profit</td><td id="net-profit">$0.00</td></tr>
-    </tbody>
   </table>
 
   <script>
-    const journalEntries = [
-      { account: "Sales Revenue", type: "income", date: "2025-01-15", amount: 5000 },
-      { account: "Consulting", type: "income", date: "2025-03-10", amount: 3200 },
-      { account: "Software Subscriptions", type: "expense", date: "2025-02-01", amount: 600 },
-      { account: "Marketing", type: "expense", date: "2025-05-20", amount: 1200 },
-      { account: "Office Supplies", type: "expense", date: "2025-08-12", amount: 350 }
-    ];
+    async function loadJournal() {
+      const response = await fetch('journal.html');
+      const text = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      const rows = doc.querySelectorAll('#journal tbody tr');
 
-    function formatCurrency(amount) {
-      return `$${amount.toFixed(2)}`;
-    }
-
-    function populateTables() {
       let incomeTotal = 0;
       let expenseTotal = 0;
+      const reportBody = document.querySelector('#report tbody');
 
-      const incomeBody = document.querySelector("#income-table tbody");
-      const expenseBody = document.querySelector("#expense-table tbody");
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const [date, desc, category, amountStr, type] = Array.from(cells).map(cell => cell.textContent);
+        const amount = parseFloat(amountStr);
 
-      journalEntries.forEach(entry => {
-        const row = `<tr><td>${entry.account}</td><td>${entry.date}</td><td>${formatCurrency(entry.amount)}</td></tr>`;
-        if (entry.type === "income") {
-          incomeBody.innerHTML += row;
-          incomeTotal += entry.amount;
-        } else if (entry.type === "expense") {
-          expenseBody.innerHTML += row;
-          expenseTotal += entry.amount;
-        }
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td>${date}</td>
+          <td>${desc}</td>
+          <td>${category}</td>
+          <td class="${type.toLowerCase()}">$${amount.toFixed(2)}</td>
+          <td>${type}</td>
+        `;
+        reportBody.appendChild(newRow);
+
+        if (type === 'Income') incomeTotal += amount;
+        else if (type === 'Expense') expenseTotal += amount;
       });
 
-      document.getElementById("total-income").textContent = formatCurrency(incomeTotal);
-      document.getElementById("total-expense").textContent = formatCurrency(expenseTotal);
-      document.getElementById("net-profit").textContent = formatCurrency(incomeTotal - expenseTotal);
+      document.getElementById('summary').innerHTML = `
+        <p><strong>Total Income:</strong> <span class="income">
+
+{incomeTotal.toFixed(2)}</span></p>
+        <p><strong>Total Expenses:</strong> <span class="expense">
+
+{expenseTotal.toFixed(2)}</span></p>
+        <p><strong>Net Profit:</strong> <span>${(incomeTotal - expenseTotal).toFixed(2)}</span></p>
+      `;
     }
 
-    populateTables();
+    loadJournal();
   </script>
 </body>
 </html>
