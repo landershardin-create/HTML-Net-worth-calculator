@@ -27,6 +27,8 @@
 │
 ├── /js/                      # JavaScript modules
 │   ├── app.js                # Main dashboard logic
+│   ├── dashboard.js           # Tab and module navigation
+│   ├── tab-loader.js             # Tab and module navigation
 │   ├── router.js             # Tab and module navigation
 │   ├── storage.js            # Persistent storage and export logic
 │   ├── access.js             # Role-based access control
