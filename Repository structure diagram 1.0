@@ -1,6 +1,6 @@
 # Repository diagram 1.0
 
-/finance-dashboard/
+/Dashboard/
 │
 ├── .github/workflow                        #
 ├── .gitignore                              # Git exclusions
