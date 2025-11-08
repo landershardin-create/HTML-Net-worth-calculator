@@ -7,12 +7,8 @@
   <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin/HTML-Business-and-Personal-Finance/css/stylesheet.css" />
 </head>
 <body>
-  <!-- Filter + Export -->
+  <!-- Export -->
   <div class="filter-export">
-    <label for="ownerFilter">Filter by Owner:</label>
-    <select id="ownerFilter">
-      <option value="">All Owners</option>
-    </select>
     <button onclick="exportProfiles()">Export Profiles</button>
   </div>
 
@@ -40,7 +36,6 @@
         <input type="text" id="city" placeholder="City" />
         <input type="text" id="state" placeholder="State" />
         <input type="text" id="zipCode" placeholder="ZIP Code" />
-        <input type="text" id="profileOwner" placeholder="Owner" />
         <select id="profileRole">
           <option value="Viewer">Viewer</option>
           <option value="Editor">Editor</option>
@@ -74,28 +69,19 @@
         city: city.value,
         state: state.value,
         zip: zipCode.value,
-        owner: profileOwner.value,
         role: profileRole.value,
         type: profileType.value
       };
       profiles.push(profile);
       updateProfileList();
-      updateOwnerFilter();
       updateCarousel();
       this.reset();
     });
 
     function updateProfileList() {
-      const ownerFilter = document.getElementById('ownerFilter').value;
-      const list = profiles.filter(p => !ownerFilter || p.owner === ownerFilter);
-      profileList.innerHTML = list.map(p =>
-        `<div>${p.firstName} ${p.middleName} ${p.lastName} (${p.owner}) - ${p.type}</div>`
+      profileList.innerHTML = profiles.map(p =>
+        `<div>${p.firstName} ${p.middleName} ${p.lastName} - ${p.type}</div>`
       ).join('');
-    }
-
-    function updateOwnerFilter() {
-      const owners = [...new Set(profiles.map(p => p.owner))];
-      ownerFilter.innerHTML = `<option value="">All Owners</option>` + owners.map(o => `<option value="${o}">${o}</option>`).join('');
     }
 
     function updateCarousel() {
@@ -104,7 +90,7 @@
         return;
       }
       const p = profiles[carouselIndex % profiles.length];
-      carouselDisplay.innerHTML = `<strong>${p.firstName} ${p.middleName} ${p.lastName}</strong><br>${p.city}, ${p.state}<br>Owner: ${p.owner}<br>Category: ${p.type}`;
+      carouselDisplay.innerHTML = `<strong>${p.firstName} ${p.middleName} ${p.lastName}</strong><br>${p.city}, ${p.state}<br>Category: ${p.type}`;
     }
 
     function prevProfile() {
@@ -127,7 +113,6 @@
       URL.revokeObjectURL(url);
     }
 
-    document.getElementById('ownerFilter').addEventListener('change', updateProfileList);
     document.getElementById('tabMenu')?.addEventListener('change', function() {
       content.innerHTML = `<p>Selected tab: <strong>${this.value}</strong></p>`;
     });
