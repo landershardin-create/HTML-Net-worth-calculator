@@ -32,14 +32,9 @@
 │   └── responsive.css                      # Mobile and adaptive layout (not available)
 │
 ├── /js/                                    # JavaScript modules
-│   ├── app.js                              # Main dashboard logic (not available)
 │   ├── dashboard.js                        # Dashboard
 │   ├── tab-loader.js                       # Tab loader 
-│   ├── router.js                           # Tab and module navigation (not available)
-│   ├── storage.js                          # Persistent storage and export logic (not available)
-│   ├── access.js                           # Role-based access control (not available)
-│   ├── local storage .js                   # Local persistent storage script
-│   └── onboarding.js                       # Contributor onboarding flows (not available)
+│   └── local storage .js                   # Local persistent storage script    
 │
 ├── /modules/                               # Dashboard feature modules
 │   ├── business accounting journal.html
