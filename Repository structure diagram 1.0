@@ -61,9 +61,9 @@
 │   └── personal net worth.html
 │
 ├── /data/                                  # Sample data and templates
-│   ├── sample-business.json.               # (not available)
-│   ├── sample-journal.csv.                 # (not available)
-│   └── contributors-template.json
+│   ├── 
+│   ├── 
+│   └── 
 │
 └── /docs/                                  # Documentation and guides
     ├── setup.md                            # Installation and configuration (not available)
