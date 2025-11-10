@@ -17,8 +17,9 @@
 │
 ├── /assets/                                # Static assets (images, fonts, icons)
 │   ├── /images/                            # Logos, illustrations, UI icons (not available)
-│   ├── /fonts/                             # Custom or branded fonts (not available)
-│   └── /branding/                          # Business-specific visual assets (not available)
+│   ├── dashboard-preview.png               # Welcome page dashboard banner
+│   ├── /fonts/                               # Custom or branded fonts (not available)
+│   └── /branding/                            # Business-specific visual assets (not available)
 │
 ├── /C++/                                   # C++ coding modules
 │   ├── basic C++ login-system.cpp          # Basic C++ login system
