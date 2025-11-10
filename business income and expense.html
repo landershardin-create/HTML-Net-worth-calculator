@@ -13,12 +13,12 @@
     .income { color: green; }
     .expense { color: red; }
     .summary { margin-top: 1em; font-size: 1.2em; }
+    .right-align { text-align: right; }
   </style>
 </head>
 <body>
   <h1>Business Income & Expense Report</h1>
 
-  <!-- Company Selector -->
   <label for="companySelect">Select Company:</label>
   <select id="companySelect">
     <option value="acme">Acme Corp</option>
@@ -26,7 +26,6 @@
     <option value="nova">Nova Industries</option>
   </select>
 
-  <!-- Company Header -->
   <div class="company-header" role="region" aria-label="Company Summary">
     <h2 id="headerCompanyName">Company Name</h2>
     <p id="headerLocation">City, State</p>
@@ -41,6 +40,7 @@
         <th>Category</th>
         <th>Type</th>
         <th>Amount</th>
+        <th class="right-align" id="expenseTotalHeader"></th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -88,19 +88,29 @@
 
       let totalIncome = 0;
       let totalExpense = 0;
+      const expenseSubtotals = {};
+
+      data.forEach(entry => {
+        if (entry.type === "Income") totalIncome += entry.amount;
+        else if (entry.type === "Expense") {
+          totalExpense += entry.amount;
+          expenseSubtotals[entry.category] = (expenseSubtotals[entry.category] || 0) + entry.amount;
+        }
+      });
 
       data.forEach(entry => {
         const row = document.createElement('tr');
+        const subtotal = entry.type === "Expense" ? expenseSubtotals[entry.category].toFixed(2) : '';
         row.innerHTML = `
           <td>${entry.category}</td>
           <td>${entry.type}</td>
           <td class="${entry.type.toLowerCase()}">${entry.amount.toFixed(2)}</td>
+          <td class="right-align">${subtotal}</td>
         `;
         tbody.appendChild(row);
-
-        if (entry.type === "Income") totalIncome += entry.amount;
-        else if (entry.type === "Expense") totalExpense += entry.amount;
       });
+
+      document.getElementById('expenseTotalHeader').textContent = `Total Expenses: ${totalExpense.toFixed(2)}`;
 
       const net = totalIncome - totalExpense;
       document.getElementById('summary').innerHTML = `
@@ -114,7 +124,6 @@
       loadReport(e.target.value);
     });
 
-    // Initial load
     loadReport(document.getElementById('companySelect').value);
   </script>
 </body>
