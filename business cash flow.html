@@ -47,6 +47,14 @@
     <option value="BetaEnterprises">BetaEnterprises</option>
   </select>
 
+  <!-- View Selector -->
+  <label for="viewSelect"><strong>Select View:</strong></label>
+  <select id="viewSelect">
+    <option value="annual">Annual</option>
+    <option value="quarterly">Quarterly</option>
+    <option value="monthly">Monthly</option>
+  </select>
+
   <!-- Company Header -->
   <div class="company-header" role="region" aria-label="Company Summary">
     <h2 id="headerCompanyName">Company Name</h2>
@@ -117,8 +125,23 @@
       return `$${amount.toFixed(2)}`;
     }
 
+    function getPeriod(dateStr, view) {
+      const date = new Date(dateStr);
+      const month = date.getMonth();
+      const year = date.getFullYear();
+
+      if (view === "monthly") {
+        return `${year}-${String(month + 1).padStart(2, "0")}`;
+      } else if (view === "quarterly") {
+        const quarter = Math.floor(month / 3) + 1;
+        return `Q${quarter} ${year}`;
+      }
+      return `${year}`; // annual
+    }
+
     function populateCashFlow(companyKey) {
       const company = companies[companyKey];
+      const view = document.getElementById("viewSelect").value;
       const { journal, name, location, type, role } = company;
 
       document.getElementById("headerCompanyName").textContent = name;
@@ -126,7 +149,7 @@
       document.getElementById("headerTypeValue").textContent = type;
       document.getElementById("headerRoleValue").textContent = role;
 
-      let totalOperating = 0, totalInvesting = 0, totalFinancing = 0;
+      let totals = {};
       const operatingBody = document.querySelector("#operating-table tbody");
       const investingBody = document.querySelector("#investing-table tbody");
       const financingBody = document.querySelector("#financing-table tbody");
@@ -136,18 +159,24 @@
       financingBody.innerHTML = "";
 
       journal.forEach(entry => {
-        const row = `<tr><td>${entry.description}</td><td>${entry.date}</td><td>${formatCurrency(entry.amount)}</td></tr>`;
-        if (entry.activity === "operating") {
-          operatingBody.innerHTML += row;
-          totalOperating += entry.amount;
-        } else if (entry.activity === "investing") {
-          investingBody.innerHTML += row;
-          totalInvesting += entry.amount;
-        } else if (entry.activity === "financing") {
-          financingBody.innerHTML += row;
-          totalFinancing += entry.amount;
+        const period = getPeriod(entry.date, view);
+        if (!totals[period]) {
+          totals[period] = { operating: 0, investing: 0, financing: 0 };
         }
+        totals[period][entry.activity] += entry.amount;
+
+        const row = `<tr><td>${entry.description}</td><td>${entry.date}</td><td>${formatCurrency(entry.amount)}</td></tr>`;
+        if (entry.activity === "operating") operatingBody.innerHTML += row;
+        else if (entry.activity === "investing") investingBody.innerHTML += row;
+        else if (entry.activity === "financing") financingBody.innerHTML += row;
       });
+
+      let totalOperating = 0, totalInvesting = 0, totalFinancing = 0;
+      for (const period in totals) {
+        totalOperating += totals[period].operating;
+        totalInvesting += totals[period].investing;
+        totalFinancing += totals[period].financing;
+      }
 
       document.getElementById("total-operating").textContent = formatCurrency(totalOperating);
       document.getElementById("total-investing").textContent = formatCurrency(totalInvesting);
@@ -157,6 +186,11 @@
 
     document.getElementById("companySelect").addEventListener("change", e => {
       populateCashFlow(e.target.value);
+    });
+
+    document.getElementById("viewSelect").addEventListener("change", () => {
+      const companyKey = document.getElementById("companySelect").value;
+      populateCashFlow(companyKey);
     });
 
     // Initial load
