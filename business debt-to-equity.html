@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Debt to Equity Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
+    h2 { color: #333; }
+    .container { background: #fff; padding: 20px; border-radius: 8px; max-width: 800px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .section { margin-bottom: 30px; }
+    label { display: block; margin-top: 10px; }
+    input[type="number"] { width: 100%; padding: 8px; margin-top: 5px; }
+    .result { font-weight: bold; margin-top: 10px; }
+    .summary { background: #e8f5e9; padding: 15px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Debt to Equity Ratio Calculator</h2>
+
+    <div class="section">
+      <label>Loan Amount ($):</label>
+      <input type="number" id="loanAmount" value="50000" />
+
+      <label>Equity Amount ($):</label>
+      <input type="number" id="equityAmount" value="75000" />
+
+      <button onclick="calculateRatio()">Calculate Ratio</button>
+      <div class="result" id="ratioResult"></div>
+    </div>
+
+    <div class="section">
+      <h3>Loan Proceeds Distribution</h3>
+      <label>Operations (%):</label>
+      <input type="number" id="opsPercent" value="40" />
+      <label>Assets (%):</label>
+      <input type="number" id="assetsPercent" value="35" />
+      <label>Reserves (%):</label>
+      <input type="number" id="reservesPercent" value="25" />
+      <button onclick="calculateDistribution()">Distribute Loan</button>
+      <div class="result" id="distributionResult"></div>
+    </div>
+
+    <div class="section">
+      <h3>Equity Categories</h3>
+      <label>Founder Equity (%):</label>
+      <input type="number" id="founderEquity" value="60" />
+      <label>Investor Equity (%):</label>
+      <input type="number" id="investorEquity" value="40" />
+      <button onclick="calculateEquity()">Calculate Equity</button>
+      <div class="result" id="equityResult"></div>
+    </div>
+
+    <div class="section summary">
+      <h3>Financial Summary</h3>
+      <div id="financialSummary"></div>
+    </div>
+  </div>
+
+  <script>
+    function calculateRatio() {
+      const loan = parseFloat(document.getElementById('loanAmount').value);
+      const equity = parseFloat(document.getElementById('equityAmount').value);
+      const ratio = (loan / equity).toFixed(2);
+      document.getElementById('ratioResult').innerText = `Debt-to-Equity Ratio: ${ratio}`;
+      updateSummary();
+    }
+
+    function calculateDistribution() {
+      const loan = parseFloat(document.getElementById('loanAmount').value);
+      const ops = parseFloat(document.getElementById('opsPercent').value);
+      const assets = parseFloat(document.getElementById('assetsPercent').value);
+      const reserves = parseFloat(document.getElementById('reservesPercent').value);
+
+      const opsAmt = (loan * ops / 100).toFixed(2);
+      const assetsAmt = (loan * assets / 100).toFixed(2);
+      const reservesAmt = (loan * reserves / 100).toFixed(2);
+
+      document.getElementById('distributionResult').innerText =
+        `Operations:
+
+{opsAmt}, Assets: 
+
+{assetsAmt}, Reserves:
+
+{reservesAmt}`;
+      updateSummary();
+    }
+
+    function calculateEquity() {
+      const equity = parseFloat(document.getElementById('equityAmount').value);
+      const founder = parseFloat(document.getElementById('founderEquity').value);
+      const investor = parseFloat(document.getElementById('investorEquity').value);
+
+      const founderAmt = (equity * founder / 100).toFixed(2);
+      const investorAmt = (equity * investor / 100).toFixed(2);
+
+      document.getElementById('equityResult').innerText =
+        `Founder Equity: 
+
+{founderAmt}, Investor Equity: $${investorAmt}`;
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const loan = parseFloat(document.getElementById('loanAmount').value);
+      const equity = parseFloat(document.getElementById('equityAmount').value);
+      const ratio = (loan / equity).toFixed(2);
+
+      const ops = (loan * parseFloat(document.getElementById('opsPercent').value) / 100).toFixed(2);
+      const assets = (loan * parseFloat(document.getElementById('assetsPercent').value) / 100).toFixed(2);
+      const reserves = (loan * parseFloat(document.getElementById('reservesPercent').value) / 100).toFixed(2);
+
+      const founder = (equity * parseFloat(document.getElementById('founderEquity').value) / 100).toFixed(2);
+      const investor = (equity * parseFloat(document.getElementById('investorEquity').value) / 100).toFixed(2);
+
+      document.getElementById('financialSummary').innerHTML = `
+        <p><strong>Debt-to-Equity Ratio:</strong> ${ratio}</p>
+        <p><strong>Loan Distribution:</strong> Operations
+
+{ops}, Assets 
+
+{assets}, Reserves
+
+{reserves}</p>
+        <p><strong>Equity Breakdown:</strong> Founder 
+
+{founder}, Investor $${investor}</p>
+      `;
+    }
+
+    // Initial summary
+    calculateRatio();
+    calculateDistribution();
+    calculateEquity();
+  </script>
+</body>
+</html>
