@@ -6,7 +6,7 @@
   <style>
     body { font-family: sans-serif; margin: 2em; }
     h1 { color: #2c3e50; }
-    select { margin-top: 1em; padding: 0.5em; font-size: 1em; }
+    select { margin-top: 1em; padding: 0.5em; font-size: 1em; margin-right: 1em; }
     table { width: 100%; border-collapse: collapse; margin-top: 1em; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background-color: #f0f0f0; }
@@ -18,12 +18,19 @@
 <body>
   <h1>Business Net Worth Report</h1>
 
-  <!-- Company Selector -->
+  <!-- Company and Period Selectors -->
   <label for="companySelect">Select Company:</label>
   <select id="companySelect">
     <option value="acme">Acme Corp</option>
     <option value="zenith">Zenith LLC</option>
     <option value="nova">Nova Industries</option>
+  </select>
+
+  <label for="periodSelect">Select Period:</label>
+  <select id="periodSelect">
+    <option value="monthly">Monthly</option>
+    <option value="quarterly">Quarterly</option>
+    <option value="annual">Annual</option>
   </select>
 
   <!-- Company Header -->
@@ -53,17 +60,17 @@
       nova: { name: "Nova Industries", location: "San Francisco, CA", type: "Tech Startup", role: "Investor" }
     };
 
-    async function loadAccounts(companyKey) {
+    async function loadAccounts(companyKey, period = 'monthly') {
       const response = await fetch(`journal-${companyKey}.html`);
       const text = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(text, 'text/html');
-      const rows = doc.querySelectorAll('#accounts tbody tr');
+      const rows = doc.querySelectorAll(`#accounts tbody tr[data-period="${period}"]`);
 
       let totalAssets = 0;
       let totalLiabilities = 0;
       const reportBody = document.querySelector('#report tbody');
-      reportBody.innerHTML = ''; // Clear previous rows
+      reportBody.innerHTML = '';
 
       rows.forEach(row => {
         const cells = row.querySelectorAll('td');
@@ -96,12 +103,17 @@
       document.querySelector('#headerRole span').textContent = meta.role;
     }
 
-    document.getElementById('companySelect').addEventListener('change', (e) => {
-      loadAccounts(e.target.value);
-    });
+    function updateReport() {
+      const company = document.getElementById('companySelect').value;
+      const period = document.getElementById('periodSelect').value;
+      loadAccounts(company, period);
+    }
+
+    document.getElementById('companySelect').addEventListener('change', updateReport);
+    document.getElementById('periodSelect').addEventListener('change', updateReport);
 
     // Initial load
-    loadAccounts(document.getElementById('companySelect').value);
+    updateReport();
   </script>
 </body>
 </html>
