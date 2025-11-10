@@ -61,7 +61,7 @@
 │   ├── personal menu.html
 │   └── personal net worth.html
 │
-├── /data/                                  # Sample data and templates
+├── /data/                                  # SQL files
 │   ├── financial-SQL-schemea.sql
 │   ├── financial-SQL-scaffolding.sql
 │   └── 
