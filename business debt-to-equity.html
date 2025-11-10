@@ -3,33 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Business Debt to Equity Dashboard</title>
+  <title>Business Debt-to-Equity Financial Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
-    h2 { color: #333; }
-    .container { background: #fff; padding: 20px; border-radius: 8px; max-width: 800px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
+    .dashboard { max-width: 960px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2 { color: #333; margin-bottom: 10px; }
     .section { margin-bottom: 30px; }
-    label { display: block; margin-top: 10px; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
     input[type="number"] { width: 100%; padding: 8px; margin-top: 5px; }
-    .result { font-weight: bold; margin-top: 10px; }
-    .summary { background: #e8f5e9; padding: 15px; border-radius: 6px; }
+    button { margin-top: 15px; padding: 10px 20px; font-weight: bold; background: #0077cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #005fa3; }
+    .result, .summary { margin-top: 15px; padding: 10px; background: #eef; border-radius: 6px; }
+    .summary { background: #e8f5e9; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Business Debt to Equity Ratio Calculator</h2>
+  <div class="dashboard">
+    <h2>Debt-to-Equity Financial Dashboard</h2>
 
+    <!-- Debt-to-Equity Ratio -->
     <div class="section">
+      <h3>Debt-to-Equity Ratio</h3>
       <label>Loan Amount ($):</label>
       <input type="number" id="loanAmount" value="50000" />
-
       <label>Equity Amount ($):</label>
       <input type="number" id="equityAmount" value="75000" />
-
-      <button onclick="calculateRatio()">Calculate Ratio</button>
+      <button onclick="calculateDebtEquity()">Calculate Ratio</button>
       <div class="result" id="ratioResult"></div>
     </div>
 
+    <!-- Loan Proceeds Distribution -->
     <div class="section">
       <h3>Loan Proceeds Distribution</h3>
       <label>Operations (%):</label>
@@ -38,72 +41,93 @@
       <input type="number" id="assetsPercent" value="35" />
       <label>Reserves (%):</label>
       <input type="number" id="reservesPercent" value="25" />
-      <button onclick="calculateDistribution()">Distribute Loan</button>
-      <div class="result" id="distributionResult"></div>
+      <button onclick="calculateLoanDistribution()">Distribute Loan</button>
+      <div class="result" id="loanDistributionResult"></div>
     </div>
 
+    <!-- Equity Breakdown -->
     <div class="section">
-      <h3>Equity Categories</h3>
+      <h3>Equity Breakdown</h3>
       <label>Founder Equity (%):</label>
       <input type="number" id="founderEquity" value="60" />
       <label>Investor Equity (%):</label>
       <input type="number" id="investorEquity" value="40" />
-      <button onclick="calculateEquity()">Calculate Equity</button>
-      <div class="result" id="equityResult"></div>
+      <button onclick="calculateEquityBreakdown()">Calculate Equity</button>
+      <div class="result" id="equityBreakdownResult"></div>
     </div>
 
+    <!-- Use and Source of Proceeds -->
+    <div class="section">
+      <h3>Use and Source of Proceeds</h3>
+      <label>Use of Proceeds - R&D ($):</label>
+      <input type="number" id="useRD" value="20000" />
+      <label>Use of Proceeds - Marketing ($):</label>
+      <input type="number" id="useMarketing" value="15000" />
+      <label>Use of Proceeds - Infrastructure ($):</label>
+      <input type="number" id="useInfra" value="20000" />
+      <button onclick="calculateUseSource()">Summarize Proceeds</button>
+      <div class="result" id="useSourceResult"></div>
+    </div>
+
+    <!-- Financial Summary -->
     <div class="section summary">
       <h3>Financial Summary</h3>
+      <button onclick="renderSummary()">Refresh Summary</button>
       <div id="financialSummary"></div>
     </div>
   </div>
 
   <script>
-    function calculateRatio() {
+    function calculateDebtEquity() {
       const loan = parseFloat(document.getElementById('loanAmount').value);
       const equity = parseFloat(document.getElementById('equityAmount').value);
       const ratio = (loan / equity).toFixed(2);
       document.getElementById('ratioResult').innerText = `Debt-to-Equity Ratio: ${ratio}`;
-      updateSummary();
     }
 
-    function calculateDistribution() {
+    function calculateLoanDistribution() {
       const loan = parseFloat(document.getElementById('loanAmount').value);
-      const ops = parseFloat(document.getElementById('opsPercent').value);
-      const assets = parseFloat(document.getElementById('assetsPercent').value);
-      const reserves = parseFloat(document.getElementById('reservesPercent').value);
-
-      const opsAmt = (loan * ops / 100).toFixed(2);
-      const assetsAmt = (loan * assets / 100).toFixed(2);
-      const reservesAmt = (loan * reserves / 100).toFixed(2);
-
-      document.getElementById('distributionResult').innerText =
+      const ops = (loan * parseFloat(document.getElementById('opsPercent').value) / 100).toFixed(2);
+      const assets = (loan * parseFloat(document.getElementById('assetsPercent').value) / 100).toFixed(2);
+      const reserves = (loan * parseFloat(document.getElementById('reservesPercent').value) / 100).toFixed(2);
+      document.getElementById('loanDistributionResult').innerText =
         `Operations:
 
-{opsAmt}, Assets: 
+{ops}, Assets: 
 
-{assetsAmt}, Reserves:
+{assets}, Reserves:
 
-{reservesAmt}`;
-      updateSummary();
+{reserves}`;
     }
 
-    function calculateEquity() {
+    function calculateEquityBreakdown() {
       const equity = parseFloat(document.getElementById('equityAmount').value);
-      const founder = parseFloat(document.getElementById('founderEquity').value);
-      const investor = parseFloat(document.getElementById('investorEquity').value);
-
-      const founderAmt = (equity * founder / 100).toFixed(2);
-      const investorAmt = (equity * investor / 100).toFixed(2);
-
-      document.getElementById('equityResult').innerText =
+      const founder = (equity * parseFloat(document.getElementById('founderEquity').value) / 100).toFixed(2);
+      const investor = (equity * parseFloat(document.getElementById('investorEquity').value) / 100).toFixed(2);
+      document.getElementById('equityBreakdownResult').innerText =
         `Founder Equity: 
 
-{founderAmt}, Investor Equity: $${investorAmt}`;
-      updateSummary();
+{founder}, Investor Equity:
+
+{investor}`;
     }
 
-    function updateSummary() {
+    function calculateUseSource() {
+      const rd = parseFloat(document.getElementById('useRD').value);
+      const marketing = parseFloat(document.getElementById('useMarketing').value);
+      const infra = parseFloat(document.getElementById('useInfra').value);
+      const totalUse = (rd + marketing + infra).toFixed(2);
+      document.getElementById('useSourceResult').innerText =
+        `Use of Proceeds: R&D 
+
+{rd}, Marketing
+
+{marketing}, Infrastructure 
+
+{infra} | Total: $${totalUse}`;
+    }
+
+    function renderSummary() {
       const loan = parseFloat(document.getElementById('loanAmount').value);
       const equity = parseFloat(document.getElementById('equityAmount').value);
       const ratio = (loan / equity).toFixed(2);
@@ -115,9 +139,14 @@
       const founder = (equity * parseFloat(document.getElementById('founderEquity').value) / 100).toFixed(2);
       const investor = (equity * parseFloat(document.getElementById('investorEquity').value) / 100).toFixed(2);
 
+      const rd = parseFloat(document.getElementById('useRD').value);
+      const marketing = parseFloat(document.getElementById('useMarketing').value);
+      const infra = parseFloat(document.getElementById('useInfra').value);
+      const totalUse = (rd + marketing + infra).toFixed(2);
+
       document.getElementById('financialSummary').innerHTML = `
         <p><strong>Debt-to-Equity Ratio:</strong> ${ratio}</p>
-        <p><strong>Loan Distribution:</strong> Operations
+        <p><strong>Loan Distribution:</strong> Ops
 
 {ops}, Assets 
 
@@ -126,14 +155,34 @@
 {reserves}</p>
         <p><strong>Equity Breakdown:</strong> Founder 
 
-{founder}, Investor $${investor}</p>
+{founder}, Investor
+
+{investor}</p>
+        <p><strong>Use of Proceeds:</strong> R&D 
+
+{rd}, Marketing
+
+{marketing}, Infrastructure 
+
+{infra} | Total
+
+{totalUse}</p>
+        <p><strong>Source of Proceeds:</strong> Loan 
+
+{loan}, Equity
+
+{equity} | Total 
+
+{(loan + equity).toFixed(2)}</p>
       `;
     }
 
-    // Initial summary
-    calculateRatio();
-    calculateDistribution();
-    calculateEquity();
+    // Initial render
+    calculateDebtEquity();
+    calculateLoanDistribution();
+    calculateEquityBreakdown();
+    calculateUseSource();
+    renderSummary();
   </script>
 </body>
 </html>
