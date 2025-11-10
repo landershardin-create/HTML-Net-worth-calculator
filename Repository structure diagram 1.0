@@ -62,8 +62,8 @@
 │   └── personal net worth.html
 │
 ├── /data/                                  # Sample data and templates
-│   ├── 
-│   ├── 
+│   ├── financial-SQL-schemea.sql
+│   ├── financial-SQL-scaffolding.sql
 │   └── 
 │
 └── /docs/                                  # Documentation and guides
