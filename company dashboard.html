@@ -2,34 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GitHub Tabbed Dashboard with Company Manager</title>
-  <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin/HTML-Business-and-Personal-Finance/css/stylesheet.css" />
+  <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin/HTML-Business-and-Personal-Finance/css/stylesheet.css"/>
 </head>
 <body>
-  <!-- Filter + Export -->
-  <div class="filter-export">
+  <!-- Filter and Export -->
+  <section class="filter-export">
     <label for="ownerFilter">Filter by Owner:</label>
     <select id="ownerFilter">
       <option value="">All Owners</option>
     </select>
-    <button onclick="exportCompanies()">Export Companies</button>
-  </div>
+    <button id="exportBtn">Export Companies</button>
+  </section>
 
+  <!-- Tab Content -->
   <div id="content"></div>
 
-  <!-- Carousel -->
-  <div class="carousel-viewer">
+  <!-- Carousel Viewer -->
+  <section class="carousel-viewer">
     <h3>Company Carousel Viewer</h3>
-    <div id="carouselDisplay" class="carousel-card"></div>
+    <div id="carouselDisplay" class="carousel-card" aria-live="polite"></div>
     <div style="margin-top:10px;">
-      <button onclick="prevCompany()">Previous</button>
-      <button onclick="nextCompany()">Next</button>
+      <button id="prevBtn">Previous</button>
+      <button id="nextBtn">Next</button>
     </div>
-  </div>
+  </section>
 
   <!-- Company Manager -->
-  <div class="company-manager">
+  <section class="company-manager">
     <h3>Manage Companies</h3>
     <form id="companyForm">
       <div class="form-group">
@@ -59,7 +60,7 @@
         <div id="partnerSection" style="display:none; margin-top:10px;">
           <h4>Partners</h4>
           <div id="partnersContainer"></div>
-          <button type="button" onclick="addPartner()">Add Partner</button>
+          <button type="button" id="addPartnerBtn">Add Partner</button>
           <p id="ownershipWarning" style="color:red; display:none;">Total ownership must equal 100%.</p>
         </div>
 
@@ -67,27 +68,33 @@
       </div>
     </form>
     <div class="company-list" id="companyList"></div>
-  </div>
+  </section>
 
-  <!-- Embedded JavaScript -->
   <script>
     const companies = [];
     let carouselIndex = 0;
 
-    document.getElementById('companyType').addEventListener('change', function() {
-      const partnerSection = document.getElementById('partnerSection');
-      if (this.value === 'Partnership') {
+    const companyForm = document.getElementById('companyForm');
+    const companyList = document.getElementById('companyList');
+    const carouselDisplay = document.getElementById('carouselDisplay');
+    const ownerFilter = document.getElementById('ownerFilter');
+    const companyTypeSelect = document.getElementById('companyType');
+    const partnersContainer = document.getElementById('partnersContainer');
+    const partnerSection = document.getElementById('partnerSection');
+    const ownershipWarning = document.getElementById('ownershipWarning');
+
+    companyTypeSelect.addEventListener('change', () => {
+      if (companyTypeSelect.value === 'Partnership') {
         partnerSection.style.display = 'block';
       } else {
         partnerSection.style.display = 'none';
-        document.getElementById('partnersContainer').innerHTML = '';
-        document.getElementById('ownershipWarning').style.display = 'none';
+        partnersContainer.innerHTML = '';
+        ownershipWarning.style.display = 'none';
       }
     });
 
-    function addPartner() {
-      const container = document.getElementById('partnersContainer');
-      const index = container.children.length;
+    document.getElementById('addPartnerBtn').addEventListener('click', () => {
+      const index = partnersContainer.children.length;
       const div = document.createElement('div');
       div.className = 'partner-entry';
       div.innerHTML = `
@@ -97,16 +104,27 @@
         <input type="number" placeholder="Ownership %" name="partnerShare${index}" min="0" max="100" required />
         <button type="button" onclick="this.parentElement.remove()">Remove</button>
       `;
-      container.appendChild(div);
-    }
+      partnersContainer.appendChild(div);
+    });
 
-    document.getElementById('companyForm').addEventListener('submit', function(e) {
+    companyForm.addEventListener('submit', function(e) {
       e.preventDefault();
+
+      const companyType = companyTypeSelect.value;
+      const companyName = document.getElementById('companyName').value;
+      const streetAddress = document.getElementById('streetAddress').value;
+      const city = document.getElementById('city').value;
+      const state = document.getElementById('state').value;
+      const zipCode = document.getElementById('zipCode').value;
+      const companyOwner = document.getElementById('companyOwner').value;
+      const companyEIN = document.getElementById('companyEIN').value;
+      const companySEIN = document.getElementById('companySEIN').value;
+      const companyRole = document.getElementById('companyRole').value;
 
       const partners = [];
       let totalOwnership = 0;
 
-      if (companyType.value === 'Partnership') {
+      if (companyType === 'Partnership') {
         const partnerEntries = document.querySelectorAll('#partnersContainer .partner-entry');
         partnerEntries.forEach(entry => {
           const name = entry.querySelector('input[name^="partnerName"]').value;
@@ -120,47 +138,40 @@
         });
 
         if (Math.round(totalOwnership) !== 100) {
-          document.getElementById('ownershipWarning').style.display = 'block';
+          ownershipWarning.style.display = 'block';
           return;
         } else {
-          document.getElementById('ownershipWarning').style.display = 'none';
+          ownershipWarning.style.display = 'none';
         }
       }
 
       const company = {
-        name: companyName.value,
-        address: streetAddress.value,
-        city: city.value,
-        state: state.value,
-        zip: zipCode.value,
-        owner: companyOwner.value,
-        ein: companyEIN.value,
-        sein: companySEIN.value,
-        role: companyRole.value,
-        type: companyType.value,
-        partners: partners
+        name: companyName,
+        address: streetAddress,
+        city,
+        state,
+        zip: zipCode,
+        owner: companyOwner,
+        ein: companyEIN,
+        sein: companySEIN,
+        role: companyRole,
+        type: companyType,
+        partners
       };
 
       companies.push(company);
       updateCompanyList();
-      updateCompanySelect();
       updateOwnerFilter();
       updateCarousel();
-      this.reset();
-      document.getElementById('partnersContainer').innerHTML = '';
-      document.getElementById('partnerSection').style.display = 'none';
+      companyForm.reset();
+      partnersContainer.innerHTML = '';
+      partnerSection.style.display = 'none';
     });
 
     function updateCompanyList() {
-      const ownerFilter = document.getElementById('ownerFilter').value;
-      const list = companies.filter(c => !ownerFilter || c.owner === ownerFilter);
+      const filter = ownerFilter.value;
+      const list = companies.filter(c => !filter || c.owner === filter);
       companyList.innerHTML = list.map(c => `<div>${c.name} (${c.owner}) - ${c.type}</div>`).join('');
-    }
-
-    function updateCompanySelect() {
-      if (typeof companySelect !== 'undefined') {
-        companySelect.innerHTML = companies.map(c => `<option>${c.name}</option>`).join('');
-      }
     }
 
     function updateOwnerFilter() {
@@ -183,17 +194,22 @@
       carouselDisplay.innerHTML = `<strong>${c.name}</strong><br>${c.city}, ${c.state}<br>Owner: ${c.owner}<br>Type: ${c.type}${partnerInfo}`;
     }
 
-    function prevCompany() {
+    document.getElementById('prevBtn').addEventListener('click', () => {
       carouselIndex = (carouselIndex - 1 + companies.length) % companies.length;
       updateCarousel();
-    }
+    });
 
-    function nextCompany() {
+    document.getElementById('nextBtn').addEventListener('click', () => {
       carouselIndex = (carouselIndex + 1) % companies.length;
       updateCarousel();
-    }
+    });
 
-    function exportCompanies() {
+document.getElementById('nextBtn').addEventListener('click', () => {
+      carouselIndex = (carouselIndex + 1) % companies.length;
+      updateCarousel();
+    });
+
+document.getElementById('exportBtn').addEventListener('click', () => {
       const blob = new Blob([JSON.stringify(companies, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -201,12 +217,17 @@
       a.download = 'companies.json';
       a.click();
       URL.revokeObjectURL(url);
-    }
-
-    document.getElementById('ownerFilter').addEventListener('change', updateCompanyList);
-    document.getElementById('tabMenu')?.addEventListener('change', function() {
-      content.innerHTML = `<p>Selected tab: <strong>${this.value}</strong></p>`;
     });
+
+    ownerFilter.addEventListener('change', updateCompanyList);
+
+    // Optional: Tab menu logic if added later
+    const tabMenu = document.getElementById('tabMenu');
+    if (tabMenu) {
+      tabMenu.addEventListener('change', function () {
+        document.getElementById('content').innerHTML = `<p>Selected tab: <strong>${this.value}</strong></p>`;
+      });
+    }
   </script>
 </body>
 </html>
