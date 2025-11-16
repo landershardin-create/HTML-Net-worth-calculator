@@ -4,32 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Company Manager Dashboard</title>
-  <link rel="stylesheet" href="https://raw.githubusercontent.com/landershardin/HTML-Business-and-Personal-Finance/css/stylesheet.css"/>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    .form-group input, .form-group select { display: block; margin: 5px 0; padding: 5px; width: 100%; max-width: 400px; }
+    .company-list div, .carousel-card { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+    button { margin: 5px; padding: 5px 10px; }
+  </style>
 </head>
 <body>
-  <!-- Filter and Export -->
   <section class="filter-export">
     <label for="ownerFilter">Filter by Owner:</label>
-    <select id="ownerFilter">
-      <option value="">All Owners</option>
-    </select>
+    <select id="ownerFilter"><option value="">All Owners</option></select>
     <button id="exportBtn">Export Companies</button>
+    <button id="clearBtn">Clear All</button>
+    <button id="syncToGitHubBtn">Sync to GitHub</button>
+    <button id="loadFromGitHubBtn">Load from GitHub</button>
   </section>
 
-  <!-- Tab Content -->
-  <div id="content"></div>
-
-  <!-- Carousel Viewer -->
   <section class="carousel-viewer">
     <h3>Company Carousel Viewer</h3>
     <div id="carouselDisplay" class="carousel-card" aria-live="polite"></div>
-    <div style="margin-top:10px;">
-      <button id="prevBtn">Previous</button>
-      <button id="nextBtn">Next</button>
-    </div>
+    <div><button id="prevBtn">Previous</button><button id="nextBtn">Next</button></div>
   </section>
 
-  <!-- Company Manager -->
   <section class="company-manager">
     <h3>Manage Companies</h3>
     <form id="companyForm">
@@ -39,8 +36,7 @@
         <input type="text" id="city" placeholder="City" />
         <input type="text" id="state" placeholder="State" />
         <input type="text" id="zipCode" placeholder="ZIP Code" />
-        <input type="text" id="companyOwner" placeholder="Owner" />
-        <input type="text" id="companyEIN" placeholder="SSN (XXX-XX-XXXX) or EIN (XX-XXXXXXX)" pattern="\d{3}-\d{2}-\d{4}|\d{2}-\d{7}" title="Format: SSN XXX-XX-XXXX or EIN XX-XXXXXXX" />
+        <input type="text" id="companyEIN" placeholder="SSN or EIN" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
         <select id="companyRole">
           <option value="Viewer">Viewer</option>
@@ -56,8 +52,13 @@
           <option value="Nonprofit">Nonprofit</option>
         </select>
 
-        <!-- Partner Section -->
-        <div id="partnerSection" style="display:none; margin-top:10px;">
+        <div id="ownersSection" style="display:none;">
+          <h4>Owners</h4>
+          <div id="ownersContainer"></div>
+          <button type="button" id="addOwnerBtn">Add Owner</button>
+        </div>
+
+        <div id="partnerSection" style="display:none;">
           <h4>Partners</h4>
           <div id="partnersContainer"></div>
           <button type="button" id="addPartnerBtn">Add Partner</button>
@@ -71,7 +72,7 @@
   </section>
 
   <script>
-    const companies = [];
+    let companies = JSON.parse(localStorage.getItem('companies')) || [];
     let carouselIndex = 0;
 
     const companyForm = document.getElementById('companyForm');
@@ -82,13 +83,42 @@
     const partnersContainer = document.getElementById('partnersContainer');
     const partnerSection = document.getElementById('partnerSection');
     const ownershipWarning = document.getElementById('ownershipWarning');
+    const ownersContainer = document.getElementById('ownersContainer');
+    const ownersSection = document.getElementById('ownersSection');
+
+    function updateCompanyList() {
+      const filter = ownerFilter.value;
+      const list = companies.filter(c => !filter || c.owners.some(o => o.name === filter));
+      companyList.innerHTML = list.map((c, i) => {
+        const ownerNames = c.owners.map(o => o.name).join(', ');
+        return `<div>${c.name} (${ownerNames}) - ${c.type} <button onclick="editCompany(${i})">Edit</button></div>`;
+      }).join('');
+    }
+
+    function updateOwnerFilter() {
+      const allOwners = companies.flatMap(c => c.owners.map(o => o.name));
+      const uniqueOwners = [...new Set(allOwners)];
+      ownerFilter.innerHTML = `<option value="">All Owners</option>` + uniqueOwners.map(o => `<option value="${o}">${o}</option>`).join('');
+    }
+
+    function updateCarousel() {
+      if (companies.length === 0) {
+        carouselDisplay.innerHTML = '<em>No companies added yet.</em>';
+        return;
+      }
+      const c = companies[carouselIndex % companies.length];
+      let ownerInfo = c.owners.map(o => `<li>${o.name}${o.role ? ' - ' + o.role : ''}${o.email ? ' - ' + o.email : ''}</li>`).join('');
+      let partnerInfo = c.partners?.length ? c.partners.map(p => `<li>${p.name} (${p.share}%)${p.role ? ' - ' + p.role : ''}${p.email ? ' - ' + p.email : ''}</li>`).join('') : '';
+      carouselDisplay.innerHTML = `<strong>${c.name}</strong><br>${c.city}, ${c.state}<br>Type: ${c.type}<br><strong>Owners:</strong><ul>${ownerInfo}</ul>${partnerInfo ? '<strong>Partners:</strong><ul>' + partnerInfo + '</ul>' : ''}`;
+    }
 
     companyTypeSelect.addEventListener('change', () => {
-      if (companyTypeSelect.value === 'Partnership') {
-        partnerSection.style.display = 'block';
-      } else {
-        partnerSection.style.display = 'none';
+      const isPartnership = companyTypeSelect.value === 'Partnership';
+      partnerSection.style.display = isPartnership ? 'block' : 'none';
+      ownersSection.style.display = isPartnership ? 'block' : 'none';
+      if (!isPartnership) {
         partnersContainer.innerHTML = '';
+        ownersContainer.innerHTML = '';
         ownershipWarning.style.display = 'none';
       }
     });
@@ -107,51 +137,37 @@
       partnersContainer.appendChild(div);
     });
 
+    document.getElementById('addOwnerBtn').addEventListener('click', () => {
+      const index = ownersContainer.children.length;
+      const div = document.createElement('div');
+      div.className = 'owner-entry';
+      div.innerHTML = `
+        <input type="text" placeholder="Owner Name" name="ownerName${index}" required />
+        <input type="email" placeholder="Email" name="ownerEmail${index}" />
+        <input type="text" placeholder="Role" name="ownerRole${index}" />
+        <button type="button" onclick="this.parentElement.remove()">Remove</button>
+      `;
+      ownersContainer.appendChild(div);
+    });
+
     companyForm.addEventListener('submit', function(e) {
       e.preventDefault();
-
       const companyType = companyTypeSelect.value;
       const companyName = document.getElementById('companyName').value;
       const streetAddress = document.getElementById('streetAddress').value;
       const city = document.getElementById('city').value;
       const state = document.getElementById('state').value;
       const zipCode = document.getElementById('zipCode').value;
-      const companyOwner = document.getElementById('companyOwner').value;
       const companyEIN = document.getElementById('companyEIN').value;
       const companySEIN = document.getElementById('companySEIN').value;
-      const companyRole = document.getElementById('companyRole').value;
 
-      const partners = [];
-      let totalOwnership = 0;
-
-      if (companyType === 'Partnership') {
-        const partnerEntries = document.querySelectorAll('#partnersContainer .partner-entry');
-        partnerEntries.forEach(entry => {
-          const name = entry.querySelector('input[name^="partnerName"]').value;
-          const email = entry.querySelector('input[name^="partnerEmail"]').value;
-          const role = entry.querySelector('input[name^="partnerRole"]').value;
-          const share = parseFloat(entry.querySelector('input[name^="partnerShare"]').value);
-          if (name && !isNaN(share)) {
-            partners.push({ name, email, role, share });
-            totalOwnership += share;
-          }
-        });
-
-        if (Math.round(totalOwnership) !== 100) {
-          ownershipWarning.style.display = 'block';
-          return;
-        } else {
-          ownershipWarning.style.display = 'none';
-        }
-      }
-
-      const company = {
+const company = {
         name: companyName,
         address: streetAddress,
         city,
         state,
         zip: zipCode,
-        owner: companyOwner,
+        owners,
         ein: companyEIN,
         sein: companySEIN,
         role: companyRole,
@@ -160,38 +176,62 @@
       };
 
       companies.push(company);
+      localStorage.setItem('companies', JSON.stringify(companies));
       updateCompanyList();
       updateOwnerFilter();
       updateCarousel();
       companyForm.reset();
       partnersContainer.innerHTML = '';
+      ownersContainer.innerHTML = '';
       partnerSection.style.display = 'none';
+      ownersSection.style.display = 'none';
     });
 
-    function updateCompanyList() {
-      const filter = ownerFilter.value;
-      const list = companies.filter(c => !filter || c.owner === filter);
-      companyList.innerHTML = list.map(c => `<div>${c.name} (${c.owner}) - ${c.type}</div>`).join('');
-    }
+    function editCompany(index) {
+      const c = companies[index];
+      document.getElementById('companyName').value = c.name;
+      document.getElementById('streetAddress').value = c.address;
+      document.getElementById('city').value = c.city;
+      document.getElementById('state').value = c.state;
+      document.getElementById('zipCode').value = c.zip;
+      document.getElementById('companyEIN').value = c.ein;
+      document.getElementById('companySEIN').value = c.sein;
+      document.getElementById('companyRole').value = c.role;
+      document.getElementById('companyType').value = c.type;
+      companyTypeSelect.dispatchEvent(new Event('change'));
 
-    function updateOwnerFilter() {
-      const owners = [...new Set(companies.map(c => c.owner))];
-      ownerFilter.innerHTML = `<option value="">All Owners</option>` + owners.map(o => `<option value="${o}">${o}</option>`).join('');
-    }
+      ownersContainer.innerHTML = '';
+      c.owners.forEach((o, i) => {
+        const div = document.createElement('div');
+        div.className = 'owner-entry';
+        div.innerHTML = `
+          <input type="text" placeholder="Owner Name" name="ownerName${i}" value="${o.name}" required />
+          <input type="email" placeholder="Email" name="ownerEmail${i}" value="${o.email || ''}" />
+          <input type="text" placeholder="Role" name="ownerRole${i}" value="${o.role || ''}" />
+          <button type="button" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        ownersContainer.appendChild(div);
+      });
 
-    function updateCarousel() {
-      if (companies.length === 0) {
-        carouselDisplay.innerHTML = '<em>No companies added yet.</em>';
-        return;
-      }
-      const c = companies[carouselIndex % companies.length];
-      let partnerInfo = '';
-      if (c.type === 'Partnership' && c.partners?.length) {
-        partnerInfo = '<br><strong>Partners:</strong><ul>' +
-          c.partners.map(p => `<li>${p.name} (${p.share}%)${p.role ? ' - ' + p.role : ''}${p.email ? ' - ' + p.email : ''}</li>`).join('') +
-          '</ul>';
-      }
-      carouselDisplay.innerHTML = `<strong>${c.name}</strong><br>${c.city}, ${c.state}<br>Owner: ${c.owner}<br>Type: ${c.type}${partnerInfo}`;
+      partnersContainer.innerHTML = '';
+      c.partners.forEach((p, i) => {
+        const div = document.createElement('div');
+        div.className = 'partner-entry';
+        div.innerHTML = `
+          <input type="text" placeholder="Partner Name" name="partnerName${i}" value="${p.name}" required />
+          <input type="email" placeholder="Email" name="partnerEmail${i}" value="${p.email || ''}" />
+          <input type="text" placeholder="Role" name="partnerRole${i}" value="${p.role || ''}" />
+          <input type="number" placeholder="Ownership %" name="partnerShare${i}" value="${p.share}" min="0" max="100" required />
+          <button type="button" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        partnersContainer.appendChild(div);
+      });
+
+      companies.splice(index, 1);
+      localStorage.setItem('companies', JSON.stringify(companies));
+      updateCompanyList();
+      updateCarousel();
+      companyForm.scrollIntoView({ behavior: 'smooth' });
     }
 
     document.getElementById('prevBtn').addEventListener('click', () => {
@@ -204,12 +244,7 @@
       updateCarousel();
     });
 
-document.getElementById('nextBtn').addEventListener('click', () => {
-      carouselIndex = (carouselIndex + 1) % companies.length;
-      updateCarousel();
-    });
-
-document.getElementById('exportBtn').addEventListener('click', () => {
+    document.getElementById('exportBtn').addEventListener('click', () => {
       const blob = new Blob([JSON.stringify(companies, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -219,15 +254,80 @@ document.getElementById('exportBtn').addEventListener('click', () => {
       URL.revokeObjectURL(url);
     });
 
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      if (confirm('Are you sure you want to clear all companies?')) {
+        localStorage.removeItem('companies');
+        companies = [];
+        updateCompanyList();
+        updateOwnerFilter();
+        updateCarousel();
+      }
+    });
+
     ownerFilter.addEventListener('change', updateCompanyList);
 
-    // Optional: Tab menu logic if added later
-    const tabMenu = document.getElementById('tabMenu');
-    if (tabMenu) {
-      tabMenu.addEventListener('change', function () {
-        document.getElementById('content').innerHTML = `<p>Selected tab: <strong>${this.value}</strong></p>`;
-      });
+    // GitHub Sync (demo only — use secure backend in production)
+    const GITHUB_USERNAME = 'your-username';
+    const REPO_NAME = 'company-dashboard-data';
+    const FILE_PATH = 'companies.json';
+    const BRANCH = 'main';
+    const TOKEN = 'ghp_your_personal_access_token'; // ⚠️ Demo only
+
+    async function syncToGitHub() {
+      const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`;
+      try {
+        const getRes = await fetch(apiUrl, {
+          headers: { Authorization: `token ${TOKEN}` }
+        });
+        const fileData = await getRes.json();
+        const sha = fileData.sha;
+
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(companies, null, 2))));
+        const res = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            Authorization: `token ${TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'Sync companies.json from dashboard',
+            content,
+            sha,
+            branch: BRANCH
+          })
+        });
+
+        if (res.ok) {
+          alert('Synced to GitHub successfully!');
+        } else {
+          alert('GitHub sync failed.');
+        }
+      } catch (err) {
+        alert('Error syncing to GitHub: ' + err.message);
+      }
     }
+
+    async function loadFromGitHub() {
+      const apiUrl = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/${BRANCH}/${FILE_PATH}`;
+      try {
+        const res = await fetch(apiUrl);
+        if (res.ok) {
+          companies = await res.json();
+          localStorage.setItem('companies', JSON.stringify(companies));
+          updateCompanyList();
+          updateOwnerFilter();
+          updateCarousel();
+          alert('Loaded from GitHub!');
+        } else {
+          alert('Failed to load from GitHub.');
+        }
+      } catch (err) {
+        alert('Error loading from GitHub: ' + err.message);
+      }
+    }
+
+    document.getElementById('syncToGitHubBtn').addEventListener('click', syncToGitHub);
+    document.getElementById('loadFromGitHubBtn').addEventListener('click', loadFromGitHub);
   </script>
 </body>
 </html>
