@@ -42,12 +42,14 @@
         <input type="text" id="companyEIN" placeholder="SSN or EIN" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
 
-        <!-- OWNER/PARTNER SECTION (Visible for all types except partnership logic handled in JS) -->
+        <!-- OWNER SECTION (Visible for all types except partnership logic handled in JS) -->
         <div id="ownersSection">
-          <h4>Owner/Partners</h4>
+          <h4>Owner</h4>
           <div id="ownersContainer"></div>
           <input type="text" id="Owner" placeholder="Owner" />
           <button type="button" id="addOwnerBtn">Add Owner</button>
+        <!-- PARTNER SECTION (Visible for type partnership logic handled in JS) -->
+          <h4>Partners</h4>
           <input type="text" id="Partner" placeholder="Partner" /><input type="text" id="PartnerShare" placeholder="Partner share %" />
           <button type="button" id="addPartberBtn">Add Partner</button>
         </div>
