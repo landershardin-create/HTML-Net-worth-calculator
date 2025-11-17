@@ -42,7 +42,16 @@
         <input type="text" id="companyEIN" placeholder="SSN or EIN" />
         <input type="text" id="companySEIN" placeholder="State EIN #" />
 
-        <select id="companyRole">
+        <!-- OWNER/PARTNER SECTION (Visible for all types except partnership logic handled in JS) -->
+        <div id="ownersSection">
+          <h4>Owner/Partners</h4>
+          <div id="ownersContainer"></div>
+          <input type="text" id="Owner" placeholder="Owner" />
+          <input type="text" id="Partner" placeholder="Partner" /><input type="text" id="PartnerShare" placeholder="Partner share %" />
+          <button type="button" id="addOwnerBtn">Add Owner</button>
+        </div>
+        
+          <select id="companyRole">
           <option value="Viewer">Viewer</option>
           <option value="Editor">Editor</option>
           <option value="Owner">Owner</option>
@@ -56,15 +65,6 @@
           <option value="Corporation">Corporation</option>
           <option value="Nonprofit">Nonprofit</option>
         </select>
-
-        <!-- OWNER/PARTNER SECTION (Visible for all types except partnership logic handled in JS) -->
-        <div id="ownersSection">
-          <h4>Owner/Partners</h4>
-          <div id="ownersContainer"></div>
-          <input type="text" id="Owner" placeholder="Owner" />
-          <input type="text" id="Partner" placeholder="Partner" /><input type="text" id="PartnerShare" placeholder="Partner share %" />
-          <button type="button" id="addOwnerBtn">Add Owner</button>
-        </div>
 
         <!-- PARTNER SECTION (ONLY FOR PARTNERSHIP) -->
         <div id="partnerSection" style="display:none;">
