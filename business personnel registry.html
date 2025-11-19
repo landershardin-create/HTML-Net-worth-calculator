@@ -6,124 +6,167 @@
   <title>Company Personnel Manager</title>
   <style>
     body { font-family: sans-serif; margin: 2em; }
-    h1 { color: #2c3e50; }
-    select { margin-top: 1em; padding: 0.5em; font-size: 1em; margin-right: 1em; }
+    h1, h2 { color: #2c3e50; }
+    .form-group { margin-bottom: 0.6em; }
+    label { display: block; font-weight: 600; margin-bottom: 0.25em; }
+    input, select, button { padding: 0.5em; font-size: 1em; }
+    select { margin-top: 0.25em; }
     table { width: 100%; border-collapse: collapse; margin-top: 1em; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background-color: #f0f0f0; }
-    .income { color: green; }
-    .expense { color: red; }
-    .summary { margin-top: 1em; font-size: 1.2em; }
+    .btn { margin-right: 0.4em; }
+    .summary { margin-top: 1em; font-size: 1.05em; }
     .right-align { text-align: right; }
+    #adminPanel { margin-top: 1em; border: 1px solid #ddd; padding: 1em; background: #fafafa; }
+    .hidden { display: none; }
+    .flex-row { display:flex; gap: 1em; align-items:flex-end; flex-wrap:wrap; }
+    .small { width: 160px; }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" role="main">
     <h2>Company Personnel Manager</h2>
 
-    <div class="form-group">
-      <label for="companySelect">Select Company:</label>
-      <select id="companySelect"></select>
+    <div class="form-group flex-row" aria-hidden="false">
+      <div>
+        <label for="companySelect">Select Company:</label>
+        <select id="companySelect" class="small" aria-label="Select company"></select>
+      </div>
+
+      <div>
+        <label for="role">Select Role:</label>
+        <select id="role" class="small" aria-label="Select role">
+          <option value="Admin">Admin</option>
+          <option value="Viewer">Viewer</option>
+        </select>
+      </div>
+
+      <div style="margin-left:auto;">
+        <div class="company-header" role="region" aria-labelledby="headerCompanyName" aria-label="Company Summary">
+          <h3 id="headerCompanyName"></h3>
+          <p id="headerLocation" style="margin:0;"></p>
+          <p id="headerType" style="margin:0;"></p>
+          <p id="headerRole" style="margin:0;"></p>
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="role">Select Role:</label>
-      <select id="role">
-        <option value="Admin">Admin</option>
-        <option value="Viewer">Viewer</option>
-      </select>
-    </div>
-
-    <div class="company-header" role="region" aria-label="Company Summary">
-      <h2 id="headerCompanyName"></h2>
-      <p id="headerLocation"></p>
-      <p id="headerType"></p>
-      <p id="headerRole"></p>
-    </div>
-
-    <div id="adminPanel">
-      <form id="personnelForm">
+    <div id="adminPanel" aria-live="polite">
+      <form id="personnelForm" novalidate>
         <fieldset>
-          <legend>Add Personnel Record</legend>
-          <div class="form-group">
-            <label for="idnumber">Employee ID number:</label>
-            <input type="number" id="idnumber" required />
+          <legend>Add / Edit Personnel Record</legend>
+
+          <div class="flex-row">
+            <div class="form-group">
+              <label for="idnumber">Employee ID number:</label>
+              <input type="number" id="idnumber" />
+            </div>
+
+            <div class="form-group">
+              <label for="ftitle">Title:</label>
+              <input type="text" id="ftitle" />
+            </div>
+
+            <div class="form-group">
+              <label for="dtitle">Degree title:</label>
+              <input type="text" id="dtitle" />
+            </div>
           </div>
-          <div class="form-group">
-            <label for="ftitle">Title:</label>
-            <input type="text" id="ftitle" required />
+
+          <div class="flex-row">
+            <div class="form-group">
+              <label for="fname">First Name:</label>
+              <input type="text" id="fname" />
+            </div>
+
+            <div class="form-group">
+              <label for="mname">Middle Name / Initial:</label>
+              <input type="text" id="mname" />
+            </div>
+
+            <div class="form-group">
+              <label for="lname">Last Name:</label>
+              <input type="text" id="lname" />
+            </div>
           </div>
-          <div class="form-group">
-            <label for="fname">First Name:</label>
-            <input type="text" id="fname" required />
+
+          <div class="flex-row">
+            <div class="form-group">
+              <label for="ssn">Social Security Number (optional):</label>
+              <!-- pattern enforces 123-45-6789 format if provided; we still recommend not storing SSNs in client-side apps -->
+              <input type="text" id="ssn" inputmode="numeric" pattern="^\d{3}-\d{2}-\d{4}$" placeholder="123-45-6789" />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input type="email" id="email" />
+            </div>
+
+            <div class="form-group">
+              <label for="position">Position:</label>
+              <input type="text" id="position" />
+            </div>
           </div>
-          <div class="form-group">
-            <label for="mname">Middle Name or initial:</label>
-            <input type="text" id="mname" required />
+
+          <div class="flex-row">
+            <div class="form-group">
+              <label for="department">Department:</label>
+              <input type="text" id="department" />
+            </div>
+
+            <div class="form-group">
+              <label for="address">Street address:</label>
+              <input type="text" id="address" />
+            </div>
+
+            <div class="form-group">
+              <label for="city">City:</label>
+              <input type="text" id="city" />
+            </div>
           </div>
-          <div class="form-group">
-            <label for="lname">Last Name:</label>
-            <input type="text" id="lname" required />
+
+          <div class="flex-row">
+            <div class="form-group">
+              <label for="state">State:</label>
+              <input type="text" id="state" />
+            </div>
+
+            <div class="form-group">
+              <label for="zip">Zip code:</label>
+              <input type="text" id="zip" />
+            </div>
+
+            <div class="form-group">
+              <label for="doe">Date of employment:</label>
+              <input type="date" id="doe" />
+            </div>
+
+            <div class="form-group">
+              <label for="doet">Date of employment termination:</label>
+              <input type="date" id="doet" />
+            </div>
           </div>
-          <div class="form-group">
-            <label for="ssn">Social Security Number:</label>
-            <input type="social security number" id="ssn" required />
-          </div>
-          <div class="form-group">
-            <label for="dtitle">Degree title:</label>
-            <input type="text" id="dtitle" required />
-          </div>
-          <div class="form-group">
-            <label for="address">Street address:</label>
-            <input type="text" id="address" required />
-          </div>
-          <div class="form-group">
-            <label for="city">City:</label>
-            <input type="text" id="city" required />
-          </div>
-          <div class="form-group">
-            <label for="state">State:</label>
-            <input type="text" id="state" required />
-          </div>
-          <div class="form-group">
-            <label for="zip">Zip code:</label>
-            <input type="text" id="zip" required />
-          </div>
-          <div class="form-group">
-            <label for="position">Position:</label>
-            <input type="text" id="position" required />
-          </div>
-          <div class="form-group">
-            <label for="department">Department:</label>
-            <input type="text" id="department" required />
-          </div>
-          <div class="form-group">
-            <label for="doe">Date of employment:</label>
-            <input type="text" id="doe" required />
-          </div>
-          <div class="form-group">
-            <label for="doet,">Date of employment termination:</label>
-            <input type="text" id="doet" required />
-          </div>
-          <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required />
-          </div>
+
           <div class="form-group">
             <label for="businessNames">Business Name(s):</label>
             <div id="businessDropdownContainer"></div>
           </div>
-          <button type="submit" class="btn">Add Record</button>
+
+          <div style="margin-top:0.5em;">
+            <button type="submit" id="submitBtn" class="btn">Add Record</button>
+            <button type="button" id="cancelEditBtn" class="btn hidden">Cancel Edit</button>
+          </div>
+
         </fieldset>
       </form>
     </div>
 
-    <div class="search-box">
+    <div class="search-box" style="margin-top:1em;">
       <label for="searchInput">Search:</label>
-      <input type="text" id="searchInput" placeholder="Search by any field..." />
+      <input type="text" id="searchInput" placeholder="Search by any field..." style="width:100%;" />
     </div>
 
-    <table id="recordsTable">
+    <table id="recordsTable" aria-live="polite" style="margin-bottom:2em;">
       <thead>
         <tr>
           <th>Name</th>
@@ -139,6 +182,7 @@
   </div>
 
   <script>
+    // --- Data (companies) ---
     const companies = [
       { name: "Alpha Corp", location: "New York, NY", type: "Tech", contributors: ["Admin", "Viewer"] },
       { name: "Beta LLC", location: "Austin, TX", type: "Finance", contributors: ["Admin"] },
@@ -146,17 +190,42 @@
       { name: "Delta Partners", location: "Chicago, IL", type: "Consulting", contributors: ["Admin", "Viewer"] }
     ];
 
+    // --- DOM refs ---
     const form = document.getElementById('personnelForm');
     const tableBody = document.querySelector('#recordsTable tbody');
     const searchInput = document.getElementById('searchInput');
     const roleSelect = document.getElementById('role');
     const companySelect = document.getElementById('companySelect');
     const adminPanel = document.getElementById('adminPanel');
+    const submitBtn = document.getElementById('submitBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
 
+    // form fields
+    const idnumber = document.getElementById('idnumber');
+    const ftitle = document.getElementById('ftitle');
+    const dtitle = document.getElementById('dtitle');
+    const fname = document.getElementById('fname');
+    const mname = document.getElementById('mname');
+    const lname = document.getElementById('lname');
+    const ssn = document.getElementById('ssn');
+    const email = document.getElementById('email');
+    const position = document.getElementById('position');
+    const department = document.getElementById('department');
+    const address = document.getElementById('address');
+    const city = document.getElementById('city');
+    const stateEl = document.getElementById('state');
+    const zip = document.getElementById('zip');
+    const doe = document.getElementById('doe');
+    const doet = document.getElementById('doet');
+
+    // runtime state
     let currentCompany = companies[0].name;
-    let companyRecords = {};
+    let companyRecords = {}; // { "Alpha Corp": [ { ...record... } ] }
+    let editIndex = null; // null when adding, number when editing
 
+    // --- helpers ---
     function populateCompanySelect() {
+      companySelect.innerHTML = '';
       companies.forEach(c => {
         const option = document.createElement('option');
         option.value = c.name;
@@ -167,11 +236,11 @@
     }
 
     function updateCompanyHeader(name) {
-      const company = companies.find(c => c.name === name);
+      const company = companies.find(c => c.name === name) || { name: '', location: '', type: '' };
       document.getElementById('headerCompanyName').textContent = company.name;
       document.getElementById('headerLocation').textContent = company.location;
-      document.getElementById('headerType').innerHTML = `Type: <span>${company.type}</span>`;
-      document.getElementById('headerRole').innerHTML = `Role: <span>${roleSelect.value}</span>`;
+      document.getElementById('headerType').textContent = `Type: ${company.type}`;
+      document.getElementById('headerRole').textContent = `Role: ${roleSelect.value}`;
     }
 
     function getFilteredBusinesses(role) {
@@ -185,6 +254,8 @@
       const select = document.createElement('select');
       select.id = 'businessNames';
       select.multiple = true;
+      select.size = Math.min(6, getFilteredBusinesses(role).length || 1);
+      select.setAttribute('aria-label', 'Select businesses');
 
       getFilteredBusinesses(role).forEach(b => {
         const option = document.createElement('option');
@@ -196,206 +267,274 @@
       container.appendChild(select);
     }
 
+    function buildFullName() {
+      const parts = [ftitle.value.trim(), fname.value.trim(), mname.value.trim(), lname.value.trim()]
+        .filter(Boolean);
+      return parts.join(' ');
+    }
+
+    function getFormRecord() {
+      const businessSelect = document.getElementById('businessNames');
+      const selectedBusinesses = businessSelect ? Array.from(businessSelect.selectedOptions).map(o => o.value) : [];
+
+      return {
+        idnumber: idnumber.value.trim(),
+        title: ftitle.value.trim(),
+        degreeTitle: dtitle.value.trim(),
+        firstName: fname.value.trim(),
+        middleName: mname.value.trim(),
+        lastName: lname.value.trim(),
+        name: buildFullName(),
+        ssn: ssn.value.trim(), // consider not storing SSN client-side
+        email: email.value.trim(),
+        position: position.value.trim(),
+        department: department.value.trim(),
+        address: address.value.trim(),
+        city: city.value.trim(),
+        state: stateEl.value.trim(),
+        zip: zip.value.trim(),
+        dateOfEmployment: doe.value || null,
+        dateOfEmploymentTermination: doet.value || null,
+        businesses: selectedBusinesses
+      };
+    }
+
+    function resetForm() {
+      form.reset();
+      editIndex = null;
+      submitBtn.textContent = 'Add Record';
+      cancelEditBtn.classList.add('hidden');
+      // rebuild business dropdown to clear selections
+      renderBusinessDropdown(roleSelect.value);
+    }
+
+    function validateSSNIfProvided() {
+      const v = ssn.value.trim();
+      if (!v) return true;
+      const re = /^\d{3}-\d{2}-\d{4}$/;
+      return re.test(v);
+    }
+
+    // --- rendering table ---
     function renderTable() {
       const role = roleSelect.value;
-      const query = searchInput.value.toLowerCase();
+      const query = (searchInput.value || '').toLowerCase();
       const records = companyRecords[currentCompany] || [];
       tableBody.innerHTML = '';
 
-      records
-        .filter(record =>
-          Object.values(record).some(val =>
-            Array.isArray(val)
-              ? val.join(', ').toLowerCase().includes(query)
-              : val.toLowerCase().includes(query)
-          )
-        )
-        .forEach((record, index) => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${record.name}</td>
-            <td>${record.position}</td>
-            <td>${record.department}</td>
-            <td>${record.email}</td>
-            <td>${record.businesses.join(', ')}</td>
-            <td>
-              ${role === 'Admin' ? `
-                <button class="btn edit-btn" onclick="editRecord(${index})">Edit</button>
-                <button class="btn delete-btn" onclick="deleteRecord(${index})">Delete</button>
-              ` : '—'}
-            </td>
-          `;
-          tableBody.appendChild(row);
-        });
-    }
+      const filtered = records.filter(rec => {
+        if (!query) return true;
+        // stringify selected searchable parts to avoid missing arrays
+        const hay = [
+          rec.name,
+          rec.position,
+          rec.department,
+          rec.email,
+          rec.firstName,
+          rec.lastName,
+          rec.city,
+          rec.state,
+          (rec.businesses || []).join(', ')
+        ].join(' | ').toLowerCase();
+        return hay.includes(query);
+      });
 
-    function deleteRecord(index) {
-      companyRecords[currentCompany].splice(index, 1);
-      renderTable();
-    }
-
-    function editRecord(index) {
-      const record = companyRecords[currentCompany][index];
-      document.getElementById('name').value = record.name;
-      document.getElementById('position').value = record.position;
-      document.getElementById('department').value = record.department;
-      document.getElementById('email').value = record.email;
-
-      renderBusinessDropdown(roleSelect.value);
-      const businessSelect = document.getElementById('businessNames');
-      Array.from(businessSelect.options
-
-<script>
-  const companies = [
-    { name: "Alpha Corp", location: "New York, NY", type: "Tech", contributors: ["Admin", "Viewer"] },
-    { name: "Beta LLC", location: "Austin, TX", type: "Finance", contributors: ["Admin"] },
-    { name: "Gamma Inc", location: "Seattle, WA", type: "Retail", contributors: ["Viewer"] },
-    { name: "Delta Partners", location: "Chicago, IL", type: "Consulting", contributors: ["Admin", "Viewer"] }
-  ];
-
-  const form = document.getElementById('personnelForm');
-  const tableBody = document.querySelector('#recordsTable tbody');
-  const searchInput = document.getElementById('searchInput');
-  const roleSelect = document.getElementById('role');
-  const companySelect = document.getElementById('companySelect');
-  const adminPanel = document.getElementById('adminPanel');
-
-  let currentCompany = companies[0].name;
-  let companyRecords = {};
-
-  function populateCompanySelect() {
-    companies.forEach(c => {
-      const option = document.createElement('option');
-      option.value = c.name;
-      option.textContent = c.name;
-      companySelect.appendChild(option);
-    });
-    companySelect.value = currentCompany;
-  }
-
-  function updateCompanyHeader(name) {
-    const company = companies.find(c => c.name === name);
-    document.getElementById('headerCompanyName').textContent = company.name;
-    document.getElementById('headerLocation').textContent = company.location;
-    document.getElementById('headerType').innerHTML = `Type: <span>${company.type}</span>`;
-    document.getElementById('headerRole').innerHTML = `Role: <span>${roleSelect.value}</span>`;
-  }
-
-  function getFilteredBusinesses(role) {
-    return companies.filter(c => c.contributors.includes(role));
-  }
-
-  function renderBusinessDropdown(role) {
-    const container = document.getElementById('businessDropdownContainer');
-    container.innerHTML = '';
-
-    const select = document.createElement('select');
-    select.id = 'businessNames';
-    select.multiple = true;
-
-    getFilteredBusinesses(role).forEach(b => {
-      const option = document.createElement('option');
-      option.value = b.name;
-      option.textContent = b.name;
-      select.appendChild(option);
-    });
-
-    container.appendChild(select);
-  }
-
-  function renderTable() {
-    const role = roleSelect.value;
-    const query = searchInput.value.toLowerCase();
-    const records = companyRecords[currentCompany] || [];
-    tableBody.innerHTML = '';
-
-    records
-      .filter(record =>
-        Object.values(record).some(val =>
-          Array.isArray(val)
-            ? val.join(', ').toLowerCase().includes(query)
-            : val.toLowerCase().includes(query)
-        )
-      )
-      .forEach((record, index) => {
+      filtered.forEach((record, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${record.name}</td>
-          <td>${record.position}</td>
-          <td>${record.department}</td>
-          <td>${record.email}</td>
-          <td>${record.businesses.join(', ')}</td>
+          <td>${escapeHtml(record.name)}</td>
+          <td>${escapeHtml(record.position)}</td>
+          <td>${escapeHtml(record.department)}</td>
+          <td>${escapeHtml(record.email)}</td>
+          <td>${escapeHtml((record.businesses || []).join(', '))}</td>
           <td>
             ${role === 'Admin' ? `
-              <button class="btn edit-btn" onclick="editRecord(${index})">Edit</button>
-              <button class="btn delete-btn" onclick="deleteRecord(${index})">Delete</button>
+              <button class="btn edit-btn" data-index="${index}">Edit</button>
+              <button class="btn delete-btn" data-index="${index}">Delete</button>
             ` : '—'}
           </td>
         `;
         tableBody.appendChild(row);
       });
-  }
 
-  function deleteRecord(index) {
-    companyRecords[currentCompany].splice(index, 1);
-    renderTable();
-  }
+      // attach handlers (delegated style would be fine; simple attach will work here)
+      tableBody.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = Number(btn.getAttribute('data-index'));
+          startEdit(i);
+        });
+      });
+      tableBody.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const i = Number(btn.getAttribute('data-index'));
+          deleteRecord(i);
+        });
+      });
+    }
 
-  function editRecord(index) {
-    const record = companyRecords[currentCompany][index];
-    document.getElementById('name').value = record.name;
-    document.getElementById('position').value = record.position;
-    document.getElementById('department').value = record.department;
-    document.getElementById('email').value = record.email;
+    // small utility to avoid XSS when injecting content
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
 
-    renderBusinessDropdown(roleSelect.value);
-    const businessSelect = document.getElementById('businessNames');
-    Array.from(businessSelect.options).forEach(opt => {
-      opt.selected = record.businesses.includes(opt.value);
+    // --- record actions ---
+    function deleteRecord(index) {
+      if (!confirm('Delete this record? This action cannot be undone.')) return;
+      if (!companyRecords[currentCompany]) return;
+      companyRecords[currentCompany].splice(index, 1);
+      renderTable();
+    }
+
+    function startEdit(index) {
+      const record = (companyRecords[currentCompany] || [])[index];
+      if (!record) return alert('Record not found.');
+
+      // populate form fields
+      idnumber.value = record.idnumber || '';
+      ftitle.value = record.title || '';
+      dtitle.value = record.degreeTitle || '';
+      fname.value = record.firstName || '';
+      mname.value = record.middleName || '';
+      lname.value = record.lastName || '';
+      ssn.value = record.ssn || '';
+      email.value = record.email || '';
+      position.value = record.position || '';
+      department.value = record.department || '';
+      address.value = record.address || '';
+      city.value = record.city || '';
+      stateEl.value = record.state || '';
+      zip.value = record.zip || '';
+      doe.value = record.dateOfEmployment || '';
+      doet.value = record.dateOfEmploymentTermination || '';
+
+      // render business dropdown and select current ones
+      renderBusinessDropdown(roleSelect.value);
+      const businessSelect = document.getElementById('businessNames');
+      if (businessSelect && record.businesses) {
+        Array.from(businessSelect.options).forEach(opt => {
+          opt.selected = record.businesses.includes(opt.value);
+        });
+      }
+
+      editIndex = index;
+      submitBtn.textContent = 'Update Record';
+      cancelEditBtn.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- form submit (add or update) ---
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Basic validation
+      if (!fname.value.trim() && !lname.value.trim()) {
+        return alert('Please enter at least a first or last name.');
+      }
+      if (!validateSSNIfProvided()) {
+        return alert('SSN must be in the format 123-45-6789 if provided.');
+      }
+
+      const record = getFormRecord();
+      if (!companyRecords[currentCompany]) companyRecords[currentCompany] = [];
+
+      if (editIndex === null) {
+        // add
+        companyRecords[currentCompany].push(record);
+      } else {
+        // update
+        companyRecords[currentCompany][editIndex] = record;
+      }
+
+      resetForm();
+      renderTable();
     });
 
-    companyRecords[currentCompany].splice(index, 1);
-    renderTable();
-  }
+    cancelEditBtn.addEventListener('click', () => {
+      resetForm();
+    });
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const selectedBusinesses = Array.from(document.getElementById('businessNames').selectedOptions).map(opt => opt.value);
-    const record = {
-      name: document.getElementById('name').value.trim(),
-      position: document.getElementById('position').value.trim(),
-      department: document.getElementById('department').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      businesses: selectedBusinesses
-    };
-    if (!companyRecords[currentCompany]) companyRecords[currentCompany] = [];
-    companyRecords[currentCompany].push(record);
-    form.reset();
-    renderTable();
-  });
+    // --- role & company change handlers ---
+    roleSelect.addEventListener('change', () => {
+      const role = roleSelect.value;
+      adminPanel.style.display = role === 'Admin' ? 'block' : 'none';
+      updateCompanyHeader(currentCompany);
+      renderBusinessDropdown(role);
+      renderTable();
+    });
 
-  roleSelect.addEventListener('change', () => {
-    const role = roleSelect.value;
-    adminPanel.style.display = role === 'Admin' ? 'block' : 'none';
-    updateCompanyHeader(currentCompany);
-    renderBusinessDropdown(role);
-    renderTable();
-  });
+    companySelect.addEventListener('change', (e) => {
+      currentCompany = e.target.value;
+      updateCompanyHeader(currentCompany);
+      renderBusinessDropdown(roleSelect.value);
+      renderTable();
+    });
 
-  companySelect.addEventListener('change', (e) => {
-    currentCompany = e.target.value;
+    searchInput.addEventListener('input', renderTable);
+
+    // --- initial setup ---
+    populateCompanySelect();
     updateCompanyHeader(currentCompany);
     renderBusinessDropdown(roleSelect.value);
+    // Hide admin panel if viewer
+    adminPanel.style.display = roleSelect.value === 'Admin' ? 'block' : 'none';
     renderTable();
-  });
 
-  searchInput.addEventListener('input', renderTable);
+    // --- Optional: persist to localStorage (lightweight improvement) ---
+    // This keeps data between reloads — comment out if you don't want persistence.
+    (function loadFromStorage() {
+      try {
+        const saved = localStorage.getItem('companyRecords_v1');
+        if (saved) {
+          companyRecords = JSON.parse(saved);
+          // ensure currentCompany exists
+          if (!companyRecords[currentCompany]) companyRecords[currentCompany] = [];
+        } else {
+          // initialize empty arrays for each company to keep structure predictable
+          companies.forEach(c => companyRecords[c.name] = []);
+        }
+      } catch (err) {
+        console.warn('Failed to load saved records', err);
+        companies.forEach(c => { if (!companyRecords[c.name]) companyRecords[c.name] = []; });
+      }
+      renderTable();
+    })();
 
-  // Initial setup
-  populateCompanySelect();
-  updateCompanyHeader(currentCompany);
-  renderBusinessDropdown(roleSelect.value);
-  renderTable();
-</script>
+    // save on changes
+    const saveDebounced = debounce(() => {
+      try {
+        localStorage.setItem('companyRecords_v1', JSON.stringify(companyRecords));
+      } catch (e) {
+        console.warn('Could not save company records to localStorage.', e);
+      }
+    }, 500);
+
+    // watch table changes (very small approach: call saveDebounced after any mutating op)
+    const origDelete = deleteRecord;
+    window.deleteRecord = function(i) { origDelete(i); saveDebounced(); };
+
+    // hook into existing add/update flows
+    const origSubmitListener = form.onsubmit;
+    // we use saveDebounced in the submit handler itself below - easier:
+    form.addEventListener('submit', () => saveDebounced());
+
+    // also save after edits/deletes via renderTable actions
+    const origStartEdit = startEdit;
+    window.startEdit = function(i) { origStartEdit(i); saveDebounced(); };
+
+    // debounce helper
+    function debounce(fn, wait) {
+      let t;
+      return function(...args) {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+      };
+    }
+  </script>
 </body>
 </html>
